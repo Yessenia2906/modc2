@@ -1,0 +1,6 @@
+eclipse.preferences.version=1
+encoding//WebContent/WEB-INF/views/template/administrador/administrarSeguro.jsp=ISO-8859-1
+encoding//WebContent/WEB-INF/views/template/prestamo/emision.jsp=ISO-8859-1
+encoding//WebContent/WEB-INF/views/template/prestamo/pase.jsp=ISO-8859-1
+encoding//src/pe/com/bn/modc/controller/AdministracionController.java=UTF-8
+encoding//src/seguridad/service/XssAndSqlHttpServletRequestWrapper.java=UTF-8

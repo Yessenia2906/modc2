@@ -1,0 +1,111 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:security="http://www.springframework.org/schema/security"
+	xsi:schemaLocation="http://www.springframework.org/schema/security http://www.springframework.org/schema/security/spring-security-4.1.xsd
+		http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd">
+
+	<security:http use-expressions="true">
+	
+		<security:intercept-url pattern="/" access="permitAll" />
+		<security:intercept-url pattern="/assets/**" access="permitAll" />
+		<security:intercept-url pattern="/login" access="permitAll" />
+		<security:intercept-url pattern="/welcome" access="isAuthenticated()" />
+		
+		
+		<security:intercept-url pattern="/administrarSeguro/**" access="isAuthenticated()" />
+		<security:intercept-url pattern="/administrarSeguro1/**" access="isAuthenticated()" />
+		
+		<security:intercept-url pattern="/adminSeguro/**" access="isAuthenticated()" />
+		
+		
+		
+		<security:intercept-url pattern="/exPrestamoAct/**" access="isAuthenticated()" />
+		<security:intercept-url pattern="/exPagare/**" access="isAuthenticated()" />
+		
+		<security:intercept-url pattern="/testpdf/**" access="isAuthenticated()" />
+		<security:intercept-url pattern="/mostrarParametro/**" access="isAuthenticated()" />
+		
+				<security:intercept-url pattern="/exPrestamo/**" access="isAuthenticated()" />
+		<security:intercept-url pattern="/pagare/**" access="isAuthenticated()" />
+		<security:intercept-url pattern="/poliza/**" access="isAuthenticated()" />
+		<security:intercept-url pattern="/reprogramacion/**" access="isAuthenticated()" />
+		<security:intercept-url pattern="/pagareG/**" access="isAuthenticated()" />
+		<security:intercept-url pattern="/prestamo/**" access="isAuthenticated()" />
+		<security:intercept-url pattern="/prestamoPre/**" access="isAuthenticated()" />
+		<security:intercept-url pattern="/prestamoG/**" access="isAuthenticated()" />
+		<security:intercept-url pattern="/prestamoGPre/**" access="isAuthenticated()" />
+		<security:intercept-url pattern="/reprogramacionG/**" access="isAuthenticated()" />
+		<security:intercept-url pattern="/docPrestamoT/**" access="isAuthenticated()" />
+		<security:intercept-url pattern="/consulPR/**" access="isAuthenticated()" />
+		<security:intercept-url pattern="/consulPM/**" access="isAuthenticated()" />
+		<security:intercept-url pattern="/consulImagen/**" access="isAuthenticated()" />
+		<security:intercept-url pattern="/actualizar/**" access="isAuthenticated()" />
+		<security:intercept-url pattern="/emision/**" access="isAuthenticated()" />
+		<security:intercept-url pattern="/emisionG/**" access="isAuthenticated()" />
+		<security:intercept-url pattern="/consulT/**" access="isAuthenticated()" />
+		<security:intercept-url pattern="/exReprogramacion/**" access="isAuthenticated()" />
+		<security:intercept-url pattern="/exPoliza/**" access="isAuthenticated()" />
+		<security:intercept-url pattern="/exSolicitud/**" access="isAuthenticated()" />
+		<security:intercept-url pattern="/verNotarial/**" access="isAuthenticated()" />
+		<security:intercept-url pattern="/docPrestamoEx/**" access="isAuthenticated()" />
+		<security:intercept-url pattern="/docPrestamoExPR/**" access="isAuthenticated()" />
+		<security:intercept-url pattern="/docTarjetaEx/**" access="isAuthenticated()" />
+		<security:intercept-url pattern="/docTarjeta/**" access="isAuthenticated()" />
+		<security:intercept-url pattern="/verTarjetaT/**" access="isAuthenticated()" />
+		<security:intercept-url pattern="/verPrestamoT/**" access="isAuthenticated()" />
+		<security:intercept-url pattern="/verParametro/**" access="isAuthenticated()" />
+		<security:intercept-url pattern="/exPdfCronograma/**" access="isAuthenticated()" /> 
+		<security:intercept-url pattern="/verPrestamoTPR/**" access="isAuthenticated()" />
+		<security:intercept-url pattern="/docPrestamo/**" access="isAuthenticated()" />
+		<security:intercept-url pattern="/docPrestamoPR/**" access="isAuthenticated()" />
+		<security:intercept-url pattern="/exPrestamoEnviar/**" access="isAuthenticated()" />
+		<security:intercept-url pattern="/enviar2/**" access="isAuthenticated()" />
+		<security:intercept-url pattern="/consultaTC/**" access="isAuthenticated()" />
+		<security:intercept-url pattern="/consultaPM/**" access="isAuthenticated()" />
+		<security:intercept-url pattern="/consultaPR/**" access="isAuthenticated()" />
+	    <security:intercept-url pattern="/consultaImagen/**" access="isAuthenticated()" />
+	      <security:intercept-url pattern="/adjuntar/**" access="isAuthenticated()" />
+		<security:intercept-url pattern="/cancelacion/**" access="isAuthenticated()" />
+		<security:intercept-url pattern="/polizaG/**" access="isAuthenticated()" />
+		<security:intercept-url pattern="/solicitudG/**" access="isAuthenticated()" />
+		<security:intercept-url pattern="/solicitud/**" access="isAuthenticated()" />
+		<security:intercept-url pattern="/cancelacionG/**" access="isAuthenticated()" />
+		<security:intercept-url pattern="/exCancelacion/**" access="isAuthenticated()" />
+		<security:intercept-url pattern="/pase/**" access="isAuthenticated()" />
+		<security:intercept-url pattern="/paseG/**" access="isAuthenticated()" />
+<!--  -->
+		<security:intercept-url pattern="/validarC/**" access="isAuthenticated()" />
+		<security:intercept-url pattern="/exPdfPase/**" access="isAuthenticated()" /> 
+			<security:intercept-url pattern="/estadocuenta/**" access="isAuthenticated()" />
+ 			<security:intercept-url pattern="/buscarestadopdf/**" access="isAuthenticated()" />
+  			<security:intercept-url pattern="/enviarestadopdfcorreo/**" access="isAuthenticated()" />
+			<security:intercept-url pattern="/getEmail/**" access="isAuthenticated()" />
+			<security:intercept-url pattern="/log/**" access="isAuthenticated()" />
+			<security:intercept-url pattern="/filterlog/**" access="isAuthenticated()" />
+			
+		
+<!-- 		<security:intercept-url pattern="/consultaLogCuentas/**" access="hasAnyRole('02')" /> -->
+<!-- 		<security:intercept-url pattern="/resultadoConsultaLogCuentas/**" access="hasAnyRole('02')" /> -->
+		
+		<security:intercept-url pattern="/**" access="denyAll" />
+
+		<security:form-login login-page="/login"
+			username-parameter="username" password-parameter="password"
+			authentication-failure-url="/login" 
+			default-target-url = "/welcome" />
+		
+		<security:access-denied-handler error-page="/403" />
+		
+		<security:logout invalidate-session="true" logout-url="/cerrarSesion" />	
+		
+		<security:csrf disabled="true"/>	
+				
+	</security:http>
+	
+	<security:authentication-manager>
+		<security:authentication-provider ref="customAuthenticationProvider" />
+	</security:authentication-manager>
+
+	<bean id="customAuthenticationProvider" class="pe.com.bn.modc.config.CustomAuthenticationProvider" />
+	
+</beans>

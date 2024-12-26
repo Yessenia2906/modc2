@@ -1,0 +1,109 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<web-app xmlns="http://java.sun.com/xml/ns/javaee" id="WebApp_ID"
+	version="3.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://java.sun.com/xml/ns/javaee http://java.sun.com/xml/ns/javaee/web-app_3_0.xsd">
+
+	<display-name>modc</display-name>
+
+	<welcome-file-list>
+		<welcome-file>index.jsp</welcome-file>
+	</welcome-file-list>
+
+	<servlet>
+		<description></description>
+		<display-name>dispatcher</display-name>
+		<servlet-name>dispatcher</servlet-name>
+		<servlet-class>org.springframework.web.servlet.DispatcherServlet</servlet-class>
+	</servlet>
+	<servlet-mapping>
+		<servlet-name>dispatcher</servlet-name>
+		<url-pattern>/</url-pattern>
+	</servlet-mapping>
+	
+	<security-constraint>
+		<web-resource-collection>
+			<web-resource-name>WhiteList_Http_Verbs</web-resource-name>
+			<url-pattern>/*</url-pattern>
+			<http-method-omission>GET</http-method-omission>
+			<http-method-omission>POST</http-method-omission>
+		</web-resource-collection>
+		<auth-constraint />
+	</security-constraint>
+
+	<error-page>
+		<error-code>500</error-code>
+		<location>/page_error.jsp</location>
+	</error-page>
+	
+	<error-page>
+		<error-code>404</error-code>
+		<location>/403</location>
+	</error-page>
+	
+	<listener>
+		<listener-class>org.springframework.web.context.ContextLoaderListener</listener-class>
+	</listener>
+
+	<context-param>
+		<param-name>contextConfigLocation</param-name>
+		<param-value>
+	  		classpath:pe/com/bn/modc/config/service-context.xml
+	  		classpath:pe/com/bn/modc/config/spring-security.xml
+	  	</param-value>
+	</context-param>
+
+	<!-- Spring Security Filter -->
+
+	<filter>
+		<display-name>springSecurityFilterChain</display-name>
+		<filter-name>springSecurityFilterChain</filter-name>
+		<filter-class>org.springframework.web.filter.DelegatingFilterProxy</filter-class>
+	</filter>
+	<filter-mapping>
+		<filter-name>springSecurityFilterChain</filter-name>
+		<url-pattern>/*</url-pattern>
+	</filter-mapping>
+	
+	<session-config>
+		<session-timeout>120</session-timeout>
+	</session-config>
+
+	<service-ref>
+		<description>
+		WSDL Service GatewayInterfaceService</description>
+		<service-ref-name>service/GatewayInterfaceService</service-ref-name>
+		<service-interface>pe.bn.service.interfaz.GatewayInterfaceService</service-interface>
+		<wsdl-file>WEB-INF/wsdl/GatewayInterface.wsdl</wsdl-file>
+		<jaxrpc-mapping-file>WEB-INF/GatewayInterface_mapping.xml</jaxrpc-mapping-file>
+		<service-qname xmlns:pfx="http://interfaz.service.bn.pe">pfx:GatewayInterfaceService
+		</service-qname>
+		<port-component-ref>
+			<service-endpoint-interface>pe.bn.service.interfaz.GatewayInterface</service-endpoint-interface>
+		</port-component-ref>
+	</service-ref>
+	<service-ref>
+		<description>
+		WSDL Service ParametroInterfazService</description>
+		<service-ref-name>service/ParametroInterfazService</service-ref-name>
+		<service-interface>pe.com.bn.comp.ws.service.ParametroInterfazService</service-interface>
+		<wsdl-file>WEB-INF/wsdl/ParametroInterfaz.wsdl</wsdl-file>
+		<jaxrpc-mapping-file>WEB-INF/ParametroInterfaz_mapping.xml</jaxrpc-mapping-file>
+		<service-qname xmlns:pfx="http://service.ws.comp.bn.com.pe">pfx:ParametroInterfazService</service-qname>
+		<port-component-ref>
+			<service-endpoint-interface>pe.com.bn.comp.ws.service.ParametroInterfaz</service-endpoint-interface>
+		</port-component-ref>
+	</service-ref>
+	<service-ref>
+		<description>
+		WSDL Service AutenticaRegService</description>
+		<service-ref-name>service/AutenticaRegService</service-ref-name>
+		<service-interface>seguridad.service.AutenticaRegService</service-interface>
+		<wsdl-file>WEB-INF/wsdl/AutenticaReg.wsdl</wsdl-file>
+		<jaxrpc-mapping-file>WEB-INF/AutenticaReg_mapping.xml</jaxrpc-mapping-file>
+		<service-qname xmlns:pfx="http://service.seguridad">pfx:AutenticaRegService</service-qname>
+		<port-component-ref>
+			<service-endpoint-interface>seguridad.service.AutenticaReg</service-endpoint-interface>
+		</port-component-ref>
+	</service-ref>
+
+</web-app>
