@@ -48,6 +48,14 @@ public class RequestGateway_Deser extends com.ibm.ws.webservices.engine.encoding
     protected boolean tryElementSetFromList(javax.xml.namespace.QName qName, java.util.List listValue) {
         return false;
     }
+    private final static javax.xml.namespace.QName QName_0_3 = 
+           com.ibm.ws.webservices.engine.utils.QNameTable.createQName(
+                  "",
+                  "transid");
+    private final static javax.xml.namespace.QName QName_0_1 = 
+           com.ibm.ws.webservices.engine.utils.QNameTable.createQName(
+                  "",
+                  "filler");
     private final static javax.xml.namespace.QName QName_0_2 = 
            com.ibm.ws.webservices.engine.utils.QNameTable.createQName(
                   "",
@@ -56,12 +64,4 @@ public class RequestGateway_Deser extends com.ibm.ws.webservices.engine.encoding
            com.ibm.ws.webservices.engine.utils.QNameTable.createQName(
                   "",
                   "datos");
-    private final static javax.xml.namespace.QName QName_0_1 = 
-           com.ibm.ws.webservices.engine.utils.QNameTable.createQName(
-                  "",
-                  "filler");
-    private final static javax.xml.namespace.QName QName_0_3 = 
-           com.ibm.ws.webservices.engine.utils.QNameTable.createQName(
-                  "",
-                  "transid");
 }

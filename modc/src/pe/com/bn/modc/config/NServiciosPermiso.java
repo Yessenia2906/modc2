@@ -38,13 +38,13 @@ public class NServiciosPermiso implements IServiciosPermiso {
 		String respuesta = "";
 		
 		try {
-			respuesta = proxi.claveHost(Util.lpad(user,4).toUpperCase() + 
+			/*respuesta = proxi.claveHost(Util.lpad(user,4).toUpperCase() + 
 										Util.lpad(password,8).toUpperCase() + 
 										Constant.VAR_GLB_COD_APLICATIVO + 
-									Constant.CONST_ID_DESA);
+									Constant.CONST_ID_DESA);*/
 			
-			
-		//	respuesta = "00|0372|1|0000000|01S02S03S04S05S06S07S08S09S10S11S12S13S14S15N16N17N18N19N20N21N22N23N24N25N26N27N28N29N30N|FIORELLA GALVAN                    |MEDIOS ELECTRONICOS          |Su acceso ha sido exitoso                         |1|00000000|000 |                         |";
+			// TODO autenticacion en duro
+			respuesta = "00|0372|1|0000000|01S02S03S04S05S06S07S08S09S10S11S12S13S14S15N16N17N18N19N20N21N22N23N24N25N26N27N28N29N30N|FIORELLA GALVAN                    |MEDIOS ELECTRONICOS          |Su acceso ha sido exitoso                         |1|00000000|000 |                         |";
 			
 		} catch (Exception e) {
 			log.error(e, "[NServiciosPermiso/validarLoginHost|ERR: AutenticaRegProxy " + Constante.ERR_LOGICA_NEGOCIO, "");
