@@ -16,4 +16,8 @@ public interface ServiceEnvioEmail {
 	
 	public   Map<String, String> getEmailDni(String dni,
 			ParametrosComp parametrosComp);
+
+	public Map<String, String> getNombreCliente(String tipo, String num, ParametrosComp parametrosComp);
+	
+	
 }

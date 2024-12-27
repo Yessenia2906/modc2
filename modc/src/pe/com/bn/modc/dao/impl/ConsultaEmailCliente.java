@@ -172,4 +172,10 @@ public class ConsultaEmailCliente implements ServiceEnvioEmail{
 		return resultadoEnvio;
 	}
 
+	@Override
+	public Map<String, String> getNombreCliente(String tipo, String num, ParametrosComp parametrosComp) {
+		// TODO Apéndice de método generado automáticamente
+		return null;
+	}
+
 }

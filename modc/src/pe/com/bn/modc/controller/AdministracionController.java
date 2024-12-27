@@ -23,8 +23,11 @@ import pe.com.bn.modc.common.GeneratePdfCronograma;
 import pe.com.bn.modc.common.LoggerBn;
 import pe.com.bn.modc.common.Util;
 import pe.com.bn.modc.common.View;
+import pe.com.bn.modc.config.CustomUser;
 import pe.com.bn.modc.dao.impl.ConsultaDocumentoImpl;
 import pe.com.bn.modc.dao.impl.ConsultaImagen;
+import pe.com.bn.modc.dao.inte.EstadosCuentaDAO;
+import pe.com.bn.modc.dao.inte.IntLogAuditoria;
 import pe.com.bn.modc.dao.pool.CargarDocumento;
 import pe.com.bn.modc.dao.pool.ConexionJndi;
 import pe.com.bn.modc.domain.mapper.BnCancelacion;
@@ -52,6 +55,7 @@ import pe.com.bn.modc.domain.mapper.GeneracionCronogramaRepro;
 import pe.com.bn.modc.domain.mapper.GuardarTarjetaRequest;
 import pe.com.bn.modc.listener.Testeopdf;
 import pe.com.bn.modc.listener.contextListenerProperties;
+import pe.com.bn.modc.model.AudiLog;
 import pe.com.bn.modc.model.BodyCronograma;
 import pe.com.bn.modc.model.BodyGeneracionCronograma;
 import pe.com.bn.modc.model.BodyGeneracionCronogramaRepro;
@@ -63,14 +67,21 @@ import pe.com.bn.modc.model.BodyPolizaPrestamo;
 import pe.com.bn.modc.model.BodySolicitudPrestamo;
 import pe.com.bn.modc.trama.interactive.CicsSoapConnection;
 import pe.com.bn.modc.trama.interactive.RequestMensajeHost;
+import pe.com.bn.modc.services.inte.ServiceEnvioEmail;
+import pe.com.bn.modc.model.ParametrosComp;
 
 import net.sf.jasperreports.engine.JasperReport;
 import net.sf.jasperreports.engine.convert.ImageConverter;
 
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.ModelMap;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.ResponseBody;
 
 import java.awt.Graphics;
 import java.awt.Graphics2D;
@@ -117,6 +128,7 @@ import org.apache.poi.xssf.usermodel.XSSFSheet;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 
 import org.codehaus.jackson.map.ObjectMapper;
+import org.json.JSONException;
 
 import com.itextpdf.text.BaseColor;
 import com.itextpdf.text.Chunk;
@@ -150,8 +162,14 @@ import www.bn.simm.ws.open.service.ArrayOfTns1ReqListMessage;
 import www.bn.simm.ws.open.service.ServiceMessageProxy;
 import java.math.RoundingMode;
 
+
 @Controller
 public class AdministracionController {
+	
+	@Autowired
+	private ParametrosComp parametrosComp;
+	@Autowired
+	private ServiceEnvioEmail serviceEnvioEmail;
 
 	ConexionJndi dss = new ConexionJndi();
 
@@ -10323,22 +10341,7 @@ public class AdministracionController {
 
 	}
 	
-	// TODO validar
-	@RequestMapping("validarC")
-	public String validarC(ModelMap model, HttpServletRequest request,
-			HttpServletResponse response) throws Exception {
 
-		String path = "";
-		DatosSesion datosSesion = Util.getIdUsuario(request);
-		HttpSession sesion = request.getSession();
-
-		// iniciando la ventana
-
-		path = View.returnJsp(model, "prestamo/validarC");
-
-		return path;
-
-	}
 
 	@RequestMapping(value = "exPdfCronograma", method = RequestMethod.POST)
 	public void exportarCronograma(HttpServletRequest request,
@@ -40230,7 +40233,143 @@ public class AdministracionController {
 		return path;
 
 	}
+//-----------------------------------------------------------------------------------------------------------------
+	// TOOD VALIDAR CORREO
+	@RequestMapping("validarCorreo")
+	public String validarCorreo(ModelMap model, HttpServletRequest request,
+			HttpServletResponse response) throws Exception {
 
+		String path = "";
+		DatosSesion datosSesion = Util.getIdUsuario(request);
+		HttpSession sesion = request.getSession();
+
+		// Capturando DNI
+
+		String tipo = request.getParameter("tipo");
+		String numero = request.getParameter("numero");
+
+		System.out.print("PRUEBA");
+
+		RequestMensajeHost host = new RequestMensajeHost();
+
+		BnSolicitud solicitud = null;
+
+		// solicitud =
+		// host.getSolicitud(numero,datosSesion.getCodigoHost().toUpperCase());
+
+		solicitud = host.getSolicitud(tipo, numero, "pjmo");
+
+		String codResult = "";
+		// hirostar
+		// --------------------------------------------------------------------
+
+		ConfiguracionTarjetaRequestTemp configuracionTarjetaRequestTemp = new ConfiguracionTarjetaRequestTemp();
+
+		// hiro
+		String[] country = "PE,CL,RF,DG,FF".split(",");
+		GuardarTarjetaRequest guardarTarjetaRequest = new GuardarTarjetaRequest();
+
+		ComprasInternet comprasInternet = new ComprasInternet();
+		ComprasExtranjero comprasExtranjero = new ComprasExtranjero();
+		Notificacion notificacion = new Notificacion();
+		CashDispositionSettings disposicionEfectivo = new CashDispositionSettings();
+
+		guardarTarjetaRequest.setTypeCard("2");// DEFAULT
+		guardarTarjetaRequest.setTypeClient("T");// si o si es titular SIEMPRE
+													// DEFAULT
+		guardarTarjetaRequest.setNumberCard(numero.trim());
+		guardarTarjetaRequest.setTypeDocument(solicitud.getTIPDOC());
+		guardarTarjetaRequest.setNumberDocument(solicitud.getNUMDOC());
+		guardarTarjetaRequest.setEmail(solicitud.getMAIL());
+		guardarTarjetaRequest.setOperatorType("1");
+
+		guardarTarjetaRequest.setCellNumber(solicitud.getTLFCELL().substring(1,
+				(solicitud.getTLFCELL().length())));
+
+		comprasInternet
+				.setStatus(solicitud.getMVIRTUAL().equalsIgnoreCase("S") ? "1"
+						: "0");
+		comprasInternet.setTypeMoney("S");
+		comprasInternet.setTypeAmount(" ");
+		comprasInternet.setMeansNotification("1");
+		comprasInternet.setAmount("0");
+
+		// comprasExtranjero.setStatus(solicitud.getOEXTERIO().equalsIgnoreCase("S")?
+		// "1" :"0" );//0
+		comprasExtranjero.setStatus("0");// Pues va ir por defecto
+		comprasExtranjero.setTypeMoney("S");
+		comprasExtranjero.setAmount("0");
+		comprasExtranjero.setTypeAmount(" ");
+		comprasExtranjero.setDateDeparture(null);
+		comprasExtranjero.setDateReturn(null);
+
+		comprasExtranjero.setCountry(null);
+
+		notificacion
+				.setStatus(solicitud.getNOTIFICA().equalsIgnoreCase("S") ? "1"
+						: "0");// 0
+		// tambien va ir por defecto en 0
+		notificacion.setTypeMoney("S");
+		notificacion.setAmount("0");// MONTO MINIMO
+		notificacion.setTypeAmount(" ");
+		notificacion.setMeansNotification("2");
+
+		disposicionEfectivo.setStatus(solicitud.getDISPOS().equalsIgnoreCase(
+				"S") ? "1" : "0");// 0
+		disposicionEfectivo.setTypeMoney("S");
+		disposicionEfectivo.setTypeAmount(" ");
+		disposicionEfectivo.setAmount("0");
+
+		guardarTarjetaRequest.setCashDispositionSettings(disposicionEfectivo);
+		guardarTarjetaRequest.setShoppingAbroadSettings(comprasExtranjero);
+		guardarTarjetaRequest.setShoppingInternetSettings(comprasInternet);
+		guardarTarjetaRequest.setNotificationSettings(notificacion);
+
+		GuardarTarjetaResponse respuesta = new GuardarTarjetaResponse();
+		String resultado = "";
+
+		
+
+		if ((((solicitud.getAPELLTIT()).trim()).equals(""))) {
+
+			request.setAttribute("msje", "Error 99");
+		} else {
+
+			if ((solicitud.getCODRESP().equals("98"))) {
+
+				request.setAttribute("msje", "Error 98");
+			} else {
+
+				if ((solicitud.getCODRESP().equals("14"))) {
+
+					request.setAttribute("msje", "Error 14");
+				} else {
+
+					if ((solicitud.getCODRESP().equals("50"))) {
+
+						request.setAttribute("msje", "Error 50");
+					} else {
+
+						request.setAttribute("msje",
+								"Haga Clic en Abrir para Confirmar la Exportación");
+
+						request.setAttribute("solicitud", solicitud);
+
+					}
+
+				}
+
+			}
+
+		}
+		path = View.returnJsp(model, "tarjeta/solicitud");
+		return path;
+
+	}
+	
+//-----------------------------------------------------------------------------------------------------------------	
+	
+	
 	@RequestMapping("solicitudG")
 	public String solicitudG(ModelMap model, HttpServletRequest request,
 			HttpServletResponse response) throws Exception {
@@ -47581,5 +47720,39 @@ public class AdministracionController {
 
 		return table;
 	}
+	// TODO validarCorreo - formulario
+	@RequestMapping("validarC")
+	public String validarC(ModelMap model, HttpServletRequest request,
+			HttpServletResponse response) throws Exception {
 
+		String path = "";
+		DatosSesion datosSesion = Util.getIdUsuario(request);
+		HttpSession sesion = request.getSession();
+
+		// iniciando la ventana
+
+		path = View.returnJsp(model, "prestamo/validarC");
+
+		return path;
+
+	}
+	
+	@RequestMapping(value = "/getConsultaCorreo/", method = RequestMethod.POST)
+	@ResponseBody
+	public Object getDoctorsBySpecialty(@RequestBody Map<String,String> requestBody) {
+		
+		String tipo = requestBody.get("tipo");
+		String num = requestBody.get("numero"); 		
+		
+		Map<String , String> datosCliente = serviceEnvioEmail.getNombreCliente(tipo,num,parametrosComp);
+		
+		return datosCliente;
+	}
+	
+
+
+
+	
+
+	
 }

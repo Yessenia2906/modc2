@@ -23,7 +23,8 @@
 <meta http-equiv="Expires" content="0" />
 
 <title>PRESTAMO MULTIRED</title>
-
+<script
+	src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
 <link rel="stylesheet" href="<%=request.getContextPath()%>/assets/css/fontTableroPic1.css" type="text/css"></link>
 <link rel="stylesheet" href="<%=request.getContextPath()%>/assets/css/fontTableroPic2.css" type="text/css"></link>
 <link rel="stylesheet" href="<%=request.getContextPath()%>/assets/css/styles.css" type="text/css" />
@@ -31,6 +32,51 @@
 
 <tag:scripts />
 
+<script>
+$(document).ready(function() {
+    $("#consultarCorreo").click(function() {
+          
+        // Obtener el valor del correo electrónico (puedes obtenerlo de un formulario u otra fuente)
+        var numdoc = $("#numero").val();
+		var tipodoc = $("#tipo").val();
+        // Configurar la URL de la solicitud con el parámetro 'email'
+        var url = "/modc/getConsultaCorreo/";
+		console.log(url);
+		console.log("Numero "+numdoc + "  tipo"+tipodoc);
+		
+		var datos = {
+            numero: numdoc,
+            tipo: tipodoc
+        };
+		
+        // Realizar la solicitud AJAX con jQuery
+  $.ajax({
+            url: url, // Endpoint del servidor
+            type: "POST", // Tipo de solicitud
+            contentType: "application/json", // El tipo de datos que se envía al servidor
+            data: JSON.stringify(datos), // Convertir los datos en JSON
+            success: function(response) {
+                // Procesar la respuesta del servidor
+                console.log("Datos recibidos:", response);
+                if (response) {
+                    // Actualiza campos en la interfaz con los datos recibidos
+                    $("#nombres").val(response.nombre);
+                    $("#correo").val(response.correo);
+                } else {
+                    alert("No se encontraron datos para el cliente.");
+                }
+            },
+            error: function(jqXHR, textStatus, errorThrown) {
+                // Manejo de errores
+                console.error("Error en la solicitud:", textStatus, errorThrown);
+                alert("Ocurrió un error al consultar los datos.");
+            }
+        });
+    });
+ 
+   
+});
+</script>
 <script type="text/javascript">
 
 
@@ -46,14 +92,11 @@ function limpiar(){
 }
 
 
-
 function enviar(){
 
 
    document.exSolicitudEnviar.submit();
 }
-
-
 
 function exportar(numero){
 
@@ -63,46 +106,31 @@ function exportar(numero){
 }
 
 
-function validar(){
+function validarConsultaCorreo() {
+    var tipoDocumento = document.getElementById("tipo").value;
+    var numeroDocumento = document.getElementById("numero").value;
 
-if (document.frmLogin.tipo.value.length > 5) {
-     alert("Seleccionar tipo");
-     return false;
-    } 
-    
-    if (document.frmLogin.tipo.value.length =='1' ) {
-     alert("Seleccionar tipo");
-     return false;
+    if (tipoDocumento === "Seleccionar") {
+        alert("Por favor, seleccione un tipo de documento.");
+        return false;
     }
-	
-	 if (document.frmLogin.numero.value.length < 12) {
-     alert("Documento m\u00EDnimo 12 digitos");
-     return false;
-    }  
-     if (document.frmLogin.codigoOTP.value.length < 6) {
-     alert("Codigo m\u00EDnimo 6 digitos");
-     return false;
-    }
-	
 
-   if(document.frmLogin.numero.value==''){
-		alert('Ingrese su Documento.');
-		
-		return false;
-	} 
-	
-	return true;
+    if (tipoDocumento === "1") { 
+        if (numeroDocumento.length !== 8) {
+            alert("El DNI debe tener 8 dígitos.");
+            return false;
+        }
+    } else if (tipoDocumento === "2") {
+        if (numeroDocumento.length !== 12) {
+            alert("El Carnet de Extranjería debe tener 12 dígitos.");
+            return false;
+        }
+    }
+    document.frmLogin.submit();
+   
+    return true;
 }
 
-function iniciarSesion(){
-	 
-	
-	if(validar()){    
-     
-		document.frmLogin.submit();
-	}	
-	
-}
 
 function checkIt(evt) {
 
@@ -115,39 +143,17 @@ function checkIt(evt) {
     status = ""
     return true
 }
-    
- 
+     
 </script>
-
-
 
 </head>
 <body class="" style="background-color: #F0F0F0F;">
 
 <c:url var="url" value="/" />
 
-<form  id="enviar2" name="enviar2" method="post" action="<c:out value='${url}'/>enviar2" runat="server"   >
-	<input name="method" value="" type="hidden">
-	<input type="hidden" name="id" >
-</form>
-  
-<form id="exSolicitud" name="exSolicitud" method="post" action="<c:out value='${url}'/>exSolicitud"   runat="server" >
-	<input	id="numero" name="numero" value = "<c:out value="${solicitud.NROTARJETA}"  />" type="hidden" /> 
-	<input	id="tipo" name="tipo" value = "<c:out value="${solicitud.NUMDOC}"  />" type="hidden" /> 
-	<input	id="enviar" name="enviar" value = "NO" type="hidden" /> 
-	<input	id="pol1" name="pol1" type="hidden" /> 
-	<input	id="sol1" name="sol1" type="hidden"  />
-</form>
-<!--  
-<form id="exSolicitudEnviar" name="exSolicitudEnviar" method="post" action="<c:out value='${url}'/>enviar2"   runat="server" >
-	<input	id="numero" name="numero" value = "<c:out value="${solicitud.NUMDOC}"  />" type="hidden" /> 
-	<input	id="enviar" name="enviar" value = "SI" type="hidden" /> 
-	<input	id="pol1" name="pol1" type="hidden" /> 
-	<input	id="sol1" name="sol1" type="hidden" /> 
-</form>
--->
 
-<form  id="frmLogin" name="frmLogin" method="post" action="<c:out value='${url}'/>solicitudG" runat="server"   >
+
+<form  id="frmLogin" name="frmLogin" method="post" action="<c:out value='${url}'/>validarCorreo" runat="server"   >
 	<input name="method" value="" type="hidden">
 	<input type="hidden" name="id" >
 	 
@@ -183,11 +189,11 @@ function checkIt(evt) {
 												<tr>
 													<td width="20%" align="center">&nbsp;&nbsp; </td>
 													<td width="10%" align="center">&nbsp;&nbsp; </td>
-													<td width="40%" align="center">Tipo de Documento:&nbsp;&nbsp; 
-													<select id="tipo" name="tipo" onchange="mostrar_control()">
+													<td width="40%" align="center">Tipo de Documento:&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+													<select id="tipo" name="tipo"  style="width: 150px;">
 		                                            <option value="Seleccionar">Seleccionar</option>
                                                     <option value="1">Dni</option>
-                                                    <option value="2">Carnet de extranjer&iacute;a</option>            
+                                                    <option value="4">Carnet de extranjer&iacute;a</option>            
                                                     </select>
 													<td width="10%" align="center">&nbsp;&nbsp; </td>
 													<td width="20%" align="center">&nbsp;&nbsp; </td>
@@ -198,8 +204,9 @@ function checkIt(evt) {
 													
 													<td width="20%" align="center">&nbsp;&nbsp; </td>
 													<td width="10%" align="center">&nbsp;&nbsp; </td>
-													<td width="24%" align="center">N&ordm; de Documento:&nbsp;&nbsp; &nbsp;&nbsp; 
-													<input type="text" id="numero" name="numero" value="" onKeyPress="return checkIt(event)" style="width: 110px;"  maxlength="12"/></td>
+													<td width="24%" align="center">N&ordm; de Documento:&nbsp;&nbsp;&nbsp;
+													<input type="text" id="numero" name="numero" style="width: 150px;" onkeypress="return checkIt(event)" maxlength="" />
+    												</td>
 													<td width="10%" align="center">&nbsp;&nbsp; </td>
 													<td width="20%" align="center">&nbsp;&nbsp; </td>
 													
@@ -210,7 +217,7 @@ function checkIt(evt) {
 													<td width="20%" align="center">&nbsp;&nbsp; </td>
 													<td width="10%" align="center">&nbsp;&nbsp; </td>
 													<td width="24%" align="center">Nombres y Apellidos:&nbsp;&nbsp; &nbsp;&nbsp; 
-													<input type="text" id="nombres" name="nombres" value="" onKeyPress="return checkIt(event)" style="width: 110px;" /></td>
+													<input type="text" id="nombres" name="nombres" value="" onKeyPress=" " readonly style="width: 150px;" /></td>
 													<td width="10%" align="center">&nbsp;&nbsp; </td>
 													<td width="20%" align="center">&nbsp;&nbsp; </td>
 													
@@ -220,8 +227,8 @@ function checkIt(evt) {
 													
 													<td width="20%" align="center">&nbsp;&nbsp; </td>
 													<td width="10%" align="center">&nbsp;&nbsp; </td>
-													<td width="30%" align="center">Correo electr&oacute;nico:&nbsp;&nbsp; &nbsp;&nbsp; 
-													<input type="text" id="correo" name="correo" value="" onKeyPress="return checkIt(event)" style="width: 110px;"  maxlength="30"/></td>
+													<td width="30%" align="center">&nbsp;&nbsp;Correo electr&oacute;nico:&nbsp;&nbsp; &nbsp;&nbsp; 
+													<input type="text" id="correo" name="correo" value="" onKeyPress=" " style="width: 150px;"  maxlength="30"/></td>
 													<td width="10%" align="center">&nbsp;&nbsp; </td>
 													<td width="20%" align="center">&nbsp;&nbsp; </td>
 													
@@ -232,7 +239,7 @@ function checkIt(evt) {
 													<td width="20%" align="center">&nbsp;&nbsp; </td>
 													<td width="10%" align="center">&nbsp;&nbsp; </td>
 													<td width="30%" align="center">Ingresar c&oacute;digo OTP:&nbsp;&nbsp; &nbsp;&nbsp; 
-													<input type="text" id="codigo" name="codigo" value="" onKeyPress="return checkIt(event)" style="width: 110px;"  maxlength="6"/></td>
+													<input type="text" id="codigo" name="codigo" value="" onKeyPress="return checkIt(event)" style="width: 150px;"  maxlength="6"/></td>
 													<td width="10%" align="center">&nbsp;&nbsp; </td>
 													<td width="20%" align="center">&nbsp;&nbsp; </td>
 												</tr>
@@ -245,11 +252,12 @@ function checkIt(evt) {
 												<tr>
 												
 													
-													<td width="30%" align="center" colspan="2" align="center"><input type="button" class="buttonCls" submit="true" style="width: 140px" value="CONSULTAR CORREO"  onclick="iniciarSesion();" /></td>
+													<td width="30%" align="center" colspan="2" align="center">
+													<input id="consultarCorreo" type="button" class="buttonCls" style="width: 140px" value="CONSULTAR CORREO" /></td>
 													
-													<td width="30%" align="center" colspan="1" align="center"><input type="button" class="buttonCls" submit="true" style="width: 140px" value="ENVIAR OTP"  onclick="iniciarSesion();" /></td>
+													<td width="30%" align="center" colspan="1" align="center"><input type="button" class="buttonCls" submit="true" style="width: 140px" value="ENVIAR OTP"  onclick=" " /></td>
 													
-													<td width="30%" align="center" colspan="1" align="center"><input type="button" class="buttonCls" submit="true" style="width: 140px" value="VALIDAR CORREO"  onclick="iniciarSesion();" /></td>
+													<td width="30%" align="center" colspan="1" align="center"><input type="button" class="buttonCls" submit="true" style="width: 140px" value="VALIDAR CORREO"  onclick=" " /></td>
 													
 												</tr>
 
@@ -312,122 +320,16 @@ function checkIt(evt) {
 </table>
 </center>
 </c:if>									
-			
-<!-- 
-<c:if test="${msje eq 'Error 60'}">
-<center>
-<table width="60%" align="center"  bgcolor="white">
-<tr><td style="height: 20px" ></td></tr>
-	<tr>
-		<td  align="center"><strong>El servicio de IZIPAY no responde favor de consultar en unos minutos</strong></td>
-	</tr>
-
-</table>
-</center>
-</c:if>		
- -->			
-									
-									
-
-
-						
-									
-									
-<c:if test="${msje eq 'Haga Clic en Abrir para Confirmar la Exportación' }">
-<center>
-<table width="60%" align="center" class="small">
-<tr><td style="height: 20px" ></td></tr>
-	<tr>
-		<td  align="center"><strong> Abrir Solicitud de Tarjeta de Credito </strong></td>
-	</tr>
-</table>
-</center>
-
-<center>
-<table width="80%" align="center" bgcolor="white">
-	<tr>
-		<td  align="center" bgcolor="white"><strong>
-		<input type="button" onclick="exportar(<c:out value="${solicitud.NROTARJETA}"  />)"    class= "small"	value="Generar">
 		
 		
-		
-
-	
-	
-	
-	
-		
-		</strong></td>
-	</tr>
-	
-</table>
-</center>
-
-
-
-<c:if test="${respuesta eq 'Error 60'}">
-<center>
-<table width="60%" align="center"  bgcolor="white">
-<tr><td style="height: 20px" ></td></tr>
-	<tr>
-		<td  align="center"><strong> Estimado(a)</strong></td>
-	</tr>
-	<tr>
-		<td  align="center"><strong>No se ha completado la Habilitación/deshabilitación de los atributos de la</strong></td>
-	</tr>
-	<tr>
-		<td  align="center"><strong>Tarjeta de Crédito,por favor remita el screenshot de la pantalla SITC-04 </strong></td>
-	</tr>
-	<tr>
-		<td  align="center"><strong> y/o SITC-05 al correo soporteoperativotc@bn.com.pe</strong></td>
-	</tr>
-</table>
-</center>
-
-</c:if>	
-
-
-	<c:if test="${respuesta != 'Error 60' }">
-	<center>
-	<table width="60%" align="center" class="small">
-	<tr><td style="height: 20
-	px" ></td></tr>
-		<tr>
-			<td  align="center"><strong> Solicitud correcta</strong></td>
-		</tr>
-	</table>
-	</center>
-	</c:if>	
-
-	
-	
-
-</c:if>	
-		
-	
-
-											
-											
-												
-												
-												
-											
-												
-											
-												
-												
-											</table>
+									</table>
 										</td>
 									</tr>
 									
 								</table>
 							</td>
 						</tr>
-						<tr>
-						<td>
-						 &nbsp;
-						</td>
-						</tr>
+				
 					</table>
 			</td>
 		</tr>

@@ -183,7 +183,7 @@ event.preventDefault(); // Prevenir el comportamiento por defecto del enlace
                 
                 fileName = data.fileName;
                 const base64Pdf = data.base64Content;
-				console.log({data});
+			//	console.log({data});
                 // Convertir la cadena base64 a un array de bytes
                 const byteCharacters = atob(base64Pdf);
                 const byteNumbers = new Array(byteCharacters.length);
