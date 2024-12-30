@@ -42,7 +42,7 @@ $(document).ready(function() {
         // Configurar la URL de la solicitud con el parámetro 'email'
         var url = "/modc/getConsultaCorreo/";
 		console.log(url);
-		console.log("Numero "+numdoc + "  tipo"+tipodoc);
+		console.log("Numero "+numdoc + "  tipo "+tipodoc);
 		
 		var datos = {
             numero: numdoc,
@@ -58,10 +58,14 @@ $(document).ready(function() {
             success: function(response) {
                 // Procesar la respuesta del servidor
                 console.log("Datos recibidos:", response);
+                
+               const data = typeof response === "string" ? JSON.parse(response) : response;
+    	
                 if (response) {
                     // Actualiza campos en la interfaz con los datos recibidos
-                    $("#nombres").val(response.nombre);
-                    $("#correo").val(response.correo);
+                    $("#nombres").val(data.nombreCompleto);
+                    $("#correo").val(data.email);
+                                      
                 } else {
                     alert("No se encontraron datos para el cliente.");
                 }
@@ -217,7 +221,7 @@ function checkIt(evt) {
 													<td width="20%" align="center">&nbsp;&nbsp; </td>
 													<td width="10%" align="center">&nbsp;&nbsp; </td>
 													<td width="24%" align="center">Nombres y Apellidos:&nbsp;&nbsp; &nbsp;&nbsp; 
-													<input type="text" id="nombres" name="nombres" value="" onKeyPress=" " readonly style="width: 150px;" /></td>
+													<input type="text" id="nombres" name="nombres" value="" readonly	onKeyPress=" " readonly style="width: 150px;" /></td>
 													<td width="10%" align="center">&nbsp;&nbsp; </td>
 													<td width="20%" align="center">&nbsp;&nbsp; </td>
 													
@@ -228,7 +232,7 @@ function checkIt(evt) {
 													<td width="20%" align="center">&nbsp;&nbsp; </td>
 													<td width="10%" align="center">&nbsp;&nbsp; </td>
 													<td width="30%" align="center">&nbsp;&nbsp;Correo electr&oacute;nico:&nbsp;&nbsp; &nbsp;&nbsp; 
-													<input type="text" id="correo" name="correo" value="" onKeyPress=" " style="width: 150px;"  maxlength="30"/></td>
+													<input type="text" id="correo" name="correo" value=""  readonly	onKeyPress=" " style="width: 150px;"  maxlength="30"/></td>
 													<td width="10%" align="center">&nbsp;&nbsp; </td>
 													<td width="20%" align="center">&nbsp;&nbsp; </td>
 													

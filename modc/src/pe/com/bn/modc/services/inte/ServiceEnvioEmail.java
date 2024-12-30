@@ -20,4 +20,5 @@ public interface ServiceEnvioEmail {
 	public Map<String, String> getNombreCliente(String tipo, String num, ParametrosComp parametrosComp);
 	
 	
+	
 }

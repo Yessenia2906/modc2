@@ -50,9 +50,12 @@ import pe.com.bn.modc.domain.mapper.GeneracionCronograma;
 import pe.com.bn.modc.domain.mapper.GuardarTarjetaResponse;
 import pe.com.bn.modc.domain.mapper.LetraCambio;
 import pe.com.bn.modc.domain.mapper.Notificacion;
+import pe.com.bn.modc.exceptions.ExternalException;
+import pe.com.bn.modc.exceptions.ParametrosCompException;
 import pe.com.bn.modc.domain.mapper.BnwsParametro.ParamSimm;
 import pe.com.bn.modc.domain.mapper.GeneracionCronogramaRepro;
 import pe.com.bn.modc.domain.mapper.GuardarTarjetaRequest;
+import pe.com.bn.modc.listener.CompService;
 import pe.com.bn.modc.listener.Testeopdf;
 import pe.com.bn.modc.listener.contextListenerProperties;
 import pe.com.bn.modc.model.AudiLog;
@@ -170,7 +173,9 @@ public class AdministracionController {
 	private ParametrosComp parametrosComp;
 	@Autowired
 	private ServiceEnvioEmail serviceEnvioEmail;
-
+	@Autowired
+	private CompService compService;
+	
 	ConexionJndi dss = new ConexionJndi();
 
 	private static LoggerBn log = LoggerBn
@@ -47735,24 +47740,38 @@ public class AdministracionController {
 
 		return path;
 
-	}
+	} 
 	
+
+
 	@RequestMapping(value = "/getConsultaCorreo/", method = RequestMethod.POST)
 	@ResponseBody
-	public Object getDoctorsBySpecialty(@RequestBody Map<String,String> requestBody) {
+	public Object getDoctorsBySpecialty(@RequestBody Map<String,String> requestBody) throws ParametrosCompException, ExternalException 
+		{
 		
-		String tipo = requestBody.get("tipo");
-		String num = requestBody.get("numero"); 		
-		
-		Map<String , String> datosCliente = serviceEnvioEmail.getNombreCliente(tipo,num,parametrosComp);
-		
-		return datosCliente;
+			compService.asignarParametros();
+			String tipo = requestBody.get("tipo");
+			String num = requestBody.get("numero");
+			System.out.print("tipo2 "+ tipo +"   numero2"+ num);
+			
+			Map<String , String> datosCliente = serviceEnvioEmail.getNombreCliente(tipo,num,parametrosComp);
+			System.out.print(datosCliente);
+			String json ="";
+			  try {
+		            // Convertir el mapa a JSON
+		            ObjectMapper mapper = new ObjectMapper();
+		             json = mapper.writeValueAsString(datosCliente);
+
+		            System.out.println(json);
+		        } catch (Exception e) {
+		            e.printStackTrace();
+		        }
+			return json;
+	//} catch (ParametrosCompException e) {
+		// TODO Bloque catch generado automáticamente
+	//	e.printStackTrace();
+	//} 
 	}
 	
 
-
-
-	
-
-	
 }
