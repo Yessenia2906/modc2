@@ -24,7 +24,7 @@ public class ParametroInterfazServiceLocator extends com.ibm.ws.webservices.mult
     }
 
     // Utilizar para obtener la clase de proxy para parametroInterfaz
-    private final java.lang.String parametroInterfaz_address = "http://10.7.12.81/WSParamService12/services/ParametroInterfaz";
+    private final java.lang.String parametroInterfaz_address = "http://10.7.11.61:9080/WSParamService12/services/ParametroInterfaz";
 
     public java.lang.String getParametroInterfazAddress() {
         if (context.getOverriddingEndpointURIs() == null) {

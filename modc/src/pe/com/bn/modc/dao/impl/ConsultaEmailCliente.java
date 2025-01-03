@@ -38,17 +38,14 @@ public class ConsultaEmailCliente implements ServiceEnvioEmail{
 	    HttpURLConnection connection = null;
 	    StringBuilder response = null;
 	    
-	    String host = "10.7.12.75";
+	/*    String host = "10.7.12.75";
         int port = 80 ;
-        String userApplication = "modc" ;
+        String userApplication = "modc" ;*/   
 	    
-	    
-	    
-/*
 	    String host = parametrosComp.getServiceHost();
 	    int port = Integer.parseInt(parametrosComp.getServicePort());
 	    String userApplication = parametrosComp.getServiceUserApplication();
-*/
+
 	    try {
 	        log.debug("Iniciando conexión con servicio externo para buscar email", Constant.LOGGER_DEBUG_NIVEL_1);
 	        URL url = new URL("http://" + host + ":" + port + "/msdataclients/client/v1/search/TYPENUMDOC?typeDoc=1&numDoc=" + dni);
@@ -216,12 +213,13 @@ public class ConsultaEmailCliente implements ServiceEnvioEmail{
 	    HttpURLConnection connection = null;
 	    StringBuilder response = null;
 
-	 /*   String host = parametrosComp.getServiceHost();
+	    String host = parametrosComp.getServiceHost();
 	    int port = Integer.parseInt(parametrosComp.getServicePort());
-	    String userApplication = parametrosComp.getServiceUserApplication();*/
-	    String host = "10.7.12.75";
+	    String userApplication = parametrosComp.getServiceUserApplication();
+	 
+	    /* String host = "10.7.12.75";
         int port = 80 ;
-        String userApplication = "modc" ;
+        String userApplication = "modc" ;*/
 	    try {
 	        log.debug("Iniciando conexión con servicio externo para buscar nombre del cliente y correo", Constant.LOGGER_DEBUG_NIVEL_1);
 	        URL url = new URL("http://" + host + ":" + port + "/msdataclients/client/v1/search/TYPENUMDOC?typeDoc="+tipo+"&numDoc=" + num);

@@ -2,17 +2,16 @@ package pe.com.bn.modc.services.impl;
 
 import java.io.BufferedReader;
 import java.io.IOException;
+import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.OutputStream;
 import java.io.OutputStreamWriter;
-import java.io.PrintWriter;
 import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.apache.http.entity.StringEntity;
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -21,7 +20,6 @@ import com.itextpdf.text.DocumentException;
 import pe.com.bn.modc.common.Constant;
 import pe.com.bn.modc.common.Constante;
 import pe.com.bn.modc.common.LoggerEECC;
-import pe.com.bn.modc.dao.impl.ConsultaEmailCliente;
 import pe.com.bn.modc.listener.PdfOFSftp;
 import pe.com.bn.modc.model.EstadoCuentaPdf;
 import www.bn.simm.ws.open.bean.Adjunto;
@@ -29,7 +27,6 @@ import www.bn.simm.ws.open.bean.DatosCorreo;
 import www.bn.simm.ws.open.bean.DatosParametro;
 import www.bn.simm.ws.open.bean.ReqListMessage;
 import www.bn.simm.ws.open.bean.RequestMessage;
-import www.bn.simm.ws.open.bean.ResponseMessage;
 import www.bn.simm.ws.open.service.ArrayOfTns1ReqListMessage;
 import www.bn.simm.ws.open.service.ServiceMessageProxy;
 
@@ -43,6 +40,21 @@ public class HttpClientjdk {
 			.getInstance(HttpClientjdk.class.getName());
 	public HttpClientjdk(String nombre) throws MalformedURLException {
 		this.mensajeMod = generarMensaje(nombre);
+	}
+
+	public HttpClientjdk(String nombre, String codigo) throws MalformedURLException {
+		this.mensajeMod = generarMensajeOTP (nombre, codigo);
+	}
+	
+	private String generarMensajeOTP(String nombre, String codigo) {
+		String mensajeOTP =	
+				"</p>"
+				+ "<p>primer mensaje de prueba</p>"
+				+"<p>NOMBRE: " + nombre + "</p>"
+				+ "<p>CODIGO: " + codigo + "</p>"
+				+ "<p>Atentamente,</p>" + "</div>";
+		
+		return mensajeOTP;
 	}
 
 	public boolean enviarZiptoEmail(List<EstadoCuentaPdf> estadostwo,
@@ -291,5 +303,114 @@ public class HttpClientjdk {
 	public void setMensajeMod(String mensajeMod) {
 		this.mensajeMod = mensajeMod;
 	}
+
+	public boolean enviarCorreoVal(String correoCliente) {
+	    boolean resultadoEnvio = true;
+	    HttpURLConnection connection = null;
+
+	    try {
+	        connection = (HttpURLConnection) url.openConnection();
+	        connection.setConnectTimeout(20000);
+	        connection.setRequestMethod("POST");
+	        // TODO: TOKEN 
+	        connection.setRequestProperty("Authorization", "Bearer " + tokenBearerWS);
+	        //String token ="78d0f0ba.8d264b6c9ce5511ed197f908";
+	       // connection.setRequestProperty("Authorization", "Bearer " + token);
+	        connection.setRequestProperty("Content-Type", "application/json");
+	        connection.setDoOutput(true);
+
+	        JSONObject json = generarJsonBodyOTP(correoCliente, correoEmisor);
+
+	        OutputStream os = connection.getOutputStream();
+	        OutputStreamWriter osw = new OutputStreamWriter(os, "UTF-8");
+	        osw.write(json.toString());
+	        osw.flush();
+	        osw.close();
+
+	        int statusCode = connection.getResponseCode();
+
+	        if (statusCode == HttpURLConnection.HTTP_OK) {
+	            // Leer la respuesta del servidor
+	            BufferedReader in = new BufferedReader(new InputStreamReader(connection.getInputStream()));
+	            String inputLine;
+	            StringBuilder response = new StringBuilder();
+
+	            while ((inputLine = in.readLine()) != null) {
+	                response.append(inputLine);
+	            }
+
+	            System.out.println("Respuesta del servicio: " + response.toString());
+	            in.close();
+	        } else {
+	            resultadoEnvio = false;
+	            // Capturar el cuerpo del error
+	            InputStream errorStream = connection.getErrorStream();
+	            if (errorStream != null) {
+	                BufferedReader errorReader = new BufferedReader(new InputStreamReader(errorStream));
+	                String inputLine;
+	                StringBuilder errorResponse = new StringBuilder();
+
+	                while ((inputLine = errorReader.readLine()) != null) {
+	                    errorResponse.append(inputLine);
+	                }
+
+	                System.out.println("Error del servicio: " + errorResponse.toString());
+	                errorReader.close();
+	            } else {
+	                System.out.println("Error del servicio: Código de estado " + statusCode);
+	            }
+	        }
+	    } catch (Exception e) {
+	        // Imprime el stack trace del error
+	        System.out.println("Fallo en el envío del correo: " + e.getMessage());
+	        e.printStackTrace();
+	        resultadoEnvio = false;
+	    } finally {
+	        if (connection != null) {
+	            connection.disconnect();
+	        }
+	    }
+
+	    return resultadoEnvio;
+	}
+
+
+	private JSONObject generarJsonBodyOTP(String correoCliente, String correoEmisor) throws IOException, JSONException, DocumentException {
+
+	    JSONObject jsonBodyOTP = new JSONObject();
+
+	    // Campo "to"
+	    List<JSONObject> listTo = new ArrayList<>();
+	    JSONObject jsonTo = new JSONObject();
+	    jsonTo.put("email", correoCliente);
+	    listTo.add(jsonTo);
+	    jsonBodyOTP.put("to", listTo);
+
+	    // Campo "from"
+	    JSONObject jsonFrom = new JSONObject();
+	    jsonFrom.put("email", correoEmisor);
+	    jsonFrom.put("name", "Banco de la Nacion");
+	    jsonBodyOTP.put("from", jsonFrom);
+
+	    // Campo "replyTo"
+	    JSONObject jsonReplyTo = new JSONObject();
+	    jsonReplyTo.put("email", correoEmisor);
+	    jsonReplyTo.put("name", "Banco de la Nacion");
+	    jsonBodyOTP.put("replyTo", jsonReplyTo);
+
+	    // Campo "subject"
+	    jsonBodyOTP.put("subject", "Banco de la Nacion - Validar correo");
+
+	    // Campo "body"
+	   // String mensajeMod = "hola"; // Ajusta este valor según tu lógica.
+	    jsonBodyOTP.put("body", mensajeMod);
+
+	    // Campo "attachments"
+	    List<JSONObject> listAttachments = new ArrayList<>();
+	    jsonBodyOTP.put("attachments", listAttachments);
+
+	    return jsonBodyOTP;
+	}
+
 
 }

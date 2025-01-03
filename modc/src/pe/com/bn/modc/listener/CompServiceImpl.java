@@ -51,6 +51,7 @@ public class CompServiceImpl implements CompService {
 			byte[] clave = BNClaveSegura.encrypt(path, semillaKey);
 			
 			String base64SemillaKey = Base64Utils.encodeToString(clave);
+			System.out.println("Clave : "+base64SemillaKey);
 			log3.debug(  "INSTANCE  PARAMETRO LLAVE:  "+base64SemillaKey ,"1");
 			ParametroInterfazProxy proxi1 = new ParametroInterfazProxy();
 			log3.debug(  "INSTANCE SERVICE PARAMETRO ","1");		

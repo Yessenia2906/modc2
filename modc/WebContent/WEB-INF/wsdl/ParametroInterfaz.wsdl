@@ -94,7 +94,7 @@
   </wsdl:binding>
   <wsdl:service name="ParametroInterfazService">
     <wsdl:port binding="impl:ParametroInterfazSoapBinding" name="ParametroInterfaz">
-       <wsdlsoap:address location="http://10.7.12.81/WSParamService12/services/ParametroInterfaz"/> 
+       <wsdlsoap:address location="http://10.7.106.55:9080/WSParamService12/services/ParametroInterfaz"/>
     </wsdl:port>
   </wsdl:service>
 </wsdl:definitions>

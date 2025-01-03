@@ -85,6 +85,8 @@
 			
 			<security:intercept-url pattern="/validarC/**" access="isAuthenticated()" />
 			<security:intercept-url pattern="/getConsultaCorreo/**" access="isAuthenticated()" />
+			<security:intercept-url pattern="/getEnviarCorreoOTP/**" access="isAuthenticated()" />
+			
 			
 		
 <!-- 		<security:intercept-url pattern="/consultaLogCuentas/**" access="hasAnyRole('02')" /> -->

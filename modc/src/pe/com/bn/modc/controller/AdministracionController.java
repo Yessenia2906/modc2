@@ -26,6 +26,7 @@ import pe.com.bn.modc.common.View;
 import pe.com.bn.modc.config.CustomUser;
 import pe.com.bn.modc.dao.impl.ConsultaDocumentoImpl;
 import pe.com.bn.modc.dao.impl.ConsultaImagen;
+import pe.com.bn.modc.dao.impl.EnvioCorreoValidacion;
 import pe.com.bn.modc.dao.inte.EstadosCuentaDAO;
 import pe.com.bn.modc.dao.inte.IntLogAuditoria;
 import pe.com.bn.modc.dao.pool.CargarDocumento;
@@ -119,11 +120,13 @@ import java.util.Collection;
 import java.util.Date;
 import java.util.GregorianCalendar;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
+import java.util.Random;
 import java.util.regex.Pattern;
 
 import org.apache.poi.ss.usermodel.*;
@@ -175,7 +178,8 @@ public class AdministracionController {
 	private ServiceEnvioEmail serviceEnvioEmail;
 	@Autowired
 	private CompService compService;
-	
+	@Autowired
+	private EnvioCorreoValidacion servicioEnvioCorreo;
 	ConexionJndi dss = new ConexionJndi();
 
 	private static LoggerBn log = LoggerBn
@@ -47748,7 +47752,7 @@ public class AdministracionController {
 	@ResponseBody
 	public Object getDoctorsBySpecialty(@RequestBody Map<String,String> requestBody) throws ParametrosCompException, ExternalException 
 		{
-		
+
 			compService.asignarParametros();
 			String tipo = requestBody.get("tipo");
 			String num = requestBody.get("numero");
@@ -47758,20 +47762,65 @@ public class AdministracionController {
 			System.out.print(datosCliente);
 			String json ="";
 			  try {
+ 		            ObjectMapper mapper = new ObjectMapper();
+		            json = mapper.writeValueAsString(datosCliente);
+ 		        } catch (Exception e) {
+		            e.printStackTrace();
+		        }
+			return json;
+ 
+	}
+	
+	@RequestMapping(value = "/getEnviarCorreoOTP/", method = RequestMethod.POST)
+	@ResponseBody
+	public Object getDoctorsBySpecialty1(@RequestBody Map<String,String> requestBody,HttpServletRequest request,
+			HttpServletResponse response) throws ParametrosCompException, ExternalException 
+		{
+		Map<String, String> respuesta = new HashMap<String, String>();
+			compService.asignarParametros();
+
+			String numDoc = requestBody.get("numDocCli");
+			String nombreCliente = requestBody.get("nombreCli");
+			// TODO: Correo yapumelanie9
+			String correoCliente = "yapumelanie9@gmail.com";
+			//String correoCliente = requestBody.get("correoCli");
+			
+			System.out.print("numdocumento "+ numDoc +"   nombre del cliente "+ nombreCliente+"   correo del cliente "+ correoCliente);
+			
+			String codigo = generarCodigo();
+			
+			boolean estado = servicioEnvioCorreo.enviarCorreoOTP(correoCliente,nombreCliente,codigo);
+			// ejemplo
+			if (estado) {
+				request.getSession(false).setAttribute(correoCliente, codigo);
+				respuesta.put("cod", "0000");
+				respuesta.put("msj", "Se envio correctamente la clave OTP");
+			}else {
+				respuesta.put("cod", "9999");
+				respuesta.put("msj", "No se envio correctamente la clave OTP. Ocurrio un error");
+				
+			}
+				
+			String json ="";
+			  try {
 		            // Convertir el mapa a JSON
 		            ObjectMapper mapper = new ObjectMapper();
-		             json = mapper.writeValueAsString(datosCliente);
+		             json = mapper.writeValueAsString(respuesta);
 
-		            System.out.println(json);
+		   //         System.out.println(json);
 		        } catch (Exception e) {
 		            e.printStackTrace();
 		        }
 			return json;
-	//} catch (ParametrosCompException e) {
-		// TODO Bloque catch generado automáticamente
-	//	e.printStackTrace();
-	//} 
+			
+		
 	}
-	
+
+	private String generarCodigo() {
+		
+		String cod = String.format("%06d", new Random().nextInt(900000) + 100000);
+		return cod;
+	}
+
 
 }
