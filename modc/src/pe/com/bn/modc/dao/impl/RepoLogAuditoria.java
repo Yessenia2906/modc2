@@ -1,6 +1,7 @@
 package pe.com.bn.modc.dao.impl;
 
  
+import java.io.ByteArrayInputStream;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -25,6 +26,7 @@ import pe.com.bn.modc.common.LoggerEECC;
 import pe.com.bn.modc.config.CustomUser;
 import pe.com.bn.modc.dao.inte.IntLogAuditoria;
 import pe.com.bn.modc.dao.pool.ConexionJndi;
+import pe.com.bn.modc.domain.mapper.BnValidarCorreoOTP;
 import pe.com.bn.modc.model.AudiLog;
 
 
@@ -342,4 +344,62 @@ public class RepoLogAuditoria implements IntLogAuditoria{
 	    
 	  }
 
+	  
+		public String cargaCorreoValidar(BnValidarCorreoOTP valCorreo) throws SQLException {
+			
+			String sms = "ENVIADO";
+			String insertSQL = "INSERT INTO BNMODCF08_CORREO" +
+		    		" (F08_TIPO, F08_DOCUMENTO, F08_NOMBRES, F08_CORREO, F08_OTP, F08_FECHAVAL, F08_HORAVAL, F08_USUARIOVAL, F08_CAMPO1, F08_CAMPO2, F08_CAMPO3) " +
+		    		"VALUES (?, ?, ?, ?, ?, ?,?,?,?,?,?)";
+
+		    try (Connection connection = dss.connect();
+		         PreparedStatement pstmt = connection.prepareStatement(insertSQL, Statement.RETURN_GENERATED_KEYS)) {
+
+		        connection.setAutoCommit(false);
+		      	        
+		        // Establecer los valores de los parámetros
+		        pstmt.setString(1, valCorreo.getTIPDOC() );
+		        pstmt.setString(2, valCorreo.getNUMDOC()  );
+		        pstmt.setString(3, valCorreo.getNOMBR_APELL() );
+		        pstmt.setString(4, valCorreo.getCORREO());
+		        pstmt.setString(5, valCorreo.getOTP());
+		        pstmt.setString(6, valCorreo.getFECHA() );
+		        pstmt.setString(7, valCorreo.getHORA() );
+		        pstmt.setString(8, valCorreo.getUSUARIO() );
+		        pstmt.setString(9, "" );
+		        pstmt.setString(10, "" );
+		        pstmt.setString(11, "" );
+		        // Ejecutar la inserción
+		        int affectedRows = pstmt.executeUpdate();
+
+		        if (!(affectedRows > 0)) {
+		        	throw new SQLException("La inserción del log falló, no se afectaron filas.");
+		        	
+		        } 
+		        connection.commit();
+
+		    } catch (SQLException e) {
+		        log.error(e, "ERROR AL REGISTRAR LOS DATOS DE VALIDACION: " + valCorreo.toString());
+		        // Manejo de errores y rollback
+		        try (Connection connection = dss.connect()) {
+		            if (connection != null) {
+		                connection.rollback();
+		            }
+		        } catch (SQLException rollbackEx) {
+		            log.error(rollbackEx, "Error al hacer rollback");
+		            sms="Error al hacer rollback";
+		            return sms;
+		        } catch (Exception e1) {
+					// 
+					e1.printStackTrace();
+				}
+		    } catch (Exception e) {
+		        log.error(e, "ERROR AL REGISTRAR LOS DATOS DE VALIDACION: " + valCorreo.toString());
+		        sms="ERROR AL REGISTRAR LOS DATOS DE VALIDACION";
+	            return sms;
+		    }
+
+		    return sms;  
+	}
+	  
 }

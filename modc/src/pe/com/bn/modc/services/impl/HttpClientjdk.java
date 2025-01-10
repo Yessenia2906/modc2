@@ -47,12 +47,15 @@ public class HttpClientjdk {
 	}
 	
 	private String generarMensajeOTP(String nombre, String codigo) {
+		//TODO: Contenido del mensaje - validar correo
 		String mensajeOTP =	
-				"</p>"
-				+ "<p>primer mensaje de prueba</p>"
-				+"<p>NOMBRE: " + nombre + "</p>"
-				+ "<p>CODIGO: " + codigo + "</p>"
-				+ "<p>Atentamente,</p>" + "</div>";
+				"<div>" + 
+			            "<p></p>" +
+			            "<p>Estimado (a): " + nombre + "</p>" +
+			            "<p>Para validar tu correo electr&oacute;nico, ingresa este <b>c&oacute;digo de verificaci&oacute;n</b> en el m&oacute;dulo de impresiones:</p>" +				
+			            "<p>Tu c&oacute;digo de verificaci&oacute;n es: <b>" + codigo + "</b></p>" +
+			            "<p>Tiempo de expiraci&oacute;n: 2 min</p>" +
+			     "</div>";
 		
 		return mensajeOTP;
 	}
@@ -402,7 +405,7 @@ public class HttpClientjdk {
 	    jsonBodyOTP.put("subject", "Banco de la Nacion - Validar correo");
 
 	    // Campo "body"
-	   // String mensajeMod = "hola"; // Ajusta este valor según tu lógica.
+	   // String mensajeMod = "hola"; 
 	    jsonBodyOTP.put("body", mensajeMod);
 
 	    // Campo "attachments"

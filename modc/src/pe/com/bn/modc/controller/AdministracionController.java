@@ -27,6 +27,7 @@ import pe.com.bn.modc.config.CustomUser;
 import pe.com.bn.modc.dao.impl.ConsultaDocumentoImpl;
 import pe.com.bn.modc.dao.impl.ConsultaImagen;
 import pe.com.bn.modc.dao.impl.EnvioCorreoValidacion;
+import pe.com.bn.modc.dao.impl.RepoLogAuditoria;
 import pe.com.bn.modc.dao.inte.EstadosCuentaDAO;
 import pe.com.bn.modc.dao.inte.IntLogAuditoria;
 import pe.com.bn.modc.dao.pool.CargarDocumento;
@@ -42,6 +43,7 @@ import pe.com.bn.modc.domain.mapper.BnPoliza;
 import pe.com.bn.modc.domain.mapper.BnPolizaPrestamo;
 import pe.com.bn.modc.domain.mapper.BnSolicitud;
 import pe.com.bn.modc.domain.mapper.BnSolicitudPrestamo;
+import pe.com.bn.modc.domain.mapper.BnValidarCorreoOTP;
 import pe.com.bn.modc.domain.mapper.CashDispositionSettings;
 import pe.com.bn.modc.domain.mapper.ComprasExtranjero;
 import pe.com.bn.modc.domain.mapper.ComprasInternet;
@@ -114,6 +116,8 @@ import java.sql.Statement;
 import java.text.DateFormat;
 import java.text.DecimalFormat;
 import java.text.SimpleDateFormat;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Collection;
@@ -47750,54 +47754,78 @@ public class AdministracionController {
 
 	@RequestMapping(value = "/getConsultaCorreo/", method = RequestMethod.POST)
 	@ResponseBody
-	public Object getDoctorsBySpecialty(@RequestBody Map<String,String> requestBody) throws ParametrosCompException, ExternalException 
-		{
+	public Object DatosCliente(@RequestBody Map<String, String> requestBody, HttpServletRequest request) 
+	        throws ParametrosCompException, ExternalException {
 
-			compService.asignarParametros();
-			String tipo = requestBody.get("tipo");
-			String num = requestBody.get("numero");
-			System.out.print("tipo2 "+ tipo +"   numero2"+ num);
-			
-			Map<String , String> datosCliente = serviceEnvioEmail.getNombreCliente(tipo,num,parametrosComp);
-			System.out.print(datosCliente);
-			String json ="";
-			  try {
- 		            ObjectMapper mapper = new ObjectMapper();
-		            json = mapper.writeValueAsString(datosCliente);
- 		        } catch (Exception e) {
-		            e.printStackTrace();
-		        }
-			return json;
- 
+	    compService.asignarParametros();
+	    
+	    String tipo = requestBody.get("tipo");
+	    String num = requestBody.get("numero");
+	    
+	    Map<String, String> datosCliente = serviceEnvioEmail.getNombreCliente(tipo, num, parametrosComp); 
+	    String email = datosCliente.get("email");
+	    String nombreCompleto = datosCliente.get("nombreCompleto");
+	    
+	    HttpSession session = request.getSession();
+	    session.setAttribute("tipodoc", tipo);
+	    session.setAttribute("numdoc", num);
+	    session.setAttribute("nombrecompleto", nombreCompleto);
+	    //session.setAttribute("email", email);
+	    
+	    // Convertir los datos a JSON para la respuesta
+	    String json = "";
+	    try {
+	        ObjectMapper mapper = new ObjectMapper();
+	        json = mapper.writeValueAsString(datosCliente);	        
+	        
+	    } catch (Exception e) {
+	        e.printStackTrace();
+	    }
+	    return json;
 	}
-	
+
 	@RequestMapping(value = "/getEnviarCorreoOTP/", method = RequestMethod.POST)
 	@ResponseBody
-	public Object getDoctorsBySpecialty1(@RequestBody Map<String,String> requestBody,HttpServletRequest request,
-			HttpServletResponse response) throws ParametrosCompException, ExternalException 
-		{
+	public Object EnviarCorreoOTP(@RequestBody Map<String,String> requestBody,HttpServletRequest request,
+			HttpServletResponse response) throws ParametrosCompException, ExternalException {
+		
+		
 		Map<String, String> respuesta = new HashMap<String, String>();
 			compService.asignarParametros();
 
 			String numDoc = requestBody.get("numDocCli");
 			String nombreCliente = requestBody.get("nombreCli");
+			
+			
 			// TODO: Correo yapumelanie9
 			String correoCliente = "yapumelanie9@gmail.com";
 			//String correoCliente = requestBody.get("correoCli");
 			
-			System.out.print("numdocumento "+ numDoc +"   nombre del cliente "+ nombreCliente+"   correo del cliente "+ correoCliente);
-			
+			HttpSession session = request.getSession(false);
+
 			String codigo = generarCodigo();
 			
+			long tiempoGeneracion = System.currentTimeMillis();
+			
+
 			boolean estado = servicioEnvioCorreo.enviarCorreoOTP(correoCliente,nombreCliente,codigo);
-			// ejemplo
+	
 			if (estado) {
-				request.getSession(false).setAttribute(correoCliente, codigo);
+				 //TODO:CODIGO SE TIENE QUE ELIMINAR
+				System.out.print("CODIGO GENERADO: "+codigo);
+		
+				 Map<String, Object> otpData = new HashMap<>();
+				 otpData.put("codigo", codigo);
+				 otpData.put("horaGeneracion", tiempoGeneracion);
+				 
+				 session.setAttribute("email", correoCliente);
+				 session.setAttribute(numDoc, otpData);
+
 				respuesta.put("cod", "0000");
 				respuesta.put("msj", "Se envio correctamente la clave OTP");
 			}else {
 				respuesta.put("cod", "9999");
-				respuesta.put("msj", "No se envio correctamente la clave OTP. Ocurrio un error");
+			respuesta.put("msj", "No se envio la clave OTP. Ocurrio un error");
 				
 			}
 				
@@ -47807,20 +47835,176 @@ public class AdministracionController {
 		            ObjectMapper mapper = new ObjectMapper();
 		             json = mapper.writeValueAsString(respuesta);
 
-		   //         System.out.println(json);
+		  
 		        } catch (Exception e) {
 		            e.printStackTrace();
 		        }
-			return json;
-			
+			return json;	
 		
 	}
 
+	
 	private String generarCodigo() {
 		
 		String cod = String.format("%06d", new Random().nextInt(900000) + 100000);
 		return cod;
 	}
 
+	@RequestMapping(value = "/getValidarCodigoOTP/", method = RequestMethod.POST)
+	@ResponseBody
+	public Object validarCodigoOTP(@RequestBody Map<String, String> requestBody, HttpServletRequest request) {
+	    Map<String, String> respuesta = new HashMap<>();
 
+	    String numDoc = requestBody.get("numero"); // Número de documento del cliente
+	    String codigoIngresado = requestBody.get("codigoCli");
+
+	    CustomUser usuario = (CustomUser) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+	    log.debug("Usuario autenticado: " + usuario.getUsername(), Constant.LOGGER_DEBUG_NIVEL_1);
+	    
+	    HttpSession session = request.getSession(false);
+	    BnValidarCorreoOTP valCorreo = new BnValidarCorreoOTP();
+	    RepoLogAuditoria datosCorreo = new RepoLogAuditoria();
+	    
+	    if (session != null) {
+	        Map<String, Object> otpData = (Map<String, Object>) session.getAttribute(numDoc); // Usar numDoc como clave
+	        if (otpData != null) {
+	            String codigoGuardado = (String) otpData.get("codigo");
+	            long horaGeneracion = (long) otpData.get("horaGeneracion");
+
+	            long tiempoActual = System.currentTimeMillis();
+	            if (tiempoActual - horaGeneracion <= 2 * 60 * 1000) { // 2 minutos
+	                if (codigoGuardado.equals(codigoIngresado)) {
+	                    respuesta.put("cod", "0000");
+	                    respuesta.put("msj", "Código OTP válido");
+
+	                    LocalDateTime fechaHoraActual = LocalDateTime.now();
+	                    
+	                    DateTimeFormatter formatoFecha = DateTimeFormatter.ofPattern("yyyy-MM-dd");
+	                    String fecha = fechaHoraActual.format(formatoFecha);
+	                    
+	                    DateTimeFormatter formatoHora = DateTimeFormatter.ofPattern("HH:mm:ss");
+	                    String hora = fechaHoraActual.format(formatoHora);
+	                    	                             	 	            	               	   
+	            	 // Recuperar los valores de la sesión
+	        	        String tip = (String) session.getAttribute("tipodoc");
+	            	    String num = (String) session.getAttribute("numdoc");
+	            	    String nombre = (String) session.getAttribute("nombrecompleto");
+	            	    String email = (String) session.getAttribute("email");
+	                   
+	                    valCorreo.setTIPDOC(tip);
+	                    valCorreo.setNUMDOC(num); 
+	                    valCorreo.setNOMBR_APELL(nombre); 
+	                    valCorreo.setCORREO(email); 
+	                    valCorreo.setOTP(codigoIngresado);
+	                    valCorreo.setFECHA(fecha);
+	                    valCorreo.setHORA(hora);
+	                    valCorreo.setUSUARIO(usuario.getUsername());
+
+	                    
+	                    
+	                    try {
+	                        String resultado = datosCorreo.cargaCorreoValidar(valCorreo );
+
+	                        if ("ENVIADO".equals(resultado)) {
+	                            respuesta.put("msj", "Datos guardados y codigo OTP validado");
+	                        } else {
+	                            respuesta.put("msj", "Codigo OTP validado, pero no se pudo guardar en la base de datos");
+	                        }
+	                    } catch (Exception e) {
+	                     
+	                        respuesta.put("cod", "9998");
+	                        respuesta.put("msj", "Error interno al guardar datos");
+	                    }
+
+	                    
+	                    session.removeAttribute(numDoc);
+	                    session.removeAttribute("tipodoc");
+	                    session.removeAttribute("numdoc");
+	                    session.removeAttribute("nombrecompleto");
+	                    session.removeAttribute("email");
+	                    
+	                    
+	                } else {
+	                    respuesta.put("cod", "9999");
+	                    respuesta.put("msj", "El código OTP no coincide");
+	                }
+	            } else {
+	                respuesta.put("cod", "9999");
+	                respuesta.put("msj", "El código OTP ha expirado");
+	                session.removeAttribute(numDoc); 
+	                
+	            }
+	        } else {
+	            respuesta.put("cod", "9999");
+	            respuesta.put("msj", "No se encontró un código OTP para este cliente");
+	        }
+	    } else {
+	        respuesta.put("cod", "9999");
+	        respuesta.put("msj", "No hay una sesión activa");
+	    }
+	    
+	    String json2 ="";
+		  try {
+	            // Convertir el mapa a JSON
+	            ObjectMapper mapper = new ObjectMapper();
+	             json2 = mapper.writeValueAsString(respuesta);	  
+	        } catch (Exception e) {
+	            e.printStackTrace();
+	        }
+		 
+		  		return json2;	    
+	}
+
+
+//TODO enviar documento - formulario
+	@RequestMapping("enviarDoc")
+	public String enviarDoc(ModelMap model, HttpServletRequest request,
+			HttpServletResponse response) throws Exception {
+
+		String path = "";
+		DatosSesion datosSesion = Util.getIdUsuario(request);
+		HttpSession sesion = request.getSession();
+
+		// iniciando la ventana
+
+		path = View.returnJsp(model, "prestamo/enviarDoc");
+
+		return path;
+
+	} 
+	
+	
+	@RequestMapping(value = "/getConsultaPrestamo/", method = RequestMethod.POST)
+	@ResponseBody
+	public Object DatosPrestamo(@RequestBody Map<String, String> requestBody, HttpServletRequest request) 
+	        throws ParametrosCompException, ExternalException {
+
+	    compService.asignarParametros();
+	    Map<String, String> datosCliente = null;
+	    
+	   
+	    
+	    
+	    String num = requestBody.get("numero");
+	    
+	    /*String nombre = "melanie";
+	    
+	    datosCliente.put("nom", nombre);*/
+	    System.out.print(num);
+	   
+	    
+	    // Convertir los datos a JSON para la respuesta
+	    String json = "";
+	    try {
+	        ObjectMapper mapper = new ObjectMapper();
+	        json = mapper.writeValueAsString(datosCliente);	        
+	        
+	    } catch (Exception e) {
+	        e.printStackTrace();
+	    }
+	    return json;
+	}
+	
+	
+	
 }

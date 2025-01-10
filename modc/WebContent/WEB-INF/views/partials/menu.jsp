@@ -124,6 +124,14 @@
 				    </li>
 				</sec:authorize>
 				
+				<sec:authorize url="/enviarDoc/**">
+					<li>
+						<a id="conNombre"   href='<c:out value="${url}"/>enviarDoc/' >
+							<span>Enviar Documentos</span>
+						</a>
+					</li>
+				</sec:authorize>
+				
 			</ul>
 			
 		</li>
@@ -198,6 +206,8 @@
 						</a>
 					</li>
 				</sec:authorize>
+				
+				
 			</ul>
 			
 		</li>

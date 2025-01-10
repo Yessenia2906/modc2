@@ -74,11 +74,116 @@ $(document).ready(function () {
         $mensaje.addClass(tipo); // Agregar la clase correspondiente
         $mensaje.fadeIn(); // Mostrar el mensaje
 
-        // Ocultar el mensaje después de 5 segundos
         setTimeout(() => {
             $mensaje.fadeOut();
         }, 5000);
     }
+
+const $numeroDocumento = $("#numero");
+const $tipoDocumento = $("#tipo");
+const $nombreCliente = $("#nombres");
+const $correoCliente = $("#correo");
+const $OTPCliente = $("#codigo");
+
+    // Escuchar cambios en el select
+    $tipoDocumento.change(function () {
+        const tipoSeleccionado = $(this).val();
+
+        if (tipoSeleccionado === "1") { 
+            $numeroDocumento.attr("maxlength", 8); 
+            $numeroDocumento.val("");
+            $nombreCliente.val(""); 
+            $correoCliente.val("");
+            $OTPCliente.val("");
+            $("#enviarCorreo").prop("disabled", true);
+            $("#validarCodigo").prop("disabled", true);
+           
+        } else if (tipoSeleccionado === "4") { 
+            $numeroDocumento.attr("maxlength", 12); 
+            $numeroDocumento.val(""); 
+            $nombreCliente.val(""); 
+            $correoCliente.val("");
+            $OTPCliente.val("");
+            $("#enviarCorreo").prop("disabled", true);
+            $("#validarCodigo").prop("disabled", true);
+          
+        } else if (tipoSeleccionado === "Seleccionar") {
+            $numeroDocumento.attr("maxlength", 0); 
+            $numeroDocumento.val(""); 
+            $nombreCliente.val(""); 
+            $correoCliente.val("");
+            $OTPCliente.val("");
+            $("#enviarCorreo").prop("disabled", true);
+            $("#validarCodigo").prop("disabled", true);
+        }
+    });
+    
+    
+    $("#consultarCorreo").click(function () {
+        const numdoc = $("#numero").val();
+        const tipodoc = $("#tipo").val();
+        const mensajeError = validarConsultaDatos();
+
+        // Limpiar campos
+        $("#nombres").val("");
+        $("#correo").val("");
+        $("#codigo").val("");
+
+        if (!numdoc || !tipodoc) {
+            mostrarMensaje("error", "Debe completar todos los campos para consultar.");
+            return;
+        }
+
+        if (mensajeError) {
+            mostrarMensaje("error", mensajeError);
+            console.log(mensajeError);
+            return;
+        }
+
+        const url = "/modc/getConsultaCorreo/";
+        console.log("Consultando en URL:", url);
+
+        const datos = {
+            numero: numdoc,
+            tipo: tipodoc
+        };
+
+        $.ajax({
+            url: url,
+            type: "POST",
+            contentType: "application/json",
+            data: JSON.stringify(datos),
+            success: function (response) {
+                const data = typeof response === "string" ? JSON.parse(response) : response;
+                const nombreData = data.nombreCompleto;
+                const correoData = data.email;
+				
+                if (nombreData) {
+                	if (!correoData || correoData === "NO EMAIL") {
+                    mostrarMensaje("error", "Actualice sus datos de correo electronico");
+                    $("#nombres").val(nombreData);
+                    $("#correo").val(correoData);
+                   // $("#correo").prop("readonly", false);
+                   // $("#enviarCorreo").prop("disabled", false);
+                  	}else{
+                	
+                	$("#nombres").val(nombreData);
+                    $("#correo").val(correoData);
+                    mostrarMensaje("exito", "Datos consultados con exito.");
+                	$("#enviarCorreo").prop("disabled", false);
+                	}
+                    
+                } else {
+                    mostrarMensaje("error", "No se encontraron datos para el cliente.");
+                    $("#enviarCorreo").prop("disabled", true);
+                }
+            },
+            error: function (jqXHR, textStatus, errorThrown) {
+                console.error("Error en la solicitud:", textStatus, errorThrown);
+                mostrarMensaje("error", "Ocurrió un error al consultar los datos.");
+            }
+        });
+    });
 
     $("#enviarCorreo").click(function () {
         const numeroDoc = $("#numero").val();
@@ -105,8 +210,20 @@ $(document).ready(function () {
             contentType: "application/json",
             data: JSON.stringify(datosCorreo),
             success: function (respuesta) {
-                const mensaje = typeof respuesta === "string" ? JSON.parse(respuesta) : respuesta;
-                mostrarMensaje("exito", mensaje.msj || "Correo enviado con éxito.");
+                const data = typeof respuesta === "string" ? JSON.parse(respuesta) : respuesta;
+                const msjEnviar = data.msj;
+                const codEnviar = data.cod;
+
+                console.log("enviar mensa:", msjEnviar);
+                console.log("enviar Código:", codEnviar);
+
+                if (codEnviar === "0000") {
+                    mostrarMensaje("exito", msjEnviar);
+                    $("#validarCodigo").prop("disabled", false);
+                } else {
+                    mostrarMensaje("error", msjEnviar);
+                    $("#validarCodigo").prop("disabled", true);
+                }
             },
             error: function (jqXHR, textStatus, errorThrown) {
                 console.error("Error al enviar el mensaje:", textStatus, errorThrown);
@@ -115,50 +232,54 @@ $(document).ready(function () {
         });
     });
 
-    $("#consultarCorreo").click(function () {
+    $("#validarCodigo").click(function () {
+        const codigo = $("#codigo").val();
         const numdoc = $("#numero").val();
-        const tipodoc = $("#tipo").val();
 
-        if (!numdoc || !tipodoc) {
-            mostrarMensaje("error", "Debe completar todos los campos para consultar.");
-            return;
-        }
-
-        const url = "/modc/getConsultaCorreo/";
-        console.log("Consultando en URL:", url);
-
-        const datos = {
-            numero: numdoc,
-            tipo: tipodoc
+        const datosCodigo = {
+            codigoCli: codigo,
+            numero: numdoc
         };
 
+        const url3 = "/modc/getValidarCodigoOTP/";
+        console.log("Enviando a URL:", url3);
+
         $.ajax({
-            url: url,
+            url: url3,
             type: "POST",
             contentType: "application/json",
-            data: JSON.stringify(datos),
-            success: function (response) {
-                const data = typeof response === "string" ? JSON.parse(response) : response;
-                if (data) {
-                    $("#nombres").val(data.nombreCompleto);
-                    $("#correo").val(data.email);
-                    mostrarMensaje("exito", "Datos consultados con éxito.");
+            data: JSON.stringify(datosCodigo),
+            success: function (respuesta) {
+                console.log("Respuesta recibida:", respuesta);
+                const data3 = typeof respuesta === "string" ? JSON.parse(respuesta) : respuesta;
+                const msjData = data3.msj;
+                const codData = data3.cod;
+
+                console.log("mensj Validación:", msjData);
+                console.log("Código validacion:", codData);
+
+                if (codData === "0000") {
+                    mostrarMensaje("exito", msjData);
+                    // Limpiar campos
+			        $("#numero").val("");
+			        $("#nombres").val("");
+			        $("#correo").val("");
+			        $("#codigo").val("");
+			        $("#enviarCorreo").prop("disabled", true);
+			        $("#validarCodigo").prop("disabled", true);
+                    
                 } else {
-                    mostrarMensaje("error", "No se encontraron datos para el cliente.");
+                    mostrarMensaje("error", msjData);
                 }
             },
             error: function (jqXHR, textStatus, errorThrown) {
-                console.error("Error en la solicitud:", textStatus, errorThrown);
-                mostrarMensaje("error", "Ocurrió un error al consultar los datos.");
+                console.error("Error al validar el mensaje:", textStatus, errorThrown);
+                mostrarMensaje("error", "Ocurrió un error al validar el código.");
             }
         });
     });
 });
-
-
 </script>
-
-
 
 <script type="text/javascript">
 
@@ -169,47 +290,33 @@ alert(e);
 	return (key >= 48 && key <= 57)
 }
 
-function limpiar(){	
-	document.getElementById("divResultBuscar").innerHTML=document.getElementById("divVacio").innerHTML;
-	document.getElementById("buttonExportar").style.display='block';	
-}
 
-
-function enviar(){
-
-
-   document.exSolicitudEnviar.submit();
-}
-
-function exportar(numero){
-
-
-   document.exSolicitud.submit();
-   
-}
-
-function validarConsultaCorreo() {
+function validarConsultaDatos() {
     var tipoDocumento = document.getElementById("tipo").value;
     var numeroDocumento = document.getElementById("numero").value;
-
+		mensajes ="";
+   
     if (tipoDocumento === "Seleccionar") {
-        alert("Por favor, seleccione un tipo de documento.");
-        return false;
+        mensajes = "Por favor, seleccione un tipo de documento."; 
+      
+        return mensajes;
     }
 
     if (tipoDocumento === "1") { 
         if (numeroDocumento.length !== 8) {
-            alert("El DNI debe tener 8 dígitos.");
-            return false;
+        mensajes = "El DNI debe tener 8 dígitos."; 
+          
+            return mensajes;
         }
     } else if (tipoDocumento === "4") {
         if (numeroDocumento.length !== 12) {
-            alert("El Carnet de Extranjería debe tener 12 dígitos.");
-            return false;
+        mensajes = "El Carnet de Extranjería debe tener 12 dígitos."; 
+          
+            return mensajes;
         }
     }
 
-    return true; // Si todo está correcto
+    return mensajes;
 }
 
 
@@ -268,111 +375,99 @@ function checkIt(evt) {
 										<table cellpadding="4" width="100%">
 											<tr></tr>
 											<tr>
-												<td align="left">
+												<td align="center">
 
 													<table width="100%">
 														<tr>
-															<td width="20%" align="center">&nbsp;&nbsp;</td>
+															<td width="15%" align="center">&nbsp;&nbsp;</td>
 														</tr>
 														<tr>
-															<td width="20%" align="center">&nbsp;&nbsp;</td>
 															<td width="10%" align="center">&nbsp;&nbsp;</td>
-															<td width="40%" align="center">Tipo de
-																Documento:&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; <select
-																id="tipo" name="tipo" style="width: 150px;">
+															<td width="24%" align="center">Tipo de Documento:</td>
+															<td><select id="tipo" name="tipo"
+																style="width: 200px;">
 																	<option value="Seleccionar">Seleccionar</option>
 																	<option value="1">Dni</option>
 																	<option value="4">Carnet de extranjer&iacute;a</option>
-															</select>
-																<td width="10%" align="center">&nbsp;&nbsp;</td>
-																<td width="20%" align="center">&nbsp;&nbsp;</td>
-														</tr>
+															</select></td>
 
-														<tr>
 
-															<td width="20%" align="center">&nbsp;&nbsp;</td>
-															<td width="10%" align="center">&nbsp;&nbsp;</td>
-															<td width="24%" align="center">N&ordm; de
-																Documento:&nbsp;&nbsp;&nbsp; <input type="text"
-																id="numero" name="numero" style="width: 150px;"
-																onkeypress="return checkIt(event)" maxlength="" />
-															</td>
-															<td width="10%" align="center">&nbsp;&nbsp;</td>
+															<td width="24%" align="center">N&ordm; de Documento:</td>
+															<td><input type="text" id="numero" name="numero"
+																style="width: 200px;" onkeypress="return checkIt(event)"
+																maxlength="12" /></td>
 															<td width="20%" align="center">&nbsp;&nbsp;</td>
 
 														</tr>
 
 														<tr>
-
-															<td width="20%" align="center">&nbsp;&nbsp;</td>
 															<td width="10%" align="center">&nbsp;&nbsp;</td>
-															<td width="24%" align="center">Nombres y
-																Apellidos:&nbsp;&nbsp; &nbsp;&nbsp; <input type="text"
-																id="nombres" name="nombres" value="" readonly
-																onKeyPress=" " readonly style="width: 150px;" />
-															</td>
-															<td width="10%" align="center">&nbsp;&nbsp;</td>
-															<td width="20%" align="center">&nbsp;&nbsp;</td>
-
 														</tr>
+														<tr>
+															<td width="10%" align="center">&nbsp;&nbsp;</td>
+															<td width="24%" align="center">Nombres y Apellidos:</td>
+															<td><input type="text" id="nombres" name="nombres"
+																value="" readonly="readonly" style="width: 200px;" /></td>
 
+															<td width="24%" align="center">Correo
+																electr&oacute;nico:</td>
+															<td><input type="text" id="correo" name="correo"
+																value="" readonly="readonly" style="width: 200px;"
+																maxlength="30" /></td>
+															<td width="20%" align="center">&nbsp;&nbsp;</td>
+														</tr>
+														<tr>
+															<td width="10%" align="center">&nbsp;&nbsp;</td>
+														</tr>
 														<tr>
 
-															<td width="20%" align="center">&nbsp;&nbsp;</td>
 															<td width="10%" align="center">&nbsp;&nbsp;</td>
-															<td width="30%" align="center">&nbsp;&nbsp;Correo
-																electr&oacute;nico:&nbsp;&nbsp; &nbsp;&nbsp; <input
-																type="text" id="correo" name="correo" value="" readonly
-																onKeyPress=" " style="width: 150px;" maxlength="30" />
-															</td>
-															<td width="10%" align="center">&nbsp;&nbsp;</td>
-															<td width="20%" align="center">&nbsp;&nbsp;</td>
+															<td width="20%" align="center">Ingresar
+																c&oacute;digo OTP:</td>
+															<td><input type="text" id="codigo" name="codigo"
+																value="" onKeyPress="return checkIt(event)"
+																style="width: 200px;" maxlength="6" /></td>
 
-														</tr>
-
-														<tr>
-
+															<td width="15%" align="center">&nbsp;&nbsp;</td>
 															<td width="20%" align="center">&nbsp;&nbsp;</td>
-															<td width="10%" align="center">&nbsp;&nbsp;</td>
-															<td width="30%" align="center">Ingresar
-																c&oacute;digo OTP:&nbsp;&nbsp; &nbsp;&nbsp; <input
-																type="text" id="codigo" name="codigo" value=""
-																onKeyPress="return checkIt(event)" style="width: 150px;"
-																maxlength="6" />
-															</td>
-															<td width="10%" align="center">&nbsp;&nbsp;</td>
 															<td width="20%" align="center">&nbsp;&nbsp;</td>
 														</tr>
 
 														<tr>
-															<td width="20%" align="center">&nbsp;&nbsp;</td>
-															<center> <span style="height: 14px" id="mensaje"></span>
-
-															</center>
+															<td width="10%" high="30%" align="center">&nbsp;&nbsp;</td>
 														</tr>
-
-
 														<tr>
 
+															<td width="10%" colspan="6" align="center"><span
+																id="mensaje"></span></td>
 
-															<td width="30%" align="center" colspan="2" align="center">
-																<input id="consultarCorreo" type="button"
-																class="buttonCls" style="width: 140px"
-																value="CONSULTAR CORREO" />
-															</td>
+														</tr>
+														<tr>
+															<td width="10%" high="10%" align="center">&nbsp;&nbsp;</td>
+														</tr>
+														<tr>
 
-															<td width="30%" align="center" colspan="1" align="center">
+															<td width="10%" align="center">&nbsp;&nbsp;</td>
+															<td width="10%" align="center">&nbsp;&nbsp;<input
+																id="consultarCorreo" type="button" class="buttonCls"
+																style="width: 140px" value="CONSULTAR CORREO" /></td>
+															<td width="10%" align="center" colspan="2" align="center">
+
 																<input id="enviarCorreo" type="button" class="buttonCls"
 																style="width: 140px" value="ENVIAR / REENVIAR OTP"
-																onclick=" " />
+																disabled="disabled" />
 															</td>
 
-															<td width="30%" align="center" colspan="1" align="center"><input
-																type="button" class="buttonCls" submit="true"
-																style="width: 140px" value="VALIDAR CORREO" onclick=" " /></td>
 
+															<td width="5%" align="center">&nbsp;&nbsp;<input
+																id="validarCodigo" type="button" class="buttonCls"
+																submit="true" style="width: 140px"
+																value="VALIDAR CORREO" disabled="disabled" /></td>
+															<td width="5%" align="center">&nbsp;&nbsp;</td>
 														</tr>
 
+														<tr>
+															<td></td>
 														</tr>
 
 														<tr>
@@ -393,6 +488,7 @@ function checkIt(evt) {
 																</table>
 																</center>
 															</c:if>
+															<td></td>
 
 
 
