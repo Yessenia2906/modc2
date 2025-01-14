@@ -389,9 +389,9 @@ public class HttpClientjdk {
 	    listTo.add(jsonTo);
 	    jsonBodyOTP.put("to", listTo);
 
-	    // Campo "from"
+	    //TODO:  Campo "from"
 	    JSONObject jsonFrom = new JSONObject();
-	    jsonFrom.put("email", correoEmisor);
+	    jsonFrom.put("email", "notificaciones@bn.com.pe");
 	    jsonFrom.put("name", "Banco de la Nacion");
 	    jsonBodyOTP.put("from", jsonFrom);
 
@@ -402,7 +402,7 @@ public class HttpClientjdk {
 	    jsonBodyOTP.put("replyTo", jsonReplyTo);
 
 	    // Campo "subject"
-	    jsonBodyOTP.put("subject", "Banco de la Nacion - Validar correo");
+	    jsonBodyOTP.put("subject", "Prestamos Multired via Red de Agencias");
 
 	    // Campo "body"
 	   // String mensajeMod = "hola"; 

@@ -124,9 +124,9 @@
 				    </li>
 				</sec:authorize>
 				
-				<sec:authorize url="/enviarDoc/**">
+				<sec:authorize url="/enviarDocVirtual/**">
 					<li>
-						<a id="conNombre"   href='<c:out value="${url}"/>enviarDoc/' >
+						<a id="conNombre"   href='<c:out value="${url}"/>enviarDocVirtual/' >
 							<span>Enviar Documentos</span>
 						</a>
 					</li>

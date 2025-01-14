@@ -47957,7 +47957,7 @@ public class AdministracionController {
 
 
 //TODO enviar documento - formulario
-	@RequestMapping("enviarDoc")
+	@RequestMapping("enviarDocVirtual")
 	public String enviarDoc(ModelMap model, HttpServletRequest request,
 			HttpServletResponse response) throws Exception {
 
@@ -47973,38 +47973,308 @@ public class AdministracionController {
 
 	} 
 	
-	
-	@RequestMapping(value = "/getConsultaPrestamo/", method = RequestMethod.POST)
-	@ResponseBody
-	public Object DatosPrestamo(@RequestBody Map<String, String> requestBody, HttpServletRequest request) 
-	        throws ParametrosCompException, ExternalException {
 
-	    compService.asignarParametros();
-	    Map<String, String> datosCliente = null;
-	    
-	   
-	    
-	    
-	    String num = requestBody.get("numero");
-	    
-	    /*String nombre = "melanie";
-	    
-	    datosCliente.put("nom", nombre);*/
-	    System.out.print(num);
-	   
-	    
-	    // Convertir los datos a JSON para la respuesta
-	    String json = "";
-	    try {
-	        ObjectMapper mapper = new ObjectMapper();
-	        json = mapper.writeValueAsString(datosCliente);	        
-	        
-	    } catch (Exception e) {
-	        e.printStackTrace();
-	    }
-	    return json;
+	
+	// ------------------------------------------------------ENVIO DOC VIRTUAL----------------------------------------
+	@RequestMapping("enviarDoc")
+	public String envioDocVirtual(ModelMap model, HttpServletRequest request,
+			HttpServletResponse response) throws Exception {
+
+		String path = "";
+		DatosSesion datosSesion = Util.getIdUsuario(request);
+		HttpSession sesion = request.getSession();
+
+		// Capturando DNI
+
+		CicsSoapConnection cics = new CicsSoapConnection();
+
+		String numero = request.getParameter("numero");
+
+		/*
+		 * RequestMensajeHost host = new RequestMensajeHost();
+		 * 
+		 * BnPolizaPrestamo prestamo = null;
+		 * 
+		 * prestamo = host.getEmisionDocumentosPrestamo(numero);
+		 */
+
+		GeneracionCronograma cronograma = null;
+
+		BodyGeneracionCronograma cronogramaInput = new BodyGeneracionCronograma();
+
+		String tipo_prestamo1 = "05";
+
+		cronogramaInput.cargarData(tipo_prestamo1, numero);
+
+		 System.out.println("Cronograma input :"
+		 +cronogramaInput.toShowData());
+
+		String inputCronograma = cronogramaInput.toString();
+
+		BodyGeneracionCronograma bodyIn2 = new BodyGeneracionCronograma();
+		BodyGeneracionCronograma cronogramaOutPut = null;
+
+		cronogramaOutPut = cics.enviarTrama(cronogramaInput, bodyIn2);
+
+		cronogramaOutPut.getByIndex(1);
+		cronogramaOutPut.getByIndex(2);
+		cronogramaOutPut.getByIndex(3);
+
+		System.out.println("pruena 1" + cronogramaOutPut.getByIndex(0));
+		System.out.println("2 " + cronogramaOutPut.getByIndex(1));
+		System.out.println(cronogramaOutPut.toShowData());
+
+		String codResp = cronogramaOutPut.getByIndex(0);
+		String mensResp = cronogramaOutPut.getByIndex(1);
+
+		// if (!codResp.equals("0000")){
+
+		// request.setAttribute("msje","Error 99");
+		// cronograma.setMSJ(");
+		// request.setAttribute("cronograma",cronograma);
+		// }
+
+		try {
+
+			if (cronogramaOutPut != null) {
+				cronograma = new GeneracionCronograma();
+
+				cronograma.setTOPERACION(cronogramaOutPut
+						.getByTag("DFH-TOPERACION-76"));
+				cronograma.setNPRESTAMO(cronogramaOutPut
+						.getByTag("DFH-NPRESTAMO-76"));
+				cronograma.setFDSBOLSO(cronogramaOutPut
+						.getByTag("DFH-FDSBOLSO-76"));
+				cronograma.setSPRESTAMO(cronogramaOutPut
+						.getByTag("DFH-SPRESTAMO-76"));
+
+				cronograma.setCERROR(cronogramaOutPut.getByTag("DFH-CERROR-76")
+						.trim());
+				cronograma.setMSJ(cronogramaOutPut.getByTag("DFH-MSJ-76")
+						.trim());
+
+				cronograma.setMSGNO_HOST(cronogramaOutPut.getByTag("msgnoHost")
+						.trim());
+				cronograma.setMSJE_HOST(cronogramaOutPut.getByTag("msjeHost")
+						.trim());
+			}
+
+		} catch (Exception e) {
+			System.out.println(e.getMessage());
+		}
+
+		/*System.out.println("Prestamos: " + cronograma.getNPRESTAMO());
+
+		System.out.println("Codigo error: " + cronograma.getNPRESTAMO());
+
+		System.out.println("Mensaje: " + cronograma.getNPRESTAMO());*/
+
+		// System.out.println("cuenta" +(cronograma.getNPRESTAMO()).substring(0,
+		// 11));
+		// System.out.println("desembolso"
+		// +(cronograma.getNPRESTAMO()).substring(11, 13));
+
+		/*
+		 * 
+		 * if( !(codResp).equals("0000")){
+		 * 
+		 * // cronograma.setMSJ(cronogramaOutPut.getByIndex(0)+ " - "+
+		 * cronogramaOutPut.getByIndex(1));
+		 * 
+		 * cronograma.setMSJ("0004"+ " - "+ "MENSAJE NO EXISTE  WS0004");
+		 * request.setAttribute("cronograma",cronograma);
+		 * 
+		 * path = View.returnJsp(model,"prestamo/prestamo");
+		 * 
+		 * 
+		 * return path;
+		 * 
+		 * }
+		 */
+
+		cronograma.setCcuenta((cronograma.getNPRESTAMO()).substring(0, 11));
+		cronograma.setCdsbolso((cronograma.getNPRESTAMO()).substring(11, 13));
+
+		// Solicitud
+
+		BnSolicitudPrestamo solicitud = null;
+
+		BodySolicitudPrestamo solicitudInput = new BodySolicitudPrestamo();
+
+		String tipo_prestamo = "07";
+
+		solicitudInput.cargarData(tipo_prestamo, numero);
+
+		log.debug("Trama de Solicitud input", Constant.LOGGER_DEBUG_NIVEL_1);
+
+		log.debug("Trama de Solicitud", solicitudInput.toShowData());
+		// log.error(e, "SOlicitud", solicitudInput.toShowData());
+		// log.toString(solicitudInput.toShowData());
+
+		String inputSolicitud = solicitudInput.toString();
+
+		BodySolicitudPrestamo bodyIn3 = new BodySolicitudPrestamo();
+		BodySolicitudPrestamo solicitudOutPut = null;
+
+		solicitudOutPut = cics.enviarTrama(solicitudInput, bodyIn3);
+
+		log.debug("Trama de Solicitud input", solicitudInput.toShowData());
+
+		log.debug("Trama de Solicitud output", solicitudOutPut.toShowData());
+
+		if (solicitudOutPut != null) {
+			solicitud = new BnSolicitudPrestamo();
+
+			solicitud.setCERROR(solicitudOutPut.getByTag("DFH-CERROR").trim());
+			solicitud.setMSJ(solicitudOutPut.getByTag("DFH-MSJ").trim());
+
+		}
+
+		//
+		//
+
+		BnPolizaPrestamo poliza = null;
+
+		try {
+
+			BodyCronograma polizaInput = new BodyCronograma();
+
+			polizaInput.cargarData1(numero);
+
+			log.debug("Poliza input", polizaInput.toShowData());
+			// System.out.println("poliza input :" +polizaInput.toShowData());
+
+			// String inputCronograma = polizaInput.toString();
+
+			BodyCronograma bodyIn = new BodyCronograma();
+			BodyPolizaPrestamo polizaOutPut = null;
+
+			polizaOutPut = cics.enviarTramaPoliza(polizaInput, bodyIn);
+			// System.out.println("Poliza");
+			// System.out.println("Poliza :" +polizaOutPut.toShowData());
+			log.debug("Poliza output", polizaOutPut.toShowData());
+
+			if (polizaOutPut != null) {
+				poliza = new BnPolizaPrestamo();
+
+				poliza.setAcliente(polizaOutPut.getByTag("ACLIENTE"));
+				poliza.setNdoc(polizaOutPut.getByTag("NDOC"));
+
+				poliza.setCelular(polizaOutPut.getByTag("CELULAR"));
+				poliza.setEmail(polizaOutPut.getByTag("EMAIL"));
+
+				poliza.setCerror(polizaOutPut.getByTag("CERROR"));
+				poliza.setMsj(polizaOutPut.getByTag("MSJ"));
+
+			}
+		} catch (Exception e) {
+			// log.error(e,"","");
+		}
+
+		//
+
+		BodyHojaResumen hojaInput = new BodyHojaResumen();
+		BodyHojaResumen hojaOutPut = new BodyHojaResumen();
+
+		hojaInput.cargarData(numero);
+		hojaInput.toShowData();
+
+		String inputHoja = hojaInput.toString();
+
+		BodyHojaResumen bodyIn1 = new BodyHojaResumen();
+		BodyHojaResumen bodyOut1 = null;
+
+		bodyOut1 = cics.enviarTramaHojaResumen(hojaInput, bodyIn1);
+
+		// System.out.println(bodyOut1.toShowData());
+
+		log.debug("Poliza output", bodyOut1.toShowData());
+
+		BnHojaResumen hojaResumen = null;
+
+		if (bodyOut1 != null) {
+			hojaResumen = new BnHojaResumen();
+
+			hojaResumen.setCERROR(bodyOut1.getByTag("DFH-CERROR"));
+			hojaResumen.setMSJ(bodyOut1.getByTag("DFH-MSJ"));
+
+		}
+
+		//
+
+		// d
+		// System.out.println("prueba de datos" + poliza.getNdoc());
+
+		cronograma.setACLIENTE(poliza.getAcliente());
+		cronograma.setDOCUMENTO(poliza.getNdoc());
+
+		if ((cronograma.getCERROR()).equals("0000")
+				&& (solicitud.getCERROR()).equals("0000")
+				&& (poliza.getCerror()).equals("0000")
+				&& (hojaResumen.getCERROR()).equals("0000")) {
+
+			request.setAttribute("msje",
+					"Haga Clic en Abrir para Confirmar la Exportación");
+			request.setAttribute("cronograma", cronograma);
+			request.setAttribute("solicitud", solicitud);
+		} else {
+
+			if ((cronograma.getMSJ().trim()).equals("")) {
+
+				request.setAttribute("msje", "Error 99");
+				String mensa = (solicitud.getMSJ()).trim();
+				String mensa1 = (poliza.getMsj()).trim();
+				String mensa2 = (hojaResumen.getMSJ()).trim();
+
+				int mensaIn = mensa.length();
+				int mensa1In = mensa1.length();
+				int mensa2in = mensa2.length();
+
+				if (mensaIn > 2) {
+					cronograma.setMSJ(mensa);
+					request.setAttribute("cronograma", cronograma);
+					log.debug("Mensaje de error: ", mensa);
+					// request.setAttribute("msje","Haga Clic en Abrir para Confirmar la Exportación");
+					// request.setAttribute("cronograma",cronograma);
+				} else {
+					if (mensa1In > 2) {
+						cronograma.setMSJ(mensa1);
+						request.setAttribute("cronograma", cronograma);
+						log.debug("Mensaje de error: ", mensa1);
+
+						// request.setAttribute("msje","Haga Clic en Abrir para Confirmar la Exportación");
+						// request.setAttribute("cronograma",cronograma);
+
+					} else {
+						if (mensa2in > 2) {
+							cronograma.setMSJ(mensa2);
+							request.setAttribute("cronograma", cronograma);
+							log.debug("Mensaje de error: ", mensa2);
+
+							// request.setAttribute("msje","Haga Clic en Abrir para Confirmar la Exportación");
+							// request.setAttribute("cronograma",cronograma);
+
+						}
+
+					}
+
+				}
+
+			} else {
+				request.setAttribute("msje", "Error 99");
+				request.setAttribute("cronograma", cronograma);
+
+				// request.setAttribute("msje","Haga Clic en Abrir para Confirmar la Exportación");
+				// request.setAttribute("cronograma",cronograma);
+
+			}
+
+		}
+		System.out.println("SOLICITUD: " + solicitud);
+		path = View.returnJsp(model, "prestamo/enviarDoc");
+		
+		return path;
+
 	}
-	
-	
 	
 }

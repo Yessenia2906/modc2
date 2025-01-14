@@ -24,8 +24,7 @@
 <meta http-equiv="Expires" content="0" />
 
 <title>PRESTAMO MULTIRED</title>
-<script
-	src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+
 <link rel="stylesheet"
 	href="<%=request.getContextPath()%>/assets/css/fontTableroPic1.css"
 	type="text/css"></link>
@@ -40,7 +39,6 @@
 	type="text/css"></link>
 
 <tag:scripts />
-
 <style>
 #mensaje {
 	display: none;
@@ -64,9 +62,8 @@
 }
 </style>
 
-
-<script>
-$(document).ready(function () {
+<script type="text/javascript">
+    
     function mostrarMensaje(tipo, texto) {
         const $mensaje = $("#mensaje");
         $mensaje.text(texto); // Actualizar el texto del mensaje
@@ -78,71 +75,7 @@ $(document).ready(function () {
             $mensaje.fadeOut();
         }, 5000);
     }
-   
-    function validarDatosIngresados() {
-    var numeroP = document.getElementById("numprestamo").value;
-		mensajes ="";
 
-        if (numeroP.length !== 13) {
-        mensajes = "El Número de prestamo debe tener 13 dígitos."; 
-          
-            return mensajes;
-        }
-    return mensajes;
-}
-    
-   $("#consultarDatos").click(function () {
-    const numPres = $("#numprestamo").val();
-    const mensajeError = validarDatosIngresados();
-
-    if (mensajeError) {
-        mostrarMensaje("error", mensajeError); // Mostrar mensaje de error
-        console.log(mensajeError);
-        return;
-    }
-
-    // Limpiar campos solo si no hay errores
-    $("#numprestamo").val("");
-    $("#nombres").val("");
-    $("#tipoDoc").val("");
-    $("#numDoc").val("");
-    $("#correo").val("");
-
-    const url = "/modc/getConsultaPrestamo/";
-    console.log("Consultando en URL:", url);
-
-    const datos = { numero: numPres };
-	console.log(datos);
-
-    $.ajax({
-        url: url,
-        type: "POST",
-        contentType: "application/json",
-        data: JSON.stringify(datos),
-        success: function (response) {
-           /*  const data = typeof response === "string" ? JSON.parse(response) : response;
-            const nombreData = data.nom;
-            $("#nombres").val(nombreData); */
-            console.log("ENVIO DE DATOS BIEN");
-        },
-        error: function (jqXHR, textStatus, errorThrown) {
-            console.error("Error en la solicitud:", textStatus, errorThrown);
-            mostrarMensaje("error", "Ocurrió un error al consultar los datos.");
-        }
-    });
-});
-
- });  
-</script>
-
-<script type="text/javascript">
-
-
-function soloNumeros(e){
-alert(e);
-	var key = window.Event ? e.which : e.keyCode
-	return (key >= 48 && key <= 57)
-}
 
 function checkIt(evt) {
 
@@ -155,13 +88,120 @@ function checkIt(evt) {
     status = ""
     return true
 }
-     
+
+function limpiar(){	
+	document.getElementById("divResultBuscar").innerHTML=document.getElementById("divVacio").innerHTML;
+	document.getElementById("buttonExportar").style.display='block';	
+}
+
+function exportar(){
+
+
+   document.exPrestamo.submit();
+}
+
+function exportarActualizar(){
+
+
+   document.exPrestamoAct.submit();
+}
+
+function exportarP(){
+
+
+   document.exPagare.submit();
+}
+
+function validar(){
+	if(document.frmLogin.numero.value==''){
+   mostrarMensaje("error", "Ingrese Desembolso")
+		//alert('Ingrese Desembolso');
+		
+		return false;
+	} 
+	
+	 if (document.frmLogin.numero.value.length < 13) {
+	 mostrarMensaje("error", "Documento m\u00EDnimo 13 digitos")
+   //  alert("Documento m\u00EDnimo 13 digitos");
+     return false;
+    }  
+	
+
+   
+	
+	return true;
+}
+
+
+
+function iniciarSesion(){
+	 
+	
+	if(validar()){
+	
+	document.frmLogin.submit();
+		//document.testpdf.submit();
+	}
+	
+	
+	
+}
+function testclasulapdfenviar(){ 
+		document.testpdf.submit();
+}
+
+ function testclasulaserver(){ 
+document.testearclauu.submit();
+}
+    
+ 
 </script>
 
+
+
 </head>
-<body class="" style="background-color: #F0F0F0F;">
+<body class="" style="background-color: #F0F0F0;">
 
 	<c:url var="url" value="/" />
+
+
+
+	<form id="exPagare" name="exPagare" method="post"
+		action="<c:out value='${url}'/>exPagare" runat="server">
+		<input id="cta" name="cta"
+			value="<c:out value="${cronograma.ccuenta}"  />" type="hidden" />
+		<input id="numero" name="numero"
+			value="<c:out value="${cronograma.cdsbolso}"  />" type="hidden" />
+		<input id="pol1" name="pol1" type="hidden" />
+		<input id="sol1" name="sol1" type="hidden" />
+	</form>
+
+
+	<form id="exPrestamo" name="exPrestamo" method="post"
+		action="<c:out value='${url}'/>exPrestamo" runat="server">
+		<input id="cta" name="cta"
+			value="<c:out value="${cronograma.ccuenta}"  />" type="hidden" />
+		<input id="numero" name="numero"
+			value="<c:out value="${cronograma.cdsbolso}"  />" type="hidden" />
+		<input id="pol1" name="pol1" type="hidden" />
+		<input id="sol1" name="sol1" type="hidden" />
+	</form>
+
+	<form id="testpdf" name="testpdf" method="post"
+		action="<c:out value='${url}'/>testpdf" runat="server">
+		<input id="pol1" name="pol1" type="hidden" />
+		<input id="sol1" name="sol1" type="hidden" />
+	</form>
+	<form id="exPrestamoAct" name="exPrestamoAct" method="post"
+		action="<c:out value='${url}'/>exPrestamoAct" runat="server">
+		<input id="cta" name="cta"
+			value="<c:out value="${cronograma.ccuenta}"  />" type="hidden" />
+		<input id="numero" name="numero"
+			value="<c:out value="${cronograma.cdsbolso}"  />" type="hidden" />
+		<input id="pol1" name="pol1" type="hidden" />
+		<input id="sol1" name="sol1" type="hidden" />
+	</form>
+
 
 
 
@@ -185,12 +225,9 @@ function checkIt(evt) {
 								style="width: 900px" align="center">
 								<tr>
 									<th class="rxtitle" style="height: 14px; font-size: 15px;"
-										align="center">&nbsp; &nbsp; &nbsp;&nbsp; &nbsp;
-										&nbsp;&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;&nbsp; &nbsp;
-										&nbsp;&nbsp; &nbsp; &nbsp;&nbsp; &nbsp; &nbsp; &nbsp; &nbsp;
-										&nbsp;&nbsp; &nbsp;&nbsp; &nbsp; &nbsp; &nbsp; &nbsp;
-										&nbsp;&nbsp; &nbsp; &nbsp; &nbsp; &nbsp;&nbsp;&nbsp;
-										&nbsp;&nbsp; Enviar Documentos - Pr&eacute;stamo Multired</th>
+										align="center">                                        
+										   Envio virtual de Documentos Contractuales - Préstamo
+										Multired</th>
 
 								</tr>
 								<tr>
@@ -199,53 +236,54 @@ function checkIt(evt) {
 										<table cellpadding="4" width="100%">
 											<tr></tr>
 											<tr>
-												<td align="center">
+												<td align="left">
 
 													<table width="100%">
 														<tr>
-															<td width="15%" align="center">&nbsp;&nbsp;</td>
+															<td width="8%" align="center">&nbsp;&nbsp;</td>
 														</tr>
 														<tr>
-															<td width="10%" align="center">&nbsp;&nbsp;</td>
-															<td width="20%" align="center">N&uacute;mero de Prestamo:</td>
-															<td><input type="text" id="numprestamo" name="numprestamo"
-																value="" onKeyPress="return checkIt(event)"
+															<td width="8%" align="center">&nbsp;&nbsp;</td>
+															<td width="20%" align="center">N&uacute;mero de
+																Prestamo:</td>
+															<td><input type="text" id="numero" name="numero"
+																value="" onkeypress="return checkIt(event)"
 																style="width: 200px;" maxlength="13" /></td>
 
 															<td width="40%" align="center">Nombres y Apellidos:</td>
 															<td><input type="text" id="nombres" name="nombres"
-																style="width: 200px;" readonly="readonly"/></td>
+																style="width: 200px;" readonly="readonly" /></td>
 															<td width="20%" align="center">&nbsp;&nbsp;</td>
 
 														</tr>
 
 														<tr>
-															<td width="10%" align="center">&nbsp;&nbsp;</td>
+															<td width="8%" align="center">&nbsp;&nbsp;</td>
 														</tr>
 														<tr>
-															<td width="10%" align="center">&nbsp;&nbsp;</td>
+															<td width="8%" align="center">&nbsp;&nbsp;</td>
 															<td width="24%" align="center">Tipo de Documento:</td>
 															<td><input type="text" id="tipoDoc" name="tipoDoc"
 																value="" readonly="readonly" style="width: 200px;" /></td>
 
-															<td width="40%" align="center">N&uacute;mero de Documento:</td>
+															<td width="40%" align="center">N&uacute;mero de
+																Documento:</td>
 															<td><input type="text" id="numDoc" name="numDoc"
-																value="" readonly="readonly" style="width: 200px;"
-																 /></td>
+																value="" readonly="readonly" style="width: 200px;" /></td>
 															<td width="20%" align="center">&nbsp;&nbsp;</td>
 														</tr>
 														<tr>
-															<td width="10%" align="center">&nbsp;&nbsp;</td>
+															<td width="8%" align="center">&nbsp;&nbsp;</td>
 														</tr>
 														<tr>
 														</tr>
 														<tr>
 
-															<td width="10%" align="center">&nbsp;&nbsp;</td>
+															<td width="8%" align="center">&nbsp;&nbsp;</td>
 															<td width="20%" align="center">Correo
 																electr&oacute;nico:</td>
 															<td><input type="text" id="correo" name="correo"
-																value="" style="width: 200px;" readonly="readonly"/></td>
+																value="" style="width: 200px;" readonly="readonly" /></td>
 
 															<td width="15%" align="center">&nbsp;&nbsp;</td>
 															<td width="20%" align="center">&nbsp;&nbsp;</td>
@@ -253,7 +291,7 @@ function checkIt(evt) {
 														</tr>
 
 														<tr>
-															<td width="10%" high="30%" align="center">&nbsp;&nbsp;</td>
+															<td width="8%" high="30%" align="center">&nbsp;&nbsp;</td>
 														</tr>
 														<tr>
 
@@ -261,33 +299,23 @@ function checkIt(evt) {
 																id="mensaje"></span></td>
 
 														</tr>
-														<tr>
-															<td width="10%" high="10%" align="center">&nbsp;&nbsp;</td>
-														</tr>
-														<tr>
 
-															<td width="10%" align="center">&nbsp;&nbsp;</td>
-															<td width="10%" align="center">&nbsp;&nbsp;<input
-																id="consultarDatos" type="button" class="buttonCls"
-																style="width: 140px" value="CONSULTAR" /></td>
-															<td width="10%" align="center" colspan="2" align="center">
-
-																<input id="verDoc" type="button" class="buttonCls"
-																style="width: 140px" value="VER DOCUMENTO"
-																disabled="disabled" />
-															</td>
-
-
-															<td width="5%" align="center">&nbsp;&nbsp;<input
-																id="enviarDoc" type="button" class="buttonCls"
-																submit="true" style="width: 140px"
-																value="ENVIAR DOCUMENTO" disabled="disabled" /></td>
-															<td width="5%" align="center">&nbsp;&nbsp;</td>
-														</tr>
 
 														<tr>
-															<td></td>
+															<td style="height: 8px"></td>
 														</tr>
+
+
+
+														<tr>
+															<td colspan="2" align="center"><input type="button"
+																class="buttonCls" submit="true" style="width: 140px"
+																value="CONSULTAR" onclick="iniciarSesion();" /></td>
+														</tr>
+
+														</tr>
+
+
 
 														<tr>
 
@@ -295,79 +323,99 @@ function checkIt(evt) {
 
 
 															<c:if test="${msje eq 'Error 99'}">
+																<script type="text/javascript">
+      															  $(document).ready(function() {
+     															       mostrarMensaje('error', '${cronograma.MSJ}');
+     															       });
+   																 </script>
+															</c:if>
+
+
+															<c:if test="${msje eq 'Haga Clic en Abrir para Confirmar la Exportación' }">
+																<script type="text/javascript">
+      															  $(document).ready(function() {
+      															   	var numpres = "${cronograma.NPRESTAMO}";
+														            var nombrecli = "${cronograma.ACLIENTE}";
+														            var numerodoc = "${cronograma.DOCUMENTO}";
+      															  
+      															   $("#numero").val(numpres);
+      															   $("#nombres").val(nombrecli);
+      															   $("#numDoc").val(numerodoc);
+     															       
+     																});
+   																 </script>
+															</c:if>
+
+
+															<c:if
+																test="${msje eq 'Haga Clic en Abrir para Confirmar la Exportación' }">
 																<center>
 																<table width="60%" align="center" class="small">
 																	<tr>
 																		<td style="height: 20px"></td>
 																	</tr>
 																	<tr>
-																		<td align="center"><strong> No se
-																				encontraron resultados </strong></td>
+																		<td style="height: 20px"></td>
 																	</tr>
-																</table>
-																</center>
-															</c:if>
-															<td></td>
-
-
-
-
-															<c:if test="${msje eq 'Error 98'}">
-																<center>
-																<table width="60%" align="center" class="small">
 																	<tr>
 																		<td style="height: 20px"></td>
 																	</tr>
 																	<tr>
-																		<td align="center"><strong> No se
-																				encontraron resultados </strong></td>
+																	
+																		<td align="center"><strong>Nombre: <c:out
+																					value="${cronograma.ACLIENTE}" />
+																		</strong></td>
+
 																	</tr>
+																	<tr>
+																		<td align="center"><strong>Desembolso: <c:out
+																					value="${cronograma.NPRESTAMO}" />
+																		</strong></td>
+																	</tr>
+																	<tr>
+																		<td align="center"><strong>DNI: <c:out
+																					value="${cronograma.DOCUMENTO}" />
+																		</strong></td>
+																	</tr>
+
+
+
+																	<tr>
+																		<td style="height: 30px"></td>
+																	</tr>
+
+
 																</table>
 																</center>
-															</c:if>
-
-
-
-															<c:if test="${msje eq 'Error 50'}">
 																<center>
-																<table width="60%" align="center" bgcolor="white">
+																<table width="80%" align="center" bgcolor="white">
 																	<tr>
-																		<td style="height: 20px"></td>
-																	</tr>
-																	<tr>
-																		<td align="center"><strong>Error:
-																				DPAHF01</strong></td>
-																	</tr>
-																</table>
-																</center>
-															</c:if>
-
-
-															<c:if test="${msje eq 'Error 14'}">
-																<center>
-																<table width="60%" align="center" bgcolor="white">
-																	<tr>
-																		<td style="height: 20px"></td>
-																	</tr>
-																	<tr>
-																		<td align="center"><strong>No se
-																				encuentra registrado en SITC, VERIFICAR.</strong></td>
-																	</tr>
-																	<tr>
-																		<td align="center"><strong>Codigo de
-																				Error 14 : F18-ERROR ACCESO</strong></td>
+																		<td align="center" bgcolor="white"><strong>
+																				<input type="button" onclick="exportar()"
+																				class="small" value="Generar Documento"> <input
+																					type="button" onclick="exportarP()" class="small"
+																					value="Documentos Pre Impresos">
+																		</strong></td>
+																		<td align="right" bgcolor="white"><strong>
+																				<input type="button" onclick="exportarActualizar()"
+																				class="small" value="Actualizar Documento">
+																		</strong></td>
 																	</tr>
 																</table>
 																</center>
+
+
 															</c:if>
 													</table>
 												</td>
 											</tr>
 
 										</table>
-									</td>
+									
+								
+								<tr>
+									<td>&nbsp;</td>
 								</tr>
-
 							</table>
 						</td>
 					</tr>
@@ -378,5 +426,7 @@ function checkIt(evt) {
 	</form>
 
 
+
 </body>
 </html>
+

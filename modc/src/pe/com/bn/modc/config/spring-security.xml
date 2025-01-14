@@ -88,8 +88,10 @@
 			<security:intercept-url pattern="/getEnviarCorreoOTP/**" access="isAuthenticated()" />
 			<security:intercept-url pattern="/getValidarCodigoOTP/**" access="isAuthenticated()" />
 			
-			<security:intercept-url pattern="/enviarDoc/**" access="isAuthenticated()" />
+			<security:intercept-url pattern="/enviarDocVirtual/**" access="isAuthenticated()" />
 			<security:intercept-url pattern="/getConsultaPrestamo/**" access="isAuthenticated()" />
+			<security:intercept-url pattern="/enviarDoc/**" access="isAuthenticated()" />
+
 <!-- 		<security:intercept-url pattern="/consultaLogCuentas/**" access="hasAnyRole('02')" /> -->
 <!-- 		<security:intercept-url pattern="/resultadoConsultaLogCuentas/**" access="hasAnyRole('02')" /> -->
 		

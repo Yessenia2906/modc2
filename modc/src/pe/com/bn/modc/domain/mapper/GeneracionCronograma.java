@@ -263,6 +263,7 @@ public class GeneracionCronograma {
 	}
 	public void setMSJE_HOST(String mSJE_HOST) {
 		MSJE_HOST = mSJE_HOST;
-	}	
+	}
+		
 
 }
