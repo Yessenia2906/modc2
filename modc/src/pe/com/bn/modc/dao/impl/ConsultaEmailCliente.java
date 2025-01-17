@@ -208,6 +208,8 @@ public class ConsultaEmailCliente implements ServiceEnvioEmail{
 		return informacionCliente;
 		
 	}
+	
+	
 
 	private JSONObject buscarCorreoCliente(String tipo, String num, ParametrosComp parametrosComp) throws JSONException {
 	    HttpURLConnection connection = null;
@@ -283,6 +285,113 @@ public class ConsultaEmailCliente implements ServiceEnvioEmail{
 	    return new JSONObject(response.toString());
 	}
 	
+	
+	
+	@Override
+	public Map<String, String> getDatoCliente(String num, ParametrosComp parametrosComp) {
+		// TODO Apéndice de método generado automáticamente
+		
+		Map<String, String> informacionCliente = new HashMap<String, String>();
+
+		try{
+			String correo = "";
+			String nombreCompleto = "";
+			JSONObject response = buscarCorreoDato(num, parametrosComp);
+			String clave = response.getString("codResult");
+			if (clave.equals("00000")) {
+				JSONObject data = response.getJSONObject("data");
+				JSONObject clientNaturalPerson = data.getJSONObject("clientNaturalPerson");
+				JSONObject clientGeneralPerson = data.getJSONObject("clientGeneral");
+				
+				correo = clientNaturalPerson.getString("personalEmail");
+				nombreCompleto = clientGeneralPerson.getString("fullName");
+
+			}
+
+			informacionCliente.put("email", correo);
+			informacionCliente.put("nombreCompleto", nombreCompleto);
+			
+		}catch(JSONException  e){
+		
+			
+		}
+		return informacionCliente;
+		
+	}
+	
+	private JSONObject buscarCorreoDato(String num, ParametrosComp parametrosComp) throws JSONException {
+	    HttpURLConnection connection = null;
+	    StringBuilder response = null;
+
+	    String host = parametrosComp.getServiceHost();
+	    int port = Integer.parseInt(parametrosComp.getServicePort());
+	    String userApplication = parametrosComp.getServiceUserApplication();
+	 
+	    /* String host = "10.7.12.75";
+        int port = 80 ;
+        String userApplication = "modc" ;*/
+	    try {
+	        log.debug("Iniciando conexión con servicio externo para buscar nombre del cliente y correo", Constant.LOGGER_DEBUG_NIVEL_1);
+	        URL url = new URL("http://" + host + ":" + port + "/msdataclients/client/v1/search/TYPENUMDOC?typeDoc=1&numDoc=" + num);
+	        //log.debug("URL construida: " + url.toString(), Constant.LOGGER_DEBUG_NIVEL_1);
+
+	        // Abrir la conexión
+	        connection = (HttpURLConnection) url.openConnection();
+
+	        // Configurar la solicitud
+	        connection.setRequestMethod("GET");
+	        connection.setRequestProperty("Application", "SACL");
+	        connection.setRequestProperty("Channel", "ATM");
+	        connection.setRequestProperty("ChannelCode", "1");
+	        connection.setRequestProperty("userApplication", userApplication);
+	        connection.setRequestProperty("Content-Type", "application/json");
+	        //log.debug("Solicitud configurada con headers necesarios", Constant.LOGGER_DEBUG_NIVEL_1);
+
+	        // Obtener la respuesta del servidor
+	        int responseCode = connection.getResponseCode();
+	        log.debug("Código de respuesta del servidor: " + responseCode, Constant.LOGGER_DEBUG_NIVEL_1);
+	        if (responseCode == 200) {
+	            // Leer la respuesta del servidor
+	            BufferedReader reader = new BufferedReader(new InputStreamReader(connection.getInputStream()));
+	            String line;
+	            response = new StringBuilder();
+
+	            while ((line = reader.readLine()) != null) {
+	                response.append(line);
+	            }
+
+	            // Cerrar la conexión
+	            reader.close();
+	            log.debug("Respuesta del servidor leída correctamente", Constant.LOGGER_DEBUG_NIVEL_1);
+	        } else {
+	            response = new StringBuilder();
+
+	            // Agrega los datos al StringBuilder
+	            response.append("{");
+	            response.append("\"codResult\": \"");
+	            response.append("00020");
+	            response.append("\",");
+	            response.append("\"data\": null,");
+	            response.append("\"msg\": \"");
+	            response.append("Error: numDoc debe tener un valor entre 1 y 8 caracteres.");
+	            response.append("\",");
+	            response.append("\"msgError\": \"");
+	            response.append("Error: numDoc debe tener un valor entre 1 y 12 caracteres.");
+	            response.append("\"}");
+
+	            log.debug("Respuesta del servidor no fue exitosa, código: " + responseCode, Constant.LOGGER_DEBUG_NIVEL_1);
+	        }
+
+	    } catch (Exception e) {
+	        log.error(e, "Error Api DATOS PERSONALES:");
+	    } finally {
+	        if (connection != null) {
+	            connection.disconnect();
+	            log.debug("Conexión cerrada", Constant.LOGGER_DEBUG_NIVEL_1);
+	        }
+	    }
+	    return new JSONObject(response.toString());
+	}
 	
 }
 

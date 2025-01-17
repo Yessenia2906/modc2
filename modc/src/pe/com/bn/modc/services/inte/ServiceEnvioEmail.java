@@ -18,6 +18,8 @@ public interface ServiceEnvioEmail {
 			ParametrosComp parametrosComp);
 
 	public Map<String, String> getNombreCliente(String tipo, String num, ParametrosComp parametrosComp);
+
+	public Map<String, String> getDatoCliente(String num, ParametrosComp parametrosComp);
 	
 	
 	

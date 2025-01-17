@@ -47984,8 +47984,6 @@ public class AdministracionController {
 		DatosSesion datosSesion = Util.getIdUsuario(request);
 		HttpSession sesion = request.getSession();
 
-		// Capturando DNI
-
 		CicsSoapConnection cics = new CicsSoapConnection();
 
 		String numero = request.getParameter("numero");
@@ -48202,8 +48200,8 @@ public class AdministracionController {
 
 		//
 
-		// d
-		// System.out.println("prueba de datos" + poliza.getNdoc());
+		
+		System.out.println("prueba de datos" + poliza.getNdoc());
 
 		cronograma.setACLIENTE(poliza.getAcliente());
 		cronograma.setDOCUMENTO(poliza.getNdoc());
@@ -48215,8 +48213,22 @@ public class AdministracionController {
 
 			request.setAttribute("msje",
 					"Haga Clic en Abrir para Confirmar la Exportación");
+			
+			System.out.println("Prestamos cronograma: "+ cronograma);
+
 			request.setAttribute("cronograma", cronograma);
-			request.setAttribute("solicitud", solicitud);
+			
+			
+			String correoCli = emailDoc(cronograma.getDOCUMENTO());
+			
+			request.setAttribute("correo", correoCli);
+			System.out.println("correoCli: "+ correoCli);
+			
+			String msjVal = validaremail(cronograma.getDOCUMENTO());
+			
+			request.setAttribute("valcorreo", msjVal);
+			System.out.println("mensaje del correo: "+ msjVal);
+			
 		} else {
 
 			if ((cronograma.getMSJ().trim()).equals("")) {
@@ -48268,13 +48280,59 @@ public class AdministracionController {
 				// request.setAttribute("cronograma",cronograma);
 
 			}
-
 		}
-		System.out.println("SOLICITUD: " + solicitud);
+		
 		path = View.returnJsp(model, "prestamo/enviarDoc");
 		
 		return path;
 
 	}
 	
+	
+	private String validaremail(String num) throws Exception {
+
+	    String numSinCeros = num.substring(2);
+	    System.out.println("Número sin ceros: " + numSinCeros);
+
+	    Map<String, String> datosCliente = serviceEnvioEmail.getDatoCliente(numSinCeros, parametrosComp);
+	    String emailCliente = datosCliente.get("email");
+	    System.out.println("Correo del cliente ws: " + emailCliente);
+
+	    RepoLogAuditoria datosCorreo = new RepoLogAuditoria();
+	    String emailBaseDatos = datosCorreo.correoValidado(numSinCeros);
+	    System.out.println("Correo del cliente db: " + emailBaseDatos);
+	   
+	    //cuando el cliente no tiene email
+	    if (emailCliente == null || emailCliente.isEmpty()) {
+	        return "Actualizar datos de correo";
+	    }
+	    //cliente no tiene su correo validado 
+	    if (emailBaseDatos == null || emailBaseDatos.isEmpty()) {
+	    	
+	        return "Validar correo";
+	    }
+	    // Comparar los correos
+	    if (emailCliente.equalsIgnoreCase(emailBaseDatos)) {
+	        System.out.println("Correo valido");
+	        return "Los correos coinciden";
+	    } else {
+	        System.out.println("Los correos no coinciden.");
+	        return "Los correos no coinciden.";
+	    }
+	}
+
+
+
+private String emailDoc(String num) {
+	
+	String numSinCeros = num.substring(2);
+	
+	Map<String, String> datosCliente = serviceEnvioEmail.getDatoCliente(numSinCeros, parametrosComp); 
+	    String email = datosCliente.get("email");
+	    String nombreee = datosCliente.get("nombreCompleto");
+	    
+		return email;
+	}
+
+
 }

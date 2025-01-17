@@ -388,6 +388,17 @@ public class HttpClientjdk {
 	    jsonTo.put("email", correoCliente);
 	    listTo.add(jsonTo);
 	    jsonBodyOTP.put("to", listTo);
+	    
+	    // Campo "options"
+	     
+	     
+	    JSONObject jsonOptions = new JSONObject();
+	    List<JSONObject> listacc = new ArrayList<>();
+	    JSONObject tempo = new JSONObject();
+	    tempo.put("email", "prestamomultiredcc@bn.com.pe");  	    
+	    listacc.add(tempo);
+	    jsonOptions.put("cc", listacc);
+	    jsonBodyOTP.put("options", jsonOptions);
 
 	    //TODO:  Campo "from"
 	    JSONObject jsonFrom = new JSONObject();
@@ -397,7 +408,7 @@ public class HttpClientjdk {
 
 	    // Campo "replyTo"
 	    JSONObject jsonReplyTo = new JSONObject();
-	    jsonReplyTo.put("email", correoEmisor);
+	    jsonReplyTo.put("email", "notificaciones@bn.com.pe");
 	    jsonReplyTo.put("name", "Banco de la Nacion");
 	    jsonBodyOTP.put("replyTo", jsonReplyTo);
 
@@ -411,7 +422,8 @@ public class HttpClientjdk {
 	    // Campo "attachments"
 	    List<JSONObject> listAttachments = new ArrayList<>();
 	    jsonBodyOTP.put("attachments", listAttachments);
-
+	    
+        System.out.println(jsonBodyOTP.toString(4));
 	    return jsonBodyOTP;
 	}
 

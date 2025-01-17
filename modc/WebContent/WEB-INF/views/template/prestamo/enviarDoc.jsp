@@ -114,36 +114,26 @@ function exportarP(){
 
 function validar(){
 	if(document.frmLogin.numero.value==''){
-   mostrarMensaje("error", "Ingrese Desembolso")
+   mostrarMensaje("error", "Ingrese número de prestamo")
 		//alert('Ingrese Desembolso');
-		
 		return false;
 	} 
 	
 	 if (document.frmLogin.numero.value.length < 13) {
-	 mostrarMensaje("error", "Documento m\u00EDnimo 13 digitos")
+	 mostrarMensaje("error", "Número de prestamo m\u00EDnimo 13 digitos")
    //  alert("Documento m\u00EDnimo 13 digitos");
      return false;
     }  
-	
-
-   
-	
-	return true;
+		return true;
 }
 
-
-
 function iniciarSesion(){
-	 
-	
+	 	
 	if(validar()){
 	
 	document.frmLogin.submit();
 		//document.testpdf.submit();
 	}
-	
-	
 	
 }
 function testclasulapdfenviar(){ 
@@ -154,9 +144,46 @@ function testclasulapdfenviar(){
 document.testearclauu.submit();
 }
     
- 
 </script>
 
+<script type="text/javascript">
+$(document).ready(function () {
+$("#verdoc").click(function () {
+      	var numpres = "${cronograma.NPRESTAMO}";
+		var nombrecli = "${cronograma.ACLIENTE}";
+		var numerodoc = "${cronograma.DOCUMENTO}";
+		var correocli = "${correo}"
+
+        const datosCorreo = {
+            numpres: numeroDoc,
+            nombre: nombreCompleto,
+            numero: correoDestino,
+            correo: correocli
+        };
+
+        const url = "/modc/getVerDoc/";
+        console.log("Enviando a URL:", url);
+
+        $.ajax({
+            url: url,
+            type: "POST",
+            contentType: "application/json",
+            data: JSON.stringify(datosCorreo),
+            success: function (respuesta) {
+                const data = typeof respuesta === "string" ? JSON.parse(respuesta) : respuesta;
+                
+                
+            },
+            error: function (jqXHR, textStatus, errorThrown) {
+                console.error("Error al enviar el mensaje:", textStatus, errorThrown);
+                mostrarMensaje("error", "Ocurrió un error al descargar el documento.");
+            }
+        });
+    });
+
+});
+
+</script>
 
 
 </head>
@@ -166,7 +193,7 @@ document.testearclauu.submit();
 
 
 
-	<form id="exPagare" name="exPagare" method="post"
+	<%-- <form id="exPagare" name="exPagare" method="post"
 		action="<c:out value='${url}'/>exPagare" runat="server">
 		<input id="cta" name="cta"
 			value="<c:out value="${cronograma.ccuenta}"  />" type="hidden" />
@@ -200,7 +227,7 @@ document.testearclauu.submit();
 			value="<c:out value="${cronograma.cdsbolso}"  />" type="hidden" />
 		<input id="pol1" name="pol1" type="hidden" />
 		<input id="sol1" name="sol1" type="hidden" />
-	</form>
+	</form> --%>
 
 
 
@@ -308,21 +335,28 @@ document.testearclauu.submit();
 
 
 														<tr>
-															<td colspan="2" align="center"><input type="button"
+															<td width="10%" align="center">&nbsp;&nbsp;</td>
+															<td width="10%" align="center">&nbsp;&nbsp;<input type="button"
 																class="buttonCls" submit="true" style="width: 140px"
 																value="CONSULTAR" onclick="iniciarSesion();" /></td>
+																<td width="10%" align="center" colspan="2" align="center">
+
+																<input id="verdoc" type="button" class="buttonCls"
+																style="width: 140px" value="VER DOCUMENTO"
+																disabled="disabled" />
+															</td>
+															<td width="5%" align="center">&nbsp;&nbsp;<input
+																id="enviardoc" type="button" class="buttonCls"
+																submit="true" style="width: 140px"
+																value="ENVIAR DOCUMENTO" disabled="disabled" /></td>
+															<td width="5%" align="center">&nbsp;&nbsp;</td>
+														
+														
 														</tr>
-
-														</tr>
-
-
 
 														<tr>
 
-
-
-
-															<c:if test="${msje eq 'Error 99'}">
+																<c:if test="${msje eq 'Error 99'}">
 																<script type="text/javascript">
       															  $(document).ready(function() {
      															       mostrarMensaje('error', '${cronograma.MSJ}');
@@ -337,82 +371,43 @@ document.testearclauu.submit();
       															   	var numpres = "${cronograma.NPRESTAMO}";
 														            var nombrecli = "${cronograma.ACLIENTE}";
 														            var numerodoc = "${cronograma.DOCUMENTO}";
-      															  
+      															   	var correocli = "${correo}";
+      															  	var mensajeVal = "${valcorreo}";
+      															  	 console.log("mensaje del correo:", mensajeVal);
+      															   
       															   $("#numero").val(numpres);
       															   $("#nombres").val(nombrecli);
       															   $("#numDoc").val(numerodoc);
-     															       
+     															   $("#correo").val(correocli); 
+     															   $("#tipoDoc").val("DNI");  
+     															   
+      															    if (mensajeVal=="Los correos coinciden") {
+															           $("#verdoc").prop("disabled", false);
+															           $("#enviardoc").prop("disabled", false);
+															            mostrarMensaje("exito", "Datos consultados con exito");
+															            
+															        }else{
+															        
+															          $("#verdoc").prop("disabled", true);
+															           $("#enviardoc").prop("disabled", true);
+															           mostrarMensaje("error", mensajeVal);
+															        }
+															        
+      															    
      																});
    																 </script>
 															</c:if>
 
 
-															<c:if
-																test="${msje eq 'Haga Clic en Abrir para Confirmar la Exportación' }">
-																<center>
-																<table width="60%" align="center" class="small">
-																	<tr>
-																		<td style="height: 20px"></td>
-																	</tr>
-																	<tr>
-																		<td style="height: 20px"></td>
-																	</tr>
-																	<tr>
-																		<td style="height: 20px"></td>
-																	</tr>
-																	<tr>
-																	
-																		<td align="center"><strong>Nombre: <c:out
-																					value="${cronograma.ACLIENTE}" />
-																		</strong></td>
-
-																	</tr>
-																	<tr>
-																		<td align="center"><strong>Desembolso: <c:out
-																					value="${cronograma.NPRESTAMO}" />
-																		</strong></td>
-																	</tr>
-																	<tr>
-																		<td align="center"><strong>DNI: <c:out
-																					value="${cronograma.DOCUMENTO}" />
-																		</strong></td>
-																	</tr>
-
-
-
-																	<tr>
-																		<td style="height: 30px"></td>
-																	</tr>
-
-
-																</table>
-																</center>
-																<center>
-																<table width="80%" align="center" bgcolor="white">
-																	<tr>
-																		<td align="center" bgcolor="white"><strong>
-																				<input type="button" onclick="exportar()"
-																				class="small" value="Generar Documento"> <input
-																					type="button" onclick="exportarP()" class="small"
-																					value="Documentos Pre Impresos">
-																		</strong></td>
-																		<td align="right" bgcolor="white"><strong>
-																				<input type="button" onclick="exportarActualizar()"
-																				class="small" value="Actualizar Documento">
-																		</strong></td>
-																	</tr>
-																</table>
-																</center>
-
-
-															</c:if>
+															
+															</tr>
 													</table>
 												</td>
 											</tr>
 
 										</table>
-									
-								
+								</td>	
+								</tr>
 								<tr>
 									<td>&nbsp;</td>
 								</tr>

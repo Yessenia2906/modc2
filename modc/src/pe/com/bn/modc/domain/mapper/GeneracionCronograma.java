@@ -264,6 +264,19 @@ public class GeneracionCronograma {
 	public void setMSJE_HOST(String mSJE_HOST) {
 		MSJE_HOST = mSJE_HOST;
 	}
+	@Override
+	public String toString() {
+		return "GeneracionCronograma [ccuenta=" + ccuenta + ", cdsbolso=" + cdsbolso + ", TOPERACION=" + TOPERACION
+				+ ", NPRESTAMO=" + NPRESTAMO + ", FDSBOLSO=" + FDSBOLSO + ", SPRESTAMO=" + SPRESTAMO + ", SAMORTIZADO="
+				+ SAMORTIZADO + ", SACTUAL=" + SACTUAL + ", SDEUDA_D=" + SDEUDA_D + ", NCUOTAS=" + NCUOTAS
+				+ ", ACLIENTE=" + ACLIENTE + ", DOCUMENTO=" + DOCUMENTO + ", TELEFONO=" + TELEFONO + ", DCLIENTE="
+				+ DCLIENTE + ", DOCUMGAR=" + DOCUMGAR + ", AGARANTE=" + AGARANTE + ", DGARANTE=" + DGARANTE + ", TASA="
+				+ TASA + ", TCEA=" + TCEA + ", SGCPRO=" + SGCPRO + ", CERROR=" + CERROR + ", MSJ=" + MSJ + ", BCUOTA="
+				+ BCUOTA + ", ACUOTA=" + ACUOTA + ", FVCTO=" + FVCTO + ", FCANCEL=" + FCANCEL + ", GCUOTA=" + GCUOTA
+				+ ", SAMORTIZACION=" + SAMORTIZACION + ", SINTERES=" + SINTERES + ", SDESGRAVAMEN=" + SDESGRAVAMEN
+				+ ", SDCUOTA=" + SDCUOTA + ", rutaClasspath=" + rutaClasspath + ", MSGNO_HOST=" + MSGNO_HOST
+				+ ", MSJE_HOST=" + MSJE_HOST + "]";
+	}
 		
 
 }

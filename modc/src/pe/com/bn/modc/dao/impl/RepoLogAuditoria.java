@@ -133,7 +133,7 @@ public class RepoLogAuditoria implements IntLogAuditoria{
 		}
 	 	try {		
 	 		conn =    dss.connect();
-	 		conn.setAutoCommit(false);	
+	 		conn.setAutoCommit(false);
 	 		pstmt= conn.prepareStatement(sql.toString());
 	 		AudiLog item = new AudiLog();
 	 		registros=new ArrayList<AudiLog>(); 
@@ -401,5 +401,38 @@ public class RepoLogAuditoria implements IntLogAuditoria{
 
 		    return sms;  
 	}
-	  
+		
+	
+		public String correoValidado(String numero) throws SQLException {
+			 System.out.println("reporlog numerodoc: " + numero); 
+		    
+			 String correo ="";    
+		    ResultSet rs = null;
+			Connection conn = null;																		
+		 	PreparedStatement pstmt = null;	
+		 	StringBuffer sql = new  StringBuffer();
+		 	sql.append("SELECT F08_CORREO FROM BNMODCF08_CORREO WHERE F08_DOCUMENTO = '"+numero.trim()+"'");	 	
+		    try {
+		    		conn =    dss.connect();
+			 		conn.setAutoCommit(false);	
+			 		pstmt= conn.prepareStatement(sql.toString());		 		
+					rs = pstmt.executeQuery();
+
+					if(rs.next()) {
+		                 correo = rs.getString("F08_CORREO");
+		            }
+		        }
+		     catch (Exception e) {	
+		 		if (conn != null) conn.rollback(); 
+		 	}finally {
+		 		if (conn != null) conn.setAutoCommit(true);	
+		 		if (pstmt != null) {try{pstmt.close();}catch(Exception e){}; pstmt = null; }			
+		 		if (conn != null) { try{conn.close();}catch(Exception e){}; conn = null;}				
+		 	}	
+		    System.out.println("reporlog correo: " + correo); 
+		return correo;
+		   
+		}
+		
+		
 }
