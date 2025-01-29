@@ -46,6 +46,26 @@ public class HttpClientjdk {
 		this.mensajeMod = generarMensajeOTP (nombre, codigo);
 	}
 	
+	public HttpClientjdk(String nombre, String pdf, String fecha) {
+		this.mensajeMod = generarMensajePDF (nombre, pdf, fecha);
+	}
+
+	private String generarMensajePDF(String nombre, String pdf, String fecha) {
+		String mensajepdf =	
+				"<div>" + 
+			            "<p></p>" +
+			            "<p>Estimado (a):<b> " + nombre + "</b></p>" +
+			            "<p>¡Gracias por adquirir tu Pr&eacute;stamo Multired! </p>" +				
+			            "<p>Nos complace enormemente que conf&iacute;es en el Banco de la Naci&oacute;n.</p>" +
+			            "<p>Ante ello, de acuerdo a lo autorizado por usted y en cumplimiento del art&iacute;culo 49° del Reglamento de Gesti&oacute;n de Conducta de Mercado del Sistema Financiero, le remitimos los formularios contractuales y cronograma de pago suscritos, como parte del otorgamiento del Pr&eacute;stamo Multired realizado v&iacute;a Red de Agencias el d&iacute;a "+fecha+ " : (i) Solicitud de Pr&eacute;stamo, (ii) Hoja Resumen, (iii) Cronograma de Pagos y (iv) P&oacute;liza de Seguros de Desgravamen y de Cuota Protegida; asimismo, se le recuerda que las Cl&aacute;usulas Generales y Espec&iacute;ficas del Pr&eacute;stamo las puede descargar a trav&eacute;s de la p&aacute;gina web del Banco: www.bn.com.pe.</p>" +
+			            "<p>Si tienes alguna consulta llámanos a nuestra Mesa de Consultas al 440-5305 / 442-4470, o tambi&eacute;n a nuestra l&iacute;nea gratuita desde tel&eacute;fono fijos al 0800-10700, o ingresa a www.bn.com.pe</p>"+
+			            "<p><b>Por tu seguridad:</b> Recuerda que el Banco de la Naci&oacute;n nunca te solicitar&aacute; informaci&oacute;n, ni datos relacionados con tu cuenta o tarjetas, tampoco la clave de ingreso a canales como el: cajero autom&aacute;tico, canal app e internet o de, DNI o tu n&uacute;mero de celular, mediante correo electr&oacute;nico y/o llamadas telef&oacute;nicas.</p>"+
+			            "<p>Por favor, no respondas a este correo electr&oacute;nico.</p>"+
+			            "</div>";
+		
+		return mensajepdf;
+	}
+
 	private String generarMensajeOTP(String nombre, String codigo) {
 		//TODO: Contenido del mensaje - validar correo
 		String mensajeOTP =	
@@ -427,5 +447,129 @@ public class HttpClientjdk {
 	    return jsonBodyOTP;
 	}
 
+	public boolean enviarPDF(String correoCliente, String pdf, String num) {
+	    boolean resultadoEnvio = true;
+	    HttpURLConnection connection = null;
 
+	    try {
+	        connection = (HttpURLConnection) url.openConnection();
+	        connection.setConnectTimeout(20000);
+	        connection.setRequestMethod("POST");
+	        // TODO: TOKEN 
+	        connection.setRequestProperty("Authorization", "Bearer " + tokenBearerWS);
+	        //String token ="78d0f0ba.8d264b6c9ce5511ed197f908";
+	       // connection.setRequestProperty("Authorization", "Bearer " + token);
+	        connection.setRequestProperty("Content-Type", "application/json");
+	        connection.setDoOutput(true);
+
+	        JSONObject json = generarJsonBodyPDF(correoCliente, pdf, num);
+
+	        OutputStream os = connection.getOutputStream();
+	        OutputStreamWriter osw = new OutputStreamWriter(os, "UTF-8");
+	        osw.write(json.toString());
+	        osw.flush();
+	        osw.close();
+
+	        int statusCode = connection.getResponseCode();
+
+	        if (statusCode == HttpURLConnection.HTTP_OK) {
+	            // Leer la respuesta del servidor
+	            BufferedReader in = new BufferedReader(new InputStreamReader(connection.getInputStream()));
+	            String inputLine;
+	            StringBuilder response = new StringBuilder();
+
+	            while ((inputLine = in.readLine()) != null) {
+	                response.append(inputLine);
+	            }
+
+	            System.out.println("Respuesta del servicio: " + response.toString());
+	            in.close();
+	        } else {
+	            resultadoEnvio = false;
+	            // Capturar el cuerpo del error
+	            InputStream errorStream = connection.getErrorStream();
+	            if (errorStream != null) {
+	                BufferedReader errorReader = new BufferedReader(new InputStreamReader(errorStream));
+	                String inputLine;
+	                StringBuilder errorResponse = new StringBuilder();
+
+	                while ((inputLine = errorReader.readLine()) != null) {
+	                    errorResponse.append(inputLine);
+	                }
+
+	                System.out.println("Error del servicio: " + errorResponse.toString());
+	                errorReader.close();
+	            } else {
+	                System.out.println("Error del servicio: Código de estado " + statusCode);
+	            }
+	        }
+	    } catch (Exception e) {
+	        // Imprime el stack trace del error
+	        System.out.println("Fallo en el envío del correo: " + e.getMessage());
+	        e.printStackTrace();
+	        resultadoEnvio = false;
+	    } finally {
+	        if (connection != null) {
+	            connection.disconnect();
+	        }
+	    }
+
+	    return resultadoEnvio;
+	}
+
+	private JSONObject generarJsonBodyPDF(String correoCliente, String pdf, String num) throws IOException, JSONException, DocumentException {
+
+	    JSONObject jsonBodyPDF = new JSONObject();
+
+	    // Campo "to"
+	    List<JSONObject> listTo = new ArrayList<>();
+	    JSONObject jsonTo = new JSONObject();
+	    jsonTo.put("email", correoCliente);
+	    listTo.add(jsonTo);
+	    jsonBodyPDF.put("to", listTo);
+	    
+	    // Campo "options"
+	     
+	     
+	    JSONObject jsonOptions = new JSONObject();
+	    List<JSONObject> listacc = new ArrayList<>();
+	    JSONObject tempo = new JSONObject();
+	    tempo.put("email", "prestamomultiredcc@bn.com.pe");  	    
+	    listacc.add(tempo);
+	    jsonOptions.put("cc", listacc);
+	    jsonBodyPDF.put("options", jsonOptions);
+
+	    //TODO:  Campo "from"
+	    JSONObject jsonFrom = new JSONObject();
+	    jsonFrom.put("email", "notificaciones@bn.com.pe");
+	    jsonFrom.put("name", "Banco de la Nacion");
+	    jsonBodyPDF.put("from", jsonFrom);
+
+	    // Campo "replyTo"
+	    JSONObject jsonReplyTo = new JSONObject();
+	    jsonReplyTo.put("email", "notificaciones@bn.com.pe");
+	    jsonReplyTo.put("name", "Banco de la Nacion");
+	    jsonBodyPDF.put("replyTo", jsonReplyTo);
+
+	    // Campo "subject"
+	    jsonBodyPDF.put("subject", "Prestamos Multired via Red de Agencias");
+
+	    // Campo "body"
+	   // String mensajeMod = "hola"; 
+	    jsonBodyPDF.put("body", mensajeMod);
+
+	    
+	    JSONObject jsonAttachments = new JSONObject();
+	 
+		jsonAttachments.put("filename", "FORM_35/Prestamo_Multired_"+num+".pdf");
+	 
+		jsonAttachments.put("path", "data:application/pdf;base64," + pdf);
+		List<JSONObject> listAttachments = new ArrayList<JSONObject>();
+		listAttachments.add(jsonAttachments);
+
+		jsonBodyPDF.put("attachments", listAttachments);	    
+	       
+        System.out.println(jsonBodyPDF.toString(4));
+	    return jsonBodyPDF;
+	}
 }

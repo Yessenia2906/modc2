@@ -78,7 +78,7 @@
 							<td style="vertical-align: text-top;" style="width: 80%;"><jsp:include
 									page="../partials/menu.jsp"></jsp:include></td>
 
-							<td style="width: 40%;" align="right">
+							<td style="width: 30%;" align="right">
 
 								<div class="cysSessionbar">
 									<table>

@@ -90,7 +90,15 @@
 			
 			<security:intercept-url pattern="/enviarDocVirtual/**" access="isAuthenticated()" />
 			<security:intercept-url pattern="/enviarDoc/**" access="isAuthenticated()" />
-			<security:intercept-url pattern="/getVerDoc/**" access="isAuthenticated()" />
+			<security:intercept-url pattern="/verDocumentos/**" access="isAuthenticated()" />
+			<security:intercept-url pattern="/getEnviarCorreoDoc/**" access="isAuthenticated()" />
+
+
+			<security:intercept-url pattern="/seguimientoEnvio/**" access="isAuthenticated()" />
+			<security:intercept-url pattern="/getConsultarEnvio/**" access="isAuthenticated()" />
+			
+			<security:intercept-url pattern="/consultaPM/**" access="isAuthenticated()" />
+
 
 <!-- 		<security:intercept-url pattern="/consultaLogCuentas/**" access="hasAnyRole('02')" /> -->
 <!-- 		<security:intercept-url pattern="/resultadoConsultaLogCuentas/**" access="hasAnyRole('02')" /> -->

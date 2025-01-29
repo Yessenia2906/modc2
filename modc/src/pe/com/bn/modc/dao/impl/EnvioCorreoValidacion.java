@@ -44,4 +44,30 @@ public class EnvioCorreoValidacion {
 		return resultado;
 	}
 
+
+	public boolean enviarCorreoPdf(String correoCliente, String nombreCliente, String pdfBase64, String fecha, String num) {
+		boolean resultado = false;
+
+		try {
+			
+			HttpClientjdk msjPDF = new HttpClientjdk(nombreCliente, pdfBase64, fecha);
+			msjPDF.setUrl(new URL(parametrosComp.getServicewscorreoHost()));
+			msjPDF.setTokenBearerWS(parametrosComp.getServicewscorreoToken());
+			msjPDF.setCorreoEmisor(parametrosComp.getServicewscorreoCorreoemisor());
+			
+			// ENVIO CORREO POR ALDEAMO
+			resultado = msjPDF.enviarPDF(correoCliente,pdfBase64, num);
+
+			
+		} catch (MalformedURLException e) {
+			log.error(e, "ERROR EN ENVIAR MSJ POR SERVICIO");
+			e.printStackTrace();
+			
+		}
+		
+
+		return resultado;
+	}
+
+
 }

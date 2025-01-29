@@ -33,7 +33,7 @@
 
 /* height:0px */
 /* Menu principal */
-#nav {padding:0; margin:0;list-style:none; width:100%; height:60px; background:#fff repeat-x; position:relative; z-index:500; font-family:arial, verdana, sans-serif;}
+#nav {padding:0; margin:0;list-style:none; width:100%; height:60px; background:#fff repeat-x; position:relative; z-index:500; font-family:arial, verdana, sans-serif; white-space: nowrap;}
 #nav li.top {display:block; float:left;}
 #nav li a.top_link {display:block; float:left; height:25px;  color:#C61316;border:2px solid #C61316;  text-decoration:none; font-size:11px; font-weight:bold; padding:10px 0 0 10px; cursor:pointer; }
 #nav li a.top_link span {float:left; display:block; padding:0 12px 0 12px; height:35px; background: right top no-repeat;}
@@ -128,6 +128,14 @@
 					<li>
 						<a id="conNombre"   href='<c:out value="${url}"/>enviarDocVirtual/' >
 							<span>Enviar Documentos</span>
+						</a>
+					</li>
+				</sec:authorize>
+				
+				<sec:authorize url="/seguimientoEnvio/**">
+					<li>
+						<a id="conNombre"   href='<c:out value="${url}"/>seguimientoEnvio/' >
+							<span>Seguimiento Envio</span>
 						</a>
 					</li>
 				</sec:authorize>
@@ -334,6 +342,7 @@
 		
 	</sec:authorize>
 	
+	
 	<sec:authorize access="hasAnyRole('07')">
 		<c:url var="url" value="/" />
 		
@@ -348,9 +357,29 @@
 						</a>
 					</li>
 				</sec:authorize>
+		
+				 
+			</ul>
+			
+		</li>
+	    <li class="top"><span class="down">&nbsp;</span></li>
+		
+	</sec:authorize>
+	
+	<sec:authorize access="hasAnyRole('06')">
+		<c:url var="url" value="/" />
+		
+		<li class="top"><a id="modInfo" href="javascript:void(0)" class="top_link"><span class="down">Auditor&iacute;a PM</span></a>
+
+			<ul class="sub">
 				
-		 
-				
+				<sec:authorize url="/consultaPM/**">
+					<li>
+						<a id="conNombre"   href='<c:out value="${url}"/>consultaPM/' >
+							<span>ConsultaPM</span>
+						</a>
+					</li>
+				</sec:authorize>
 				 
 			</ul>
 			

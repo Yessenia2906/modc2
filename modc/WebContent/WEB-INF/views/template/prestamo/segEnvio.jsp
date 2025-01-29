@@ -87,129 +87,101 @@ function checkIt(evt) {
     return true
 }
 
- function limpiar(){	
-	$("#numero").val("");
-    $("#nombres").val("");
-    $("#numDoc").val("");
-    $("#correo").val(""); 
-    $("#tipoDoc").val(""); 
-}
-
-
-function validar(){
-	if(document.frmLogin.numero.value==''){
-    mostrarMensaje("error", "Ingrese número de prestamo")
-    limpiar();
-		
-		return false;
-	} 
-	
-	 if (document.frmLogin.numero.value.length < 13) {
-	 mostrarMensaje("error", "Número de prestamo m\u00EDnimo 13 digitos")
-	 limpiar(); 
-   
-     return false;
-    }  
-		return true;
-}
-
-function iniciarSesion(){
-	 	
-	if(validar()){
-	document.frmLogin.submit();
-	}
-	
-}
-
-
-function exportarpdf(){ 
-		document.verDocumentos.submit();
-		
-		
-}
-
 $(document).ready(function () {
- $("#enviardoc").click(function () {
-		const prestamo = "${cronograma.NPRESTAMO}";
-		const nom_apell = "${cronograma.ACLIENTE}";
-		const numDNI = "${cronograma.DOCUMENTO}";
-		const correo = "${correo}";
 
+ $("#consultar").click(function () {
+        const numprestamo = $("#numero").val();
+      
+        const mensajeError = validarConsultaDatos();
 
-        const datosCorreo = {
-        
-            numeroP: prestamo,
-            nombreP: nom_apell,
-            numDocP: numDNI,
-            correoP: correo
+        if (!numprestamo) {
+            mostrarMensaje("error", "Debe ingresar el número de prestamo.");
+            return;
+        }
+
+        if (mensajeError) {
+            mostrarMensaje("error", mensajeError);
+            console.log(mensajeError);
+            return;
+        }
+
+        const url = "/modc/getConsultarEnvio/";
+        console.log("Consultando en URL:", url);
+
+        const datos = {
+            numerop: numprestamo
+           
         };
-console.log("datos del correo:", datosCorreo);
-
-        const url = "/modc/getEnviarCorreoDoc/";
-        console.log("Enviando a URL:", url);
 
         $.ajax({
             url: url,
             type: "POST",
             contentType: "application/json",
-            data: JSON.stringify(datosCorreo),
-            success: function (respuesta) {
-                const data = typeof respuesta === "string" ? JSON.parse(respuesta) : respuesta;
-                const msjEnviar = data.msj;
-                const codEnviar = data.cod;
-
-                console.log("enviar mensa:", msjEnviar);
-                console.log("enviar Código:", codEnviar);
-
-                if (codEnviar === "0000") {
-                    mostrarMensaje("exito", msjEnviar);
+            data: JSON.stringify(datos),
+            success: function (response) {
+                const data = typeof response === "string" ? JSON.parse(response) : response;
+                
+                const numeroprest = data.numerop;
+                const nombre = data.nombre;
+                const tipo_doc =  data.tipo;
+                const num_doc = data.numdoc;
+                const correo = data.correo;
+                const estado = data.estado;
+				
+                if (nombre) {
+                	
+                    mostrarMensaje("exito", "Datos consultados con exito.");
                     
+                    $("#numero").val(correoData);
+                    $("#nombres").val(nombreData);
                     
+                    if (tipo_doc=="1"){
+                    $("#tipodoc").val("DNI");
+                    }else if(tipo_doc=="4"){
+                    $("#tipodoc").val("Carnet de Extranjería");
+                    }
                     
-                    limpiar();
+                    $("#numDoc").val(correoData);
+                    $("#correo").val(correoData);
+                    $("#estadoenvio").val(correoData);
+                   $("#verdoc").prop("disabled", false);
+                  
                 } else {
-                    mostrarMensaje("error", msjEnviar);
-                    
+                    mostrarMensaje("error", "No se encontraron datos para el cliente.");
+                    $("#verdoc").prop("disabled", true);
+                    $("#reenviardoc").prop("disabled", true);
                 }
             },
             error: function (jqXHR, textStatus, errorThrown) {
-                console.error("Error al enviar el mensaje:", textStatus, errorThrown);
-                mostrarMensaje("error", "Ocurrió un error al enviar el correo.");
+                console.error("Error en la solicitud:", textStatus, errorThrown);
+                mostrarMensaje("error", "Ocurrió un error al consultar los datos.");
             }
         });
     });
-    
-    });
-    
+
+
+});
+
+
+function validarConsultaDatos() {
+    var numerop = document.getElementById("numero").value;
+		mensajes ="";
+   
+        if (numerop.length !== 13) {
+        mensajes = "El número de prestamo debe tener 13 digítos"; 
+          
+            return mensajes;
+        }
+
+    return mensajes;
+}    
 </script>
-
-<script type="text/javascript">
-
- function habilitarEnvio() {
-        // Habilita el botón "ENVIAR DOCUMENTO"
-        document.getElementById("enviardoc").disabled = false;
-    }
-</script>
-
 
 </head>
-
-
 <body class="" style="background-color: #F0F0F0;">
 
 	<c:url var="url" value="/" />
-
- <form id="verDocumentos" name="verDocumentos" method="post"
-	action="<c:out value='${url}'/>verDocumentos" runat="server">
-		<input id="cta" name="cta"
-			value="<c:out value="${cronograma.ccuenta}"  />" type="hidden" />
-		<input id="numero1" name="numero1"
-			value="<c:out value="${cronograma.cdsbolso}"  />" type="hidden" />
-
-
-</form>
 	
-
 	<form id="frmLogin" name="frmLogin" method="post"
 		action="<c:out value='${url}'/>enviarDoc" runat="server">
 		<input name="method" value="" type="hidden"> <input
@@ -229,8 +201,8 @@ console.log("datos del correo:", datosCorreo);
 								style="width: 900px" align="center">
 								<tr>
 									<th class="rxtitle" style="height: 14px; font-size: 15px;"
-										align="center">                                        
-										   Envio virtual de Documentos Contractuales - Préstamo
+										align="center">                                         
+										                         Seguimiento de Envio - Préstamo
 										Multired</th>
 
 								</tr>
@@ -284,13 +256,14 @@ console.log("datos del correo:", datosCorreo);
 														<tr>
 
 															<td width="8%" align="center">&nbsp;&nbsp;</td>
-															<td width="20%" align="center">Correo
+															<td width="24%" align="center">Correo
 																electr&oacute;nico:</td>
 															<td><input type="text" id="correo" name="correo"
 																value="" style="width: 200px;" readonly="readonly" /></td>
 
-															<td width="15%" align="center">&nbsp;&nbsp;</td>
-															<td width="20%" align="center">&nbsp;&nbsp;</td>
+															<td width="40%" align="center">Estado de envio:</td>
+															<td><input type="text" id="estadoenvio" name="estadoenvio"
+																value="" style="width: 200px;" readonly="readonly" /></td>
 															<td width="20%" align="center">&nbsp;&nbsp;</td>
 														</tr>
 
@@ -315,18 +288,20 @@ console.log("datos del correo:", datosCorreo);
 															<td width="10%" align="center">&nbsp;&nbsp;</td>
 															<td width="10%" align="center">&nbsp;&nbsp;
 															<input type="button" class="buttonCls" submit="true" style="width: 140px"
-																value="CONSULTAR" onclick="iniciarSesion();" /></td>
+																value="CONSULTAR" onclick="" 
+																id= "consultar"/></td>
 																<td width="10%" align="center" colspan="2" align="center">
 
 																<input type="button" class="buttonCls"
-																style="width: 140px" value="VER DOCUMENTO" onclick="habilitarEnvio(); exportarpdf()"
+																style="width: 140px" value="VER DOCUMENTO" onclick="exportarpdf()"
 																id="verdoc"
 																disabled="disabled" />
 															</td>
 															<td width="5%" align="center">&nbsp;&nbsp;<input
-																id="enviardoc" type="button" class="buttonCls"
+																id="reenviardoc" type="button" class="buttonCls"
 																submit="true" style="width: 140px"
-																value="ENVIAR DOCUMENTO" disabled="disabled" /></td>
+																value="REENVIAR DOCUMENTO" disabled="disabled" 
+																id= "reenviar"/></td>
 															<td width="5%" align="center">&nbsp;&nbsp;</td>
 														
 														
@@ -334,57 +309,6 @@ console.log("datos del correo:", datosCorreo);
 
 														<tr>
 
-																<c:if test="${msje eq 'Error 99'}">
-																<script type="text/javascript">
-      															  $(document).ready(function() {
-     															       mostrarMensaje('error', '${cronograma.MSJ}');
-     															        limpiar(); 
-     															      $("#verdoc").prop("disabled", true);
-															          $("#enviardoc").prop("disabled", true);
-     															       });
-   																 </script>
-															</c:if>
-
-
-															<c:if test="${msje eq 'Haga Clic en Abrir para Confirmar la Exportación' }">
-																<script type="text/javascript">
-      															  $(document).ready(function() {
-      															   
-      															   var numpres = "${cronograma.NPRESTAMO}";
-														           var nombrecli = "${cronograma.ACLIENTE}";
-														           var numerodoc = "${cronograma.DOCUMENTO}";
-      															   var correocli = "${correo}";
-      															   var mensajeVal = "${valcorreo}";
-      															  
-      															   
-      															  	       															   
-      															    if (mensajeVal=="Los correos coinciden") {
-															           $("#verdoc").prop("disabled", false);
-															       //    $("#enviardoc").prop("disabled", false);
-															            
-															           mostrarMensaje("exito", "Datos consultados con exito");
-															            
-															       $("#numero").val(numpres);
-      															   $("#nombres").val(nombrecli);
-      															   $("#numDoc").val(numerodoc);
-     															   $("#correo").val(correocli); 
-     															   $("#tipoDoc").val("DNI"); 															            
-															        }else{
-															        
-															          $("#verdoc").prop("disabled", true);
-															          $("#enviardoc").prop("disabled", true);
-															           
-															       limpiar(); 
-															           mostrarMensaje("error", mensajeVal);
-															        }
-     																});
-   																 </script>
-   																 
-
-															</c:if>
-
-
-															
 															</tr>
 													</table>
 												</td>

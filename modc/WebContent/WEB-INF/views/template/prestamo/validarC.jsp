@@ -214,8 +214,6 @@ const $OTPCliente = $("#codigo");
                 const msjEnviar = data.msj;
                 const codEnviar = data.cod;
 
-                console.log("enviar mensa:", msjEnviar);
-                console.log("enviar Código:", codEnviar);
 
                 if (codEnviar === "0000") {
                     mostrarMensaje("exito", msjEnviar);

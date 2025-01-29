@@ -26,6 +26,7 @@ import pe.com.bn.modc.common.LoggerEECC;
 import pe.com.bn.modc.config.CustomUser;
 import pe.com.bn.modc.dao.inte.IntLogAuditoria;
 import pe.com.bn.modc.dao.pool.ConexionJndi;
+import pe.com.bn.modc.domain.mapper.BnEnviarDoc;
 import pe.com.bn.modc.domain.mapper.BnValidarCorreoOTP;
 import pe.com.bn.modc.model.AudiLog;
 
@@ -432,6 +433,12 @@ public class RepoLogAuditoria implements IntLogAuditoria{
 		    System.out.println("reporlog correo: " + correo); 
 		return correo;
 		   
+		}
+
+
+		public String cargaDocumentopdf(BnEnviarDoc enviardoc) {
+			// TODO Apéndice de método generado automáticamente
+			return null;
 		}
 		
 		
