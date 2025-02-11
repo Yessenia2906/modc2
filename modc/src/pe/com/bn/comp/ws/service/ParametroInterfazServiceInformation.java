@@ -3,7 +3,7 @@
  *
  * This file was auto-generated from WSDL
  * by the IBM Web services WSDL2Java emitter.
- * gm1216.01 v41612173829
+ * f5011932.01 v81619102751
  */
 
 package pe.com.bn.comp.ws.service;
@@ -61,7 +61,7 @@ public class ParametroInterfazServiceInformation implements com.ibm.ws.webservic
           };
         datoParametroService0Op = new com.ibm.ws.webservices.engine.description.OperationDesc("datoParametroService", com.ibm.ws.webservices.engine.utils.QNameTable.createQName("http://service.ws.comp.bn.com.pe", "datoParametroService"), _params0, _returnDesc0, _faults0, null);
         datoParametroService0Op.setOption("inoutOrderingReq","false");
-        datoParametroService0Op.setOption("buildNum","gm1216.01");
+        datoParametroService0Op.setOption("buildNum","f5011932.01");
         datoParametroService0Op.setOption("usingAddressing","false");
         datoParametroService0Op.setOption("outputName","datoParametroServiceResponse");
         datoParametroService0Op.setOption("ResponseNamespace","http://service.ws.comp.bn.com.pe");

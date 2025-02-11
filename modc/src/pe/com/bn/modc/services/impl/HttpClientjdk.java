@@ -338,7 +338,7 @@ public class HttpClientjdk {
 	        // TODO: TOKEN 
 	        connection.setRequestProperty("Authorization", "Bearer " + tokenBearerWS);
 	        //String token ="78d0f0ba.8d264b6c9ce5511ed197f908";
-	       // connection.setRequestProperty("Authorization", "Bearer " + token);
+	        //connection.setRequestProperty("Authorization", "Bearer " + token);
 	        connection.setRequestProperty("Content-Type", "application/json");
 	        connection.setDoOutput(true);
 

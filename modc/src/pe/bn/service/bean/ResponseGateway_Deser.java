@@ -3,7 +3,7 @@
  *
  * This file was auto-generated from WSDL
  * by the IBM Web services WSDL2Java emitter.
- * gm1216.01 v41612173829
+ * f5011932.01 v81619102751
  */
 
 package pe.bn.service.bean;
@@ -48,6 +48,10 @@ public class ResponseGateway_Deser extends com.ibm.ws.webservices.engine.encodin
     protected boolean tryElementSetFromList(javax.xml.namespace.QName qName, java.util.List listValue) {
         return false;
     }
+    private final static javax.xml.namespace.QName QName_0_5 = 
+           com.ibm.ws.webservices.engine.utils.QNameTable.createQName(
+                  "",
+                  "mensaje");
     private final static javax.xml.namespace.QName QName_0_6 = 
            com.ibm.ws.webservices.engine.utils.QNameTable.createQName(
                   "",
@@ -60,8 +64,4 @@ public class ResponseGateway_Deser extends com.ibm.ws.webservices.engine.encodin
            com.ibm.ws.webservices.engine.utils.QNameTable.createQName(
                   "",
                   "datos");
-    private final static javax.xml.namespace.QName QName_0_5 = 
-           com.ibm.ws.webservices.engine.utils.QNameTable.createQName(
-                  "",
-                  "mensaje");
 }

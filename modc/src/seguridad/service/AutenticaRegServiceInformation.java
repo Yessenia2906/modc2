@@ -3,7 +3,7 @@
  *
  * This file was auto-generated from WSDL
  * by the IBM Web services WSDL2Java emitter.
- * gm1216.01 v41612173829
+ * f5011932.01 v81619102751
  */
 
 package seguridad.service;
@@ -49,7 +49,7 @@ public class AutenticaRegServiceInformation implements com.ibm.ws.webservices.mu
           };
         claveHost0Op = new com.ibm.ws.webservices.engine.description.OperationDesc("claveHost", com.ibm.ws.webservices.engine.utils.QNameTable.createQName("http://service.seguridad", "claveHost"), _params0, _returnDesc0, _faults0, null);
         claveHost0Op.setOption("inoutOrderingReq","false");
-        claveHost0Op.setOption("buildNum","gm1216.01");
+        claveHost0Op.setOption("buildNum","f5011932.01");
         claveHost0Op.setOption("outputName","claveHostResponse");
         claveHost0Op.setOption("ResponseNamespace","http://service.seguridad");
         claveHost0Op.setOption("targetNamespace","http://service.seguridad");

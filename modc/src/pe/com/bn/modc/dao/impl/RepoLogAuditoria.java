@@ -2,6 +2,7 @@ package pe.com.bn.modc.dao.impl;
 
  
 import java.io.ByteArrayInputStream;
+import java.sql.Blob;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -405,7 +406,7 @@ public class RepoLogAuditoria implements IntLogAuditoria{
 		
 	
 		public String correoValidado(String numero) throws SQLException {
-			 System.out.println("reporlog numerodoc: " + numero); 
+			 //System.out.println("reporlog numerodoc: " + numero); 
 		    
 			 String correo ="";    
 		    ResultSet rs = null;
@@ -439,6 +440,52 @@ public class RepoLogAuditoria implements IntLogAuditoria{
 		public String cargaDocumentopdf(BnEnviarDoc enviardoc) {
 			// TODO Apéndice de método generado automáticamente
 			return null;
+		}
+		
+		
+		public BnEnviarDoc buscardatos (String numero) throws SQLException {
+			 System.out.println("reporlog reenviar numero de prestamo: " + numero); 
+			BnEnviarDoc datos = new BnEnviarDoc();
+	
+		    ResultSet rs = null;
+			Connection conn = null;																		
+		 	PreparedStatement pstmt = null;	
+		 	StringBuffer sql = new  StringBuffer();
+		 	sql.append("SELECT F02_DESEMBOLSO, F02_TIPO, NOMBRES,F02_COD_OPERACION, F02_EMAIL,F02_CAMPO1 ,F02_DOCUMENTO, F02_FECHA_ENVIO   FROM BNMODCF02_DOCPRESTAMO WHERE F02_DESEMBOLSO = '"+numero.trim()+"'");	 	
+		    try {
+		    		conn =    dss.connect();
+			 		conn.setAutoCommit(false);	
+			 		pstmt= conn.prepareStatement(sql.toString());		 		
+					rs = pstmt.executeQuery();
+
+					if(rs.next()) {
+						
+		                datos.setNUMPRESTAMO(rs.getString("F02_DESEMBOLSO"));
+		                datos.setTIPDOC(rs.getString("F02_TIPO"));
+		                datos.setNUMDOC(rs.getString("F02_COD_OPERACION"));
+		                datos.setNOMBRES(rs.getString("NOMBRES"));
+		                datos.setCORREO(rs.getString("F02_EMAIL"));
+		                datos.setESTADO(rs.getString("F02_CAMPO1"));
+		                
+		                Blob blob = rs.getBlob("F02_DOCUMENTO");
+		                if (blob != null) {
+		                    datos.setPDF(blob.getBytes(1, (int) blob.length()));
+		                }
+		                datos.setFECHA(rs.getString("F02_FECHA_ENVIO"));
+
+		                 	                 
+		            }
+		        }
+		     catch (Exception e) {	
+		 		if (conn != null) conn.rollback(); 
+		 	}finally {
+		 		if (conn != null) conn.setAutoCommit(true);	
+		 		if (pstmt != null) {try{pstmt.close();}catch(Exception e){}; pstmt = null; }			
+		 		if (conn != null) { try{conn.close();}catch(Exception e){}; conn = null;}				
+		 	}	
+		   
+		return datos;
+		   
 		}
 		
 		

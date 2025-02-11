@@ -3,7 +3,7 @@
  *
  * This file was auto-generated from WSDL
  * by the IBM Web services WSDL2Java emitter.
- * gm1216.01 v41612173829
+ * f5011932.01 v81619102751
  */
 
 package pe.bn.service.interfaz;
@@ -69,7 +69,7 @@ public class GatewayInterfaceSoapBindingStub extends com.ibm.ws.webservices.engi
           };
         _enviarTramaConsultaOperation0 = new com.ibm.ws.webservices.engine.description.OperationDesc("enviarTramaConsulta", com.ibm.ws.webservices.engine.utils.QNameTable.createQName("http://interfaz.service.bn.pe", "enviarTramaConsulta"), _params0, _returnDesc0, _faults0, "");
         _enviarTramaConsultaOperation0.setOption("inoutOrderingReq","false");
-        _enviarTramaConsultaOperation0.setOption("buildNum","gm1216.01");
+        _enviarTramaConsultaOperation0.setOption("buildNum","f5011932.01");
         _enviarTramaConsultaOperation0.setOption("outputName","enviarTramaConsultaResponse");
         _enviarTramaConsultaOperation0.setOption("ResponseNamespace","http://interfaz.service.bn.pe");
         _enviarTramaConsultaOperation0.setOption("targetNamespace","http://interfaz.service.bn.pe");

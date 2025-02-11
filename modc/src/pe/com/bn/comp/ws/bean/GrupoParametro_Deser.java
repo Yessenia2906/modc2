@@ -3,7 +3,7 @@
  *
  * This file was auto-generated from WSDL
  * by the IBM Web services WSDL2Java emitter.
- * gm1216.01 v41612173829
+ * f5011932.01 v81619102751
  */
 
 package pe.com.bn.comp.ws.bean;
@@ -53,20 +53,20 @@ public class GrupoParametro_Deser extends com.ibm.ws.webservices.engine.encoding
     protected boolean tryElementSetFromList(javax.xml.namespace.QName qName, java.util.List listValue) {
         return false;
     }
-    private final static javax.xml.namespace.QName QName_0_14 = 
-           com.ibm.ws.webservices.engine.utils.QNameTable.createQName(
-                  "",
-                  "tipoGrupo");
-    private final static javax.xml.namespace.QName QName_0_16 = 
-           com.ibm.ws.webservices.engine.utils.QNameTable.createQName(
-                  "",
-                  "aliasGrupo");
-    private final static javax.xml.namespace.QName QName_0_15 = 
-           com.ibm.ws.webservices.engine.utils.QNameTable.createQName(
-                  "",
-                  "aliasDescripGrupo");
     private final static javax.xml.namespace.QName QName_0_17 = 
            com.ibm.ws.webservices.engine.utils.QNameTable.createQName(
                   "",
                   "parametro");
+    private final static javax.xml.namespace.QName QName_0_15 = 
+           com.ibm.ws.webservices.engine.utils.QNameTable.createQName(
+                  "",
+                  "aliasDescripGrupo");
+    private final static javax.xml.namespace.QName QName_0_16 = 
+           com.ibm.ws.webservices.engine.utils.QNameTable.createQName(
+                  "",
+                  "aliasGrupo");
+    private final static javax.xml.namespace.QName QName_0_14 = 
+           com.ibm.ws.webservices.engine.utils.QNameTable.createQName(
+                  "",
+                  "tipoGrupo");
 }

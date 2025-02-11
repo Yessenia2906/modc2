@@ -3,7 +3,7 @@
  *
  * This file was auto-generated from WSDL
  * by the IBM Web services WSDL2Java emitter.
- * gm1216.01 v41612173829
+ * f5011932.01 v81619102751
  */
 
 package seguridad.service;
@@ -53,7 +53,7 @@ public class AutenticaRegSoapBindingStub extends com.ibm.ws.webservices.engine.c
           };
         _claveHostOperation0 = new com.ibm.ws.webservices.engine.description.OperationDesc("claveHost", com.ibm.ws.webservices.engine.utils.QNameTable.createQName("http://service.seguridad", "claveHost"), _params0, _returnDesc0, _faults0, "");
         _claveHostOperation0.setOption("inoutOrderingReq","false");
-        _claveHostOperation0.setOption("buildNum","gm1216.01");
+        _claveHostOperation0.setOption("buildNum","f5011932.01");
         _claveHostOperation0.setOption("outputName","claveHostResponse");
         _claveHostOperation0.setOption("ResponseNamespace","http://service.seguridad");
         _claveHostOperation0.setOption("targetNamespace","http://service.seguridad");

@@ -3,7 +3,7 @@
  *
  * This file was auto-generated from WSDL
  * by the IBM Web services WSDL2Java emitter.
- * gm1216.01 v41612173829
+ * f5011932.01 v81619102751
  */
 
 package pe.com.bn.comp.ws.bean;
@@ -50,6 +50,10 @@ public class SistemaParametro_Deser extends com.ibm.ws.webservices.engine.encodi
     protected boolean tryElementSetFromList(javax.xml.namespace.QName qName, java.util.List listValue) {
         return false;
     }
+    private final static javax.xml.namespace.QName QName_0_8 = 
+           com.ibm.ws.webservices.engine.utils.QNameTable.createQName(
+                  "",
+                  "grupoParametro");
     private final static javax.xml.namespace.QName QName_0_9 = 
            com.ibm.ws.webservices.engine.utils.QNameTable.createQName(
                   "",
@@ -58,8 +62,4 @@ public class SistemaParametro_Deser extends com.ibm.ws.webservices.engine.encodi
            com.ibm.ws.webservices.engine.utils.QNameTable.createQName(
                   "",
                   "aliasSistema");
-    private final static javax.xml.namespace.QName QName_0_8 = 
-           com.ibm.ws.webservices.engine.utils.QNameTable.createQName(
-                  "",
-                  "grupoParametro");
 }

@@ -3,7 +3,7 @@
  *
  * This file was auto-generated from WSDL
  * by the IBM Web services WSDL2Java emitter.
- * gm1216.01 v41612173829
+ * f5011932.01 v81619102751
  */
 
 package pe.com.bn.comp.ws.bean;
@@ -14,7 +14,7 @@ public class SistemaParametro_Helper {
         new com.ibm.ws.webservices.engine.description.TypeDesc(SistemaParametro.class);
 
     static {
-        typeDesc.setOption("buildNum","gm1216.01");
+        typeDesc.setOption("buildNum","f5011932.01");
         com.ibm.ws.webservices.engine.description.FieldDesc field = new com.ibm.ws.webservices.engine.description.ElementDesc();
         field.setFieldName("aliasSistema");
         field.setXmlName(com.ibm.ws.webservices.engine.utils.QNameTable.createQName("", "aliasSistema"));

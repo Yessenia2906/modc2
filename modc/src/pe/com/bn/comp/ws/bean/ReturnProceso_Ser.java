@@ -3,7 +3,7 @@
  *
  * This file was auto-generated from WSDL
  * by the IBM Web services WSDL2Java emitter.
- * gm1216.01 v41612173829
+ * f5011932.01 v81619102751
  */
 
 package pe.com.bn.comp.ws.bean;
@@ -68,14 +68,14 @@ public class ReturnProceso_Ser extends com.ibm.ws.webservices.engine.encoding.se
           }
         }
     }
-    private final static javax.xml.namespace.QName QName_0_12 = 
-           com.ibm.ws.webservices.engine.utils.QNameTable.createQName(
-                  "",
-                  "codigo");
     private final static javax.xml.namespace.QName QName_1_4 = 
            com.ibm.ws.webservices.engine.utils.QNameTable.createQName(
                   "http://www.w3.org/2001/XMLSchema",
                   "string");
+    private final static javax.xml.namespace.QName QName_0_12 = 
+           com.ibm.ws.webservices.engine.utils.QNameTable.createQName(
+                  "",
+                  "codigo");
     private final static javax.xml.namespace.QName QName_0_13 = 
            com.ibm.ws.webservices.engine.utils.QNameTable.createQName(
                   "",

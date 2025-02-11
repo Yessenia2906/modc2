@@ -3,7 +3,7 @@
  *
  * This file was auto-generated from WSDL
  * by the IBM Web services WSDL2Java emitter.
- * gm1216.01 v41612173829
+ * f5011932.01 v81619102751
  */
 
 package pe.bn.service.bean;
@@ -88,6 +88,14 @@ public class ResponseGateway_Ser extends com.ibm.ws.webservices.engine.encoding.
           }
         }
     }
+    private final static javax.xml.namespace.QName QName_1_4 = 
+           com.ibm.ws.webservices.engine.utils.QNameTable.createQName(
+                  "http://www.w3.org/2001/XMLSchema",
+                  "string");
+    private final static javax.xml.namespace.QName QName_0_5 = 
+           com.ibm.ws.webservices.engine.utils.QNameTable.createQName(
+                  "",
+                  "mensaje");
     private final static javax.xml.namespace.QName QName_0_6 = 
            com.ibm.ws.webservices.engine.utils.QNameTable.createQName(
                   "",
@@ -96,16 +104,8 @@ public class ResponseGateway_Ser extends com.ibm.ws.webservices.engine.encoding.
            com.ibm.ws.webservices.engine.utils.QNameTable.createQName(
                   "",
                   "filler");
-    private final static javax.xml.namespace.QName QName_1_4 = 
-           com.ibm.ws.webservices.engine.utils.QNameTable.createQName(
-                  "http://www.w3.org/2001/XMLSchema",
-                  "string");
     private final static javax.xml.namespace.QName QName_0_0 = 
            com.ibm.ws.webservices.engine.utils.QNameTable.createQName(
                   "",
                   "datos");
-    private final static javax.xml.namespace.QName QName_0_5 = 
-           com.ibm.ws.webservices.engine.utils.QNameTable.createQName(
-                  "",
-                  "mensaje");
 }

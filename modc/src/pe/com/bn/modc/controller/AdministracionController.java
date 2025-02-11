@@ -14,6 +14,9 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 import javax.swing.ImageIcon;
+import org.springframework.http.MediaType;
+
+//import javax.ws.rs.core.MediaType;
 
 import pe.com.bn.modc.common.Constant;
 import pe.com.bn.modc.common.Constante;
@@ -81,6 +84,7 @@ import net.sf.jasperreports.engine.JasperReport;
 import net.sf.jasperreports.engine.convert.ImageConverter;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.ModelMap;
@@ -173,6 +177,10 @@ import www.bn.simm.ws.open.bean.ResponseMessage;
 import www.bn.simm.ws.open.service.ArrayOfTns1ReqListMessage;
 import www.bn.simm.ws.open.service.ServiceMessageProxy;
 import java.math.RoundingMode;
+
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 
 @Controller
 public class AdministracionController {
@@ -42099,8 +42107,8 @@ public class AdministracionController {
 		String nombreCliente = requestBody.get("nombreCli");
 
 		// TODO: Correo yapumelanie9
-		String correoCliente = "yapumelanie9@gmail.com";
-		// String correoCliente = requestBody.get("correoCli");
+		//String correoCliente = "yapumelanie9@gmail.com";
+		String correoCliente = requestBody.get("correoCli");
 
 		HttpSession session = request.getSession(false);
 
@@ -42570,7 +42578,7 @@ public class AdministracionController {
 
 	// TODO GENERAR DOCUMENTO (VER DOCUMENTO)	
 
-	// metodo principal
+	// metodo principal ver doc
 	@RequestMapping(value = "verDocumentos", method = RequestMethod.POST)
 	@ResponseBody
 	public String exportarPDF(ModelMap model, HttpServletRequest request, HttpServletResponse response) throws Exception {
@@ -45280,7 +45288,7 @@ public class AdministracionController {
 		try {
 		// Cierre del documento PDF
 		document.close();
-
+		
 		// Convertir el PDF a un arreglo de bytes
 		byte[] ba = baos.toByteArray();
 
@@ -45311,10 +45319,7 @@ public class AdministracionController {
 		request.setAttribute("pdfcod", "0000");        
 		request.setAttribute("pfdmsj", "PDF generado y enviado exitosamente.");
         System.out.println("PDF generado y enviado para descarga.");
-        
-        System.out.println("pdfcod: " + request.getAttribute("pdfcod"));
-        System.out.println("pfdmsj: " + request.getAttribute("pfdmsj"));
-        	
+   
     } else {
         // Manejo de error si el arreglo de bytes está vacío o nulo
         request.setAttribute("pdfcod", "9999");
@@ -45449,5 +45454,202 @@ public class AdministracionController {
 
 			}
 			
-		
+			@RequestMapping(value = "/getConsultarREEnvio/", method = RequestMethod.POST)
+			@ResponseBody
+			public Object DatosClienteReenvio(@RequestBody Map<String, String> requestBody, HttpServletRequest request)
+					throws ParametrosCompException, ExternalException, SQLException {
+
+				compService.asignarParametros();
+
+				String num = requestBody.get("numerop");
+				RepoLogAuditoria datos = new RepoLogAuditoria();
+				Map<String, String> respuesta = new HashMap<>();
+				BnEnviarDoc datosR = datos.buscardatos(num);
+				HttpSession session = request.getSession(false);		
+			
+				if(datosR !=null) {
+					
+					respuesta.put("prestamo", datosR.getNUMPRESTAMO());
+					respuesta.put("nombres", datosR.getNOMBRES());
+					respuesta.put("tipodoc", datosR.getESTADO());
+					respuesta.put("numdoc", datosR.getNUMDOC());
+					respuesta.put("correo", datosR.getCORREO());
+					respuesta.put("estado", datosR.getESTADO());
+					respuesta.put("cod", "0000");
+					respuesta.put("msj", "Datos consultados con exito");
+					
+					session.setAttribute("ReenviarPDF", datosR.getPDF());
+					session.setAttribute("prest", datosR.getNUMPRESTAMO());
+					session.setAttribute("dniRE", datosR.getNUMDOC());
+					session.setAttribute("nombresRE", datosR.getNOMBRES());
+					session.setAttribute("fechaenvioRE", datosR.getFECHA());
+										
+									}
+				String json = "";
+				try {
+					// Convertir el mapa a JSON
+					ObjectMapper mapper = new ObjectMapper();
+					json = mapper.writeValueAsString(respuesta);
+
+				} catch (Exception e) {
+					e.printStackTrace();
+				}
+				return json;
+			}
+			
+			
+			@RequestMapping(value = "verDocumentosR", method = RequestMethod.POST)
+			@ResponseBody
+			public String verdocReenviar(ModelMap model, HttpServletRequest request, HttpServletResponse response) throws Exception {
+			    String path = "";
+			    System.out.println("ver documento reenviar");
+
+			    HttpSession session = request.getSession(false);
+			    DatosSesion datosSesion = (DatosSesion) request.getSession().getAttribute("datosSesion");
+			    String doc = request.getParameter("dniR");
+			    String nombredoc= "Prestamo_Multired_"+session.getAttribute("prest")+".pdf";
+			    
+			    // Obtener los bytes del PDF desde la sesión
+			    byte[] ba = (byte[]) session.getAttribute("ReenviarPDF");
+			    
+			    if (ba == null) {
+			        System.out.println("No se encontró el PDF en la sesión.");
+			        return "error"; // O manejar de otra manera
+			    }
+
+			    try {
+			        // Configurar la respuesta HTTP para la descarga del PDF
+			        response.setHeader("Expires", "0");
+			        response.setHeader("Cache-Control", "must-revalidate, post-check=0, pre-check=0");
+			        response.setHeader("Pragma", "public");
+			        response.setContentType("application/pdf");
+			        response.setHeader("Content-Disposition", "attachment; filename=\""+ nombredoc +"\"");
+			        response.setContentLength(ba.length); 
+
+			        // Escribir el PDF en la respuesta para la descarga
+			        ServletOutputStream outputStream = response.getOutputStream();
+			        outputStream.write(ba); // Escribir directamente desde los bytes obtenidos
+			        outputStream.flush();
+			        outputStream.close();
+
+			        System.out.println("PDF generado y enviado para descarga.");
+
+			        path = View.returnJsp(model, "prestamo/segEnvio");
+			        return path;
+			      //  return "exito";
+
+			    } catch (Exception e) {
+			        // Manejo de errores excepcionales
+			        e.printStackTrace();
+			        System.out.println("Error inesperado al generar el PDF: " + e.getMessage());
+			        return "error"; 
+			    }
+			    
+			    
+			}
+			
+			
+			
+			@RequestMapping(value = "/getEnviarREEnvio/", method = RequestMethod.POST)
+			@ResponseBody
+			public Object REEnviarCorreoDoc(@RequestBody Map<String, String> requestBody, HttpServletRequest request,
+					HttpServletResponse response) throws ParametrosCompException, ExternalException {
+
+				Map<String, String> respuesta = new HashMap<String, String>();
+				compService.asignarParametros();
+				CustomUser usuario = (CustomUser) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+				log.debug("Usuario autenticado: " + usuario.getUsername(), Constant.LOGGER_DEBUG_NIVEL_1);
+				HttpSession session = request.getSession(false);
+				RepoLogAuditoria pdf = new RepoLogAuditoria();
+				BnEnviarDoc enviardoc = new BnEnviarDoc();
+				String pdfBase64 ="";
+				String correoCliente = requestBody.get("correop");
+					
+				// TODO: Correo yapumelanie9
+				//String correoCliente = "yapumelanie9@gmail.com";
+			
+				 			 
+				 byte[] ba = (byte[]) session.getAttribute("ReenviarPDF");
+				 if (ba != null) {
+					 	 pdfBase64 = Base64Utils.encodeToString(ba);
+					    System.out.println(pdfBase64); 
+					} else {
+					    System.out.println("No hay datos en la sesión.");
+					}
+				 
+				 String prestamo = (String) session.getAttribute("prest");
+				 String dni = (String) session.getAttribute("dniRE");
+				 String nombre = (String) session.getAttribute("nombresRE");
+				 String fecha = (String) session.getAttribute("fechaenvioRE");
+				 
+				boolean estado = servicioEnvioCorreo.enviarCorreoPdf(correoCliente, nombre, pdfBase64, fecha, prestamo);
+//listo hasta aqui
+				
+				/*LocalDateTime fechaHoraActual = LocalDateTime.now();
+
+				DateTimeFormatter formatoFecha = DateTimeFormatter.ofPattern("yyyy-MM-dd");
+				String fechaenvio = fechaHoraActual.format(formatoFecha);
+
+				DateTimeFormatter formatoHora = DateTimeFormatter.ofPattern("HH:mm:ss");
+				String hora = fechaHoraActual.format(formatoHora);
+
+				enviardoc.setNUMPRESTAMO(prestamo);
+				enviardoc.setTIPDOC("1");
+				enviardoc.setNUMDOC(numerodoc);
+				enviardoc.setCORREO(correoCliente);
+				enviardoc.setFECHA(fechaenvio);
+				enviardoc.setHORA(hora);
+				enviardoc.setUSUARIO(usuario.getUsername());
+				enviardoc.setAGENCIA(usuario.getCodAgencia());
+				enviardoc.setESTADO("ENVIADO");
+				enviardoc.setPDF(docBytes);*/
+				
+				//System.out.print("dato del cliente enviarcorreo: " + enviardoc);
+				if (estado) {
+					System.out.print("USUARIO del cliente enviarcorreo: " + usuario.getCodAgencia());
+					
+					respuesta.put("cod", "0000");
+					respuesta.put("msj", "Se envio correctamente el correo");
+					
+					/*try {
+						String resultado = pdf.cargaDocumentopdf(enviardoc);
+
+						if ("ENVIADO".equals(resultado)) {
+							
+							respuesta.put("cod", "0000");
+							respuesta.put("msj", "Se envio correctamente el correo");
+							
+							session.removeAttribute("docPDF");
+							session.removeAttribute("fechaDS");
+							
+						} else {
+							respuesta.put("cod", "9998");
+							respuesta.put("msj",
+									"Correo enviado, pero no se pudo guardar en la base de datos");
+						}
+					} catch (Exception e) {
+
+						respuesta.put("cod", "9998");
+						respuesta.put("msj", "Error interno al guardar datos");
+					}*/
+								
+				} else {
+					respuesta.put("cod", "9999");
+					respuesta.put("msj", "No se envio el correo. Ocurrio un error");
+
+				}
+
+				String json = "";
+				try {
+					// Convertir el mapa a JSON
+					ObjectMapper mapper = new ObjectMapper();
+					json = mapper.writeValueAsString(respuesta);
+
+				} catch (Exception e) {
+					e.printStackTrace();
+				}
+				return json;
+
+			}	
+
 }

@@ -3,7 +3,7 @@
  *
  * This file was auto-generated from WSDL
  * by the IBM Web services WSDL2Java emitter.
- * gm1216.01 v41612173829
+ * f5011932.01 v81619102751
  */
 
 package pe.com.bn.comp.ws.service;
@@ -24,7 +24,7 @@ public class ParametroInterfazServiceLocator extends com.ibm.ws.webservices.mult
     }
 
     // Utilizar para obtener la clase de proxy para parametroInterfaz
-    private final java.lang.String parametroInterfaz_address = "http://10.7.11.61:9080/WSParamService12/services/ParametroInterfaz";
+    private final java.lang.String parametroInterfaz_address = "http://10.7.106.55:9080/WSParamService12/services/ParametroInterfaz";
 
     public java.lang.String getParametroInterfazAddress() {
         if (context.getOverriddingEndpointURIs() == null) {

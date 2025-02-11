@@ -63,13 +63,27 @@
 </style>
 
 <script type="text/javascript">
+
+ function habilitarEnvio() {
+        // Habilita el botón "REENVIAR DOCUMENTO"
+      setTimeout(habilitarEnvio2, 1500);
+    }
+    
+
+function habilitarEnvio2() {
+    document.getElementById("reenviardoc").disabled = false;
+}
+    
+</script>
+
+<script type="text/javascript">
     
     function mostrarMensaje(tipo, texto) {
         const $mensaje = $("#mensaje");
-        $mensaje.text(texto); // Actualizar el texto del mensaje
-        $mensaje.removeClass("exito error"); // Remover clases previas
-        $mensaje.addClass(tipo); // Agregar la clase correspondiente
-        $mensaje.fadeIn(); // Mostrar el mensaje
+        $mensaje.text(texto); 
+        $mensaje.removeClass("exito error"); 
+        $mensaje.addClass(tipo); 
+        $mensaje.fadeIn(); 
 
       $mensaje.delay(5000).fadeOut();
     }
@@ -85,6 +99,12 @@ function checkIt(evt) {
     }
     status = ""
     return true
+}
+
+function exportarpdf(){ 
+		document.verDocumentosR.submit();
+		
+		
 }
 
 $(document).ready(function () {
@@ -105,7 +125,7 @@ $(document).ready(function () {
             return;
         }
 
-        const url = "/modc/getConsultarEnvio/";
+        const url = "/modc/getConsultarREEnvio/";
         console.log("Consultando en URL:", url);
 
         const datos = {
@@ -120,31 +140,31 @@ $(document).ready(function () {
             data: JSON.stringify(datos),
             success: function (response) {
                 const data = typeof response === "string" ? JSON.parse(response) : response;
-                
-                const numeroprest = data.numerop;
-                const nombre = data.nombre;
-                const tipo_doc =  data.tipo;
-                const num_doc = data.numdoc;
+                const desembolso = data.prestamo;
+                const nombres = data.nombres;
+                const tipo_doc =  data.tipodoc;
+                const numdoc = data.numdoc;
                 const correo = data.correo;
                 const estado = data.estado;
 				
-                if (nombre) {
+				console.log("tipo:", tipo_doc);
+                if (data.cod=="0000") {
                 	
-                    mostrarMensaje("exito", "Datos consultados con exito.");
+                    mostrarMensaje("exito", data.msj);
                     
-                    $("#numero").val(correoData);
-                    $("#nombres").val(nombreData);
-                    
-                    if (tipo_doc=="1"){
-                    $("#tipodoc").val("DNI");
+                    $("#numero").val(desembolso);
+                    $("#nombres").val(nombres);
+                                      
+                     if (tipo_doc =="1"){
+                    $("#tipoDocumento").val("DNI");
                     }else if(tipo_doc=="4"){
-                    $("#tipodoc").val("Carnet de Extranjería");
-                    }
+                    $("#tipoDocumento").val("Carnet de Extranjería");
+                    } 
                     
-                    $("#numDoc").val(correoData);
-                    $("#correo").val(correoData);
-                    $("#estadoenvio").val(correoData);
-                   $("#verdoc").prop("disabled", false);
+                    $("#numDoc").val(numdoc);
+                    $("#correo").val(correo);
+                    $("#estadoenvio").val(estado);
+                    $("#verdoc").prop("disabled", false);
                   
                 } else {
                     mostrarMensaje("error", "No se encontraron datos para el cliente.");
@@ -157,11 +177,57 @@ $(document).ready(function () {
                 mostrarMensaje("error", "Ocurrió un error al consultar los datos.");
             }
         });
-    });
 
 
 });
 
+ $("#reenviardoc").click(function () {
+        const correo = $("#correo").val();
+ 
+ 
+        if (!correo) {
+         	$("#reenviardoc").prop("disabled", true);
+            mostrarMensaje("error", "No cuenta con dato de correo electronico..");
+            return;
+        }
+
+        const url = "/modc/getEnviarREEnvio/";
+        console.log("Consultando en URL:", url);
+
+        const datos = {
+            correop: correo
+        };
+
+        $.ajax({
+            url: url,
+            type: "POST",
+            contentType: "application/json",
+            data: JSON.stringify(datos),
+            success: function (response) {
+                const data = typeof response === "string" ? JSON.parse(response) : response;
+                const mensaje = data.mensaje;
+                const codigo = data.codigo
+				
+				console.log("codigo:", codigo);
+                if (data.codigo=="0000") {
+                	
+                    mostrarMensaje("exito", mensaje);
+                     $("#verdoc").prop("disabled", true);
+                    $("#reenviardoc").prop("disabled", true);
+                     } else {
+                    mostrarMensaje("error", mensaje);
+                   
+                }
+            },
+            error: function (jqXHR, textStatus, errorThrown) {
+                console.error("Error en la solicitud:", textStatus, errorThrown);
+                mostrarMensaje("error", "Ocurrió un error al enviar el correo.");
+            }
+        });
+	});
+	
+	
+});
 
 function validarConsultaDatos() {
     var numerop = document.getElementById("numero").value;
@@ -181,6 +247,16 @@ function validarConsultaDatos() {
 <body class="" style="background-color: #F0F0F0;">
 
 	<c:url var="url" value="/" />
+	
+	 <form id="verDocumentosR" name="verDocumentosR" method="post"
+	action="<c:out value='${url}'/>verDocumentosR" runat="server">
+	<script type="text/javascript">
+   $(document).ready(function() {
+	 const dniR = $("#numDoc").val();
+	 $("#verDocumentosR").append(`<input type="hidden" name="dni" value="${dniR}">`);
+	 });
+ 	</script>
+	</form>
 	
 	<form id="frmLogin" name="frmLogin" method="post"
 		action="<c:out value='${url}'/>enviarDoc" runat="server">
@@ -239,7 +315,7 @@ function validarConsultaDatos() {
 														<tr>
 															<td width="8%" align="center">&nbsp;&nbsp;</td>
 															<td width="24%" align="center">Tipo de Documento:</td>
-															<td><input type="text" id="tipoDoc" name="tipoDoc"
+															<td><input type="text" id="tipoDocumento" name="tipoDocumento"
 																value="" readonly="readonly" style="width: 200px;" /></td>
 
 															<td width="40%" align="center">N&uacute;mero de
@@ -293,7 +369,7 @@ function validarConsultaDatos() {
 																<td width="10%" align="center" colspan="2" align="center">
 
 																<input type="button" class="buttonCls"
-																style="width: 140px" value="VER DOCUMENTO" onclick="exportarpdf()"
+																style="width: 140px" value="VER DOCUMENTO" onclick="habilitarEnvio(); exportarpdf()"
 																id="verdoc"
 																disabled="disabled" />
 															</td>
