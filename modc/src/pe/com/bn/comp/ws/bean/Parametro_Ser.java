@@ -98,26 +98,26 @@ public class Parametro_Ser extends com.ibm.ws.webservices.engine.encoding.ser.Be
           }
         }
     }
-    private final static javax.xml.namespace.QName QName_1_4 = 
-           com.ibm.ws.webservices.engine.utils.QNameTable.createQName(
-                  "http://www.w3.org/2001/XMLSchema",
-                  "string");
     private final static javax.xml.namespace.QName QName_0_21 = 
            com.ibm.ws.webservices.engine.utils.QNameTable.createQName(
                   "",
                   "descripcionParam");
+    private final static javax.xml.namespace.QName QName_1_4 = 
+           com.ibm.ws.webservices.engine.utils.QNameTable.createQName(
+                  "http://www.w3.org/2001/XMLSchema",
+                  "string");
     private final static javax.xml.namespace.QName QName_0_22 = 
            com.ibm.ws.webservices.engine.utils.QNameTable.createQName(
                   "",
                   "tipoParam");
-    private final static javax.xml.namespace.QName QName_0_20 = 
-           com.ibm.ws.webservices.engine.utils.QNameTable.createQName(
-                  "",
-                  "campoParam");
     private final static javax.xml.namespace.QName QName_0_23 = 
            com.ibm.ws.webservices.engine.utils.QNameTable.createQName(
                   "",
                   "valorParam");
+    private final static javax.xml.namespace.QName QName_0_20 = 
+           com.ibm.ws.webservices.engine.utils.QNameTable.createQName(
+                  "",
+                  "campoParam");
     private final static javax.xml.namespace.QName QName_0_19 = 
            com.ibm.ws.webservices.engine.utils.QNameTable.createQName(
                   "",

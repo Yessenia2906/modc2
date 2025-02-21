@@ -205,13 +205,20 @@ $(document).ready(function () {
             data: JSON.stringify(datos),
             success: function (response) {
                 const data = typeof response === "string" ? JSON.parse(response) : response;
-                const mensaje = data.mensaje;
-                const codigo = data.codigo
+                const mensaje = data.msj;
+                const codigo = data.cod;
 				
 				console.log("codigo:", codigo);
-                if (data.codigo=="0000") {
+                if (codigo =="0000") {
                 	
                     mostrarMensaje("exito", mensaje);
+                    $("#numero").val("");
+                    $("#nombres").val("");
+                    $("#tipoDocumento").val("");
+                    $("#numDoc").val("");
+                    $("#correo").val("");
+                    $("#estadoenvio").val("");
+                    
                      $("#verdoc").prop("disabled", true);
                     $("#reenviardoc").prop("disabled", true);
                      } else {
@@ -253,7 +260,24 @@ function validarConsultaDatos() {
 	<script type="text/javascript">
    $(document).ready(function() {
 	 const dniR = $("#numDoc").val();
+	 
+	 const nombre = $("#nombres").val();
+	 const correo = $("#correo").val();
+	 const estado = $("#estadoenvio").val();
+	 var tipod = "";
+	 const tipo = $("#tipoDocumento").val();
+	 if(tipo == "DNI")
+	  	tipod = "1";
+	 else {
+   		tipod = "2";
+	}
+	 
+	 
 	 $("#verDocumentosR").append(`<input type="hidden" name="dni" value="${dniR}">`);
+	 $("#verDocumentosR").append(`<input type="hidden" name="nombre" value="${nombre}">`);
+	 $("#verDocumentosR").append(`<input type="hidden" name="tipodoc" value="${tipod}">`);
+	 $("#verDocumentosR").append(`<input type="hidden" name="correo" value="${correo}">`);
+	 $("#verDocumentosR").append(`<input type="hidden" name="estado" value="${estado}">`);
 	 });
  	</script>
 	</form>

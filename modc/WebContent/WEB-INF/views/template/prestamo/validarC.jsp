@@ -218,9 +218,12 @@ const $OTPCliente = $("#codigo");
                 if (codEnviar === "0000") {
                     mostrarMensaje("exito", msjEnviar);
                     $("#validarCodigo").prop("disabled", false);
+                    $("#codigo").prop("disabled", false);
+                  
                 } else {
                     mostrarMensaje("error", msjEnviar);
                     $("#validarCodigo").prop("disabled", true);
+                    $("#codigo").prop("disabled", true);
                 }
             },
             error: function (jqXHR, textStatus, errorThrown) {
@@ -233,6 +236,13 @@ const $OTPCliente = $("#codigo");
     $("#validarCodigo").click(function () {
         const codigo = $("#codigo").val();
         const numdoc = $("#numero").val();
+	
+	const mensajes = validarDigitosOTP();
+	
+	 if (mensajes) {
+            mostrarMensaje("error", mensajes);
+            return;
+        }
 
         const datosCodigo = {
             codigoCli: codigo,
@@ -265,6 +275,7 @@ const $OTPCliente = $("#codigo");
 			        $("#codigo").val("");
 			        $("#enviarCorreo").prop("disabled", true);
 			        $("#validarCodigo").prop("disabled", true);
+			        $("#codigo").prop("disabled", true);
                     
                 } else {
                     mostrarMensaje("error", msjData);
@@ -314,6 +325,25 @@ function validarConsultaDatos() {
         }
     }
 
+    return mensajes;
+}
+
+function validarDigitosOTP() {
+    var codotp = document.getElementById("codigo").value;
+		mensajes ="";
+    
+
+        if (codotp == "") {
+        mensajes = "Ingrese Codigo OTP."; 
+          
+            return mensajes;
+        }
+   	
+        else if (codotp.length !== 6) {
+        mensajes = "El codigo OTP debe tener 6 dígitos."; 
+          
+            return mensajes;
+        }
     return mensajes;
 }
 
@@ -423,7 +453,7 @@ function checkIt(evt) {
 															<td width="20%" align="center">Ingresar
 																c&oacute;digo OTP:</td>
 															<td><input type="text" id="codigo" name="codigo"
-																value="" onKeyPress="return checkIt(event)"
+																value="" onKeyPress="return checkIt(event)" disabled="disabled"
 																style="width: 200px;" maxlength="6" /></td>
 
 															<td width="15%" align="center">&nbsp;&nbsp;</td>

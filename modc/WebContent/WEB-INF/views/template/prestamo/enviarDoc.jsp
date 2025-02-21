@@ -62,8 +62,20 @@
 }
 </style>
 
+
 <script type="text/javascript">
+ function habilitarEnvio() {
+        // Habilita el botón "ENVIAR DOCUMENTO"
+      setTimeout(habilitarEnvio2, 2000);
+    }
     
+
+function habilitarEnvio2() {
+    document.getElementById("enviardocumento").disabled = false;
+}
+
+</script>
+<script type="text/javascript"> 
     function mostrarMensaje(tipo, texto) {
         const $mensaje = $("#mensaje");
         $mensaje.text(texto); // Actualizar el texto del mensaje
@@ -129,10 +141,10 @@ function exportarpdf(){
 }
 
 $(document).ready(function () {
- $("#enviardoc").click(function () {
+ $("#enviardocumento").click(function () {
 		const prestamo = "${cronograma.NPRESTAMO}";
 		const nom_apell = "${cronograma.ACLIENTE}";
-		const numDNI = "${cronograma.DOCUMENTO}";
+		const numDNI = "${dni}";
 		const correo = "${correo}";
 
 
@@ -163,7 +175,8 @@ console.log("datos del correo:", datosCorreo);
 
                 if (codEnviar === "0000") {
                     mostrarMensaje("exito", msjEnviar);
-                    
+                     $("#verdoc").prop("disabled", true);
+                    $("#enviardocumento").prop("disabled", true);
                     
                     
                     limpiar();
@@ -181,14 +194,6 @@ console.log("datos del correo:", datosCorreo);
     
     });
     
-</script>
-
-<script type="text/javascript">
-
- function habilitarEnvio() {
-        // Habilita el botón "ENVIAR DOCUMENTO"
-        document.getElementById("enviardoc").disabled = false;
-    }
 </script>
 
 
@@ -324,7 +329,7 @@ console.log("datos del correo:", datosCorreo);
 																disabled="disabled" />
 															</td>
 															<td width="5%" align="center">&nbsp;&nbsp;<input
-																id="enviardoc" type="button" class="buttonCls"
+																id="enviardocumento" type="button" class="buttonCls"
 																submit="true" style="width: 140px"
 																value="ENVIAR DOCUMENTO" disabled="disabled" /></td>
 															<td width="5%" align="center">&nbsp;&nbsp;</td>
@@ -340,7 +345,7 @@ console.log("datos del correo:", datosCorreo);
      															       mostrarMensaje('error', '${cronograma.MSJ}');
      															        limpiar(); 
      															      $("#verdoc").prop("disabled", true);
-															          $("#enviardoc").prop("disabled", true);
+															          $("#enviardocumento").prop("disabled", true);
      															       });
    																 </script>
 															</c:if>
@@ -352,7 +357,7 @@ console.log("datos del correo:", datosCorreo);
       															   
       															   var numpres = "${cronograma.NPRESTAMO}";
 														           var nombrecli = "${cronograma.ACLIENTE}";
-														           var numerodoc = "${cronograma.DOCUMENTO}";
+														           var numerodoc = "${dni}";
       															   var correocli = "${correo}";
       															   var mensajeVal = "${valcorreo}";
       															  
@@ -360,7 +365,7 @@ console.log("datos del correo:", datosCorreo);
       															  	       															   
       															    if (mensajeVal=="Los correos coinciden") {
 															           $("#verdoc").prop("disabled", false);
-															       //    $("#enviardoc").prop("disabled", false);
+															       //    $("#enviardocumento").prop("disabled", false);
 															            
 															           mostrarMensaje("exito", "Datos consultados con exito");
 															            
@@ -370,12 +375,12 @@ console.log("datos del correo:", datosCorreo);
      															   $("#correo").val(correocli); 
      															   $("#tipoDoc").val("DNI"); 															            
 															        }else{
-															        
+															        var mensaje_error = "${msj}";
 															          $("#verdoc").prop("disabled", true);
-															          $("#enviardoc").prop("disabled", true);
-															           
+															          $("#enviardocumento").prop("disabled", true);
+															           console.log("Enviando a URL:", mensajeVal);
 															       limpiar(); 
-															           mostrarMensaje("error", mensajeVal);
+															           mostrarMensaje("error", mensaje_error);
 															        }
      																});
    																 </script>

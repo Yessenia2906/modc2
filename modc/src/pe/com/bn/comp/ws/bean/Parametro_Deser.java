@@ -59,14 +59,14 @@ public class Parametro_Deser extends com.ibm.ws.webservices.engine.encoding.ser.
            com.ibm.ws.webservices.engine.utils.QNameTable.createQName(
                   "",
                   "tipoParam");
-    private final static javax.xml.namespace.QName QName_0_20 = 
-           com.ibm.ws.webservices.engine.utils.QNameTable.createQName(
-                  "",
-                  "campoParam");
     private final static javax.xml.namespace.QName QName_0_23 = 
            com.ibm.ws.webservices.engine.utils.QNameTable.createQName(
                   "",
                   "valorParam");
+    private final static javax.xml.namespace.QName QName_0_20 = 
+           com.ibm.ws.webservices.engine.utils.QNameTable.createQName(
+                  "",
+                  "campoParam");
     private final static javax.xml.namespace.QName QName_0_19 = 
            com.ibm.ws.webservices.engine.utils.QNameTable.createQName(
                   "",

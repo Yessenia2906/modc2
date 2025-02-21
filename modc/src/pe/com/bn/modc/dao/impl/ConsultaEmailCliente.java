@@ -178,7 +178,7 @@ public class ConsultaEmailCliente implements ServiceEnvioEmail{
 
 	@Override
 	public Map<String, String> getNombreCliente(String tipo, String num, ParametrosComp parametrosComp) {
-		// TODO Apéndice de método generado automáticamente
+		// TODO Apéndice de método getNombreCliente
 		
 		Map<String, String> informacionCliente = new HashMap<String, String>();
 
@@ -214,14 +214,14 @@ public class ConsultaEmailCliente implements ServiceEnvioEmail{
 	private JSONObject buscarCorreoCliente(String tipo, String num, ParametrosComp parametrosComp) throws JSONException {
 	    HttpURLConnection connection = null;
 	    StringBuilder response = null;
-
-	    String host = parametrosComp.getServiceHost();
-	    int port = Integer.parseInt(parametrosComp.getServicePort());
-	    String userApplication = parametrosComp.getServiceUserApplication();
+// TODO IP 10.7.12.75
+//	    String host = parametrosComp.getServiceHost();
+//	    int port = Integer.parseInt(parametrosComp.getServicePort());
+//	    String userApplication = parametrosComp.getServiceUserApplication();
 	 
-	    /* String host = "10.7.12.75";
+	     String host = "10.7.12.75";
         int port = 80 ;
-        String userApplication = "modc" ;*/
+        String userApplication = "modc" ;
 	    try {
 	        log.debug("Iniciando conexión con servicio externo para buscar nombre del cliente y correo", Constant.LOGGER_DEBUG_NIVEL_1);
 	        URL url = new URL("http://" + host + ":" + port + "/msdataclients/client/v1/search/TYPENUMDOC?typeDoc="+tipo+"&numDoc=" + num);
@@ -289,13 +289,14 @@ public class ConsultaEmailCliente implements ServiceEnvioEmail{
 	
 	@Override
 	public Map<String, String> getDatoCliente(String num, ParametrosComp parametrosComp) {
-		// TODO Apéndice de método generado automáticamente
+		// TODO Get dato cliente nombre y correo y cliente
 		
 		Map<String, String> informacionCliente = new HashMap<String, String>();
 
 		try{
 			String correo = "";
 			String nombreCompleto = "";
+			String celular ="";
 			JSONObject response = buscarCorreoDato(num, parametrosComp);
 			String clave = response.getString("codResult");
 			if (clave.equals("00000")) {
@@ -305,11 +306,14 @@ public class ConsultaEmailCliente implements ServiceEnvioEmail{
 				
 				correo = clientNaturalPerson.getString("personalEmail");
 				nombreCompleto = clientGeneralPerson.getString("fullName");
+				celular = clientNaturalPerson.getString("numberMobile");
 
 			}
 
 			informacionCliente.put("email", correo);
 			informacionCliente.put("nombreCompleto", nombreCompleto);
+			informacionCliente.put("celular", celular);
+			System.out.print("informacion: " + informacionCliente);
 			
 		}catch(JSONException  e){
 		
@@ -322,14 +326,14 @@ public class ConsultaEmailCliente implements ServiceEnvioEmail{
 	private JSONObject buscarCorreoDato(String num, ParametrosComp parametrosComp) throws JSONException {
 	    HttpURLConnection connection = null;
 	    StringBuilder response = null;
-
-	    String host = parametrosComp.getServiceHost();
+	 // TODO IP 10.7.12.75
+	   /* String host = parametrosComp.getServiceHost();
 	    int port = Integer.parseInt(parametrosComp.getServicePort());
-	    String userApplication = parametrosComp.getServiceUserApplication();
+	    String userApplication = parametrosComp.getServiceUserApplication();*/
 	 
-	    /* String host = "10.7.12.75";
+	     String host = "10.7.12.75";
         int port = 80 ;
-        String userApplication = "modc" ;*/
+        String userApplication = "modc" ;
 	    try {
 	        log.debug("Iniciando conexión con servicio externo para buscar nombre del cliente y correo", Constant.LOGGER_DEBUG_NIVEL_1);
 	        URL url = new URL("http://" + host + ":" + port + "/msdataclients/client/v1/search/TYPENUMDOC?typeDoc=1&numDoc=" + num);

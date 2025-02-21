@@ -1,6 +1,6 @@
 package pe.com.bn.modc.domain.mapper;
 
-
+import java.sql.Date;
 
 public class BnEnviarDoc {
 	
@@ -15,6 +15,15 @@ public class BnEnviarDoc {
 	private String AGENCIA;
 	private String ESTADO;
 	private byte[] PDF;
+	private Date fechaope;
+	
+	
+	public Date getFechaope() {
+		return fechaope;
+	}
+	public void setFechaope(Date fechaope) {
+		this.fechaope = fechaope;
+	}
 	public String getNUMPRESTAMO() {
 		return NUMPRESTAMO;
 	}

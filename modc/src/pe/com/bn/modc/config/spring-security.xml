@@ -99,8 +99,8 @@
 			<security:intercept-url pattern="/verDocumentosR/**" access="isAuthenticated()" />
 			<security:intercept-url pattern="/getEnviarREEnvio/**" access="isAuthenticated()" />
 			
-			<security:intercept-url pattern="/consultaPM/**" access="isAuthenticated()" />
-
+			<security:intercept-url pattern="/logPM/**" access="isAuthenticated()" />
+			<security:intercept-url pattern="/filterlogPM/**" access="isAuthenticated()" />
 
 <!-- 		<security:intercept-url pattern="/consultaLogCuentas/**" access="hasAnyRole('02')" /> -->
 <!-- 		<security:intercept-url pattern="/resultadoConsultaLogCuentas/**" access="hasAnyRole('02')" /> -->

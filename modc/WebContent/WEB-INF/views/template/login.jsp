@@ -137,7 +137,7 @@ function iniciarSesion(){
 						</tr>
 						<tr>
 					
-						 <td align="rignth">v10</td>
+						 <td align="rignth">v11</td>
 						
 						</tr>
 					</table>

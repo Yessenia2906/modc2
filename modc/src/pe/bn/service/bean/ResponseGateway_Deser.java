@@ -48,20 +48,20 @@ public class ResponseGateway_Deser extends com.ibm.ws.webservices.engine.encodin
     protected boolean tryElementSetFromList(javax.xml.namespace.QName qName, java.util.List listValue) {
         return false;
     }
-    private final static javax.xml.namespace.QName QName_0_5 = 
-           com.ibm.ws.webservices.engine.utils.QNameTable.createQName(
-                  "",
-                  "mensaje");
-    private final static javax.xml.namespace.QName QName_0_6 = 
-           com.ibm.ws.webservices.engine.utils.QNameTable.createQName(
-                  "",
-                  "msgno");
-    private final static javax.xml.namespace.QName QName_0_1 = 
-           com.ibm.ws.webservices.engine.utils.QNameTable.createQName(
-                  "",
-                  "filler");
     private final static javax.xml.namespace.QName QName_0_0 = 
            com.ibm.ws.webservices.engine.utils.QNameTable.createQName(
                   "",
                   "datos");
+    private final static javax.xml.namespace.QName QName_0_6 = 
+           com.ibm.ws.webservices.engine.utils.QNameTable.createQName(
+                  "",
+                  "msgno");
+    private final static javax.xml.namespace.QName QName_0_5 = 
+           com.ibm.ws.webservices.engine.utils.QNameTable.createQName(
+                  "",
+                  "mensaje");
+    private final static javax.xml.namespace.QName QName_0_1 = 
+           com.ibm.ws.webservices.engine.utils.QNameTable.createQName(
+                  "",
+                  "filler");
 }

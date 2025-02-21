@@ -373,9 +373,9 @@
 
 			<ul class="sub">
 				
-				<sec:authorize url="/consultaPM/**">
+				<sec:authorize url="/logPM/**">
 					<li>
-						<a id="conNombre"   href='<c:out value="${url}"/>consultaPM/' >
+						<a id="conNombre"   href='<c:out value="${url}"/>logPM/' >
 							<span>ConsultaPM</span>
 						</a>
 					</li>

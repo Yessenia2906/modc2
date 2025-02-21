@@ -57,6 +57,11 @@ public class Constant {
 	/** ERRORES   **/
 	public static String ERR_APP ="ERROR EN LA APLICACION";
 	
+	/**Auditoria PM **/
+	public static String CONSULTAR_PRESTAMO = "CONSULTAR DATOS DEL CLIENTE";
+	public static String DESCARGAR_PDF = "VER DOCUMENTO";
+	public static String REENVIAR_PDF_PRESTAMO = "REENVIAR DOCUMENTO POR CORREO";
+	
 	
 	
 	

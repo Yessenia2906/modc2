@@ -35,6 +35,7 @@ import pe.com.bn.modc.dao.inte.EstadosCuentaDAO;
 import pe.com.bn.modc.dao.inte.IntLogAuditoria;
 import pe.com.bn.modc.dao.pool.CargarDocumento;
 import pe.com.bn.modc.dao.pool.ConexionJndi;
+import pe.com.bn.modc.domain.mapper.BnAuditoriaPM;
 import pe.com.bn.modc.domain.mapper.BnCancelacion;
 import pe.com.bn.modc.domain.mapper.BnConsultaParametros;
 import pe.com.bn.modc.domain.mapper.BnContextParametro;
@@ -122,12 +123,14 @@ import java.sql.Statement;
 import java.text.DateFormat;
 import java.text.DecimalFormat;
 import java.text.SimpleDateFormat;
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Collection;
-import java.util.Date;
+import java.sql.Date;
+//import java.util.Date;
 import java.util.GregorianCalendar;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -9245,8 +9248,8 @@ public class AdministracionController {
 		try {
 			// Parsear la fecha ISO al objeto Date
 			SimpleDateFormat formatoEntrada = new SimpleDateFormat("yyyy-MM-dd");
-			Date fechaDate = formatoEntrada.parse(fecha);
-
+			java.util.Date fechaDate = formatoEntrada.parse(fecha);
+			//Date fechaDate = formatoEntrada.parse(fecha);
 			// Formatear la fecha al formato deseado (DDMMAAAA)
 			SimpleDateFormat formatoSalida = new SimpleDateFormat("ddMMyyyy");
 			return formatoSalida.format(fechaDate);
@@ -13000,7 +13003,57 @@ public class AdministracionController {
 		cell.setColspan(6);
 		table.addCell(cell);
 
-		cell = new PdfPCell(new Phrase("4.   CARÁCTER DE DECLARACIÓN JURADA",
+		//-------------------
+		cell = new PdfPCell(new Phrase("4.   AUTORIZACIÓN PARA ENVÍO DE INFORMACIÓN VÍA CORREO ELECTRÓNICO",
+				FontFactory.getFont(FontFactory.HELVETICA, 10, Font.BOLD, BaseColor.WHITE)));
+		// cell.setBorder(Rectangle.NO_BORDER);
+		cell.setHorizontalAlignment(Element.ALIGN_JUSTIFIED);
+		cell.setBackgroundColor(BaseColor.GRAY);
+		cell.setColspan(6);
+		table.addCell(cell);
+
+		cell = new PdfPCell(new Phrase(
+				"Usted autoriza que el Banco le remita los formularios contractuales que ha suscrito por el otorgamiento del Préstamo Multired, a través del correo electrónico que tiene registrado en el Banco. La información que se le está siendo remitida consiste en: solicitud de préstamo, Hoja Resumen, Cronograma de Pagos, Pagare, Póliza de Seguros Desgravamen y/o Cuota Protegida. Así mismo señala que se ha informado sobre las condiciones contractuales pactadas en las Cláusulas Generales y Especificas del Préstamo Multired, las mismas que tendrá a disposición a través de la página web www.bn.com.pe",
+				FontFactory.getFont(FontFactory.HELVETICA, 10)));
+		cell.setBorder(Rectangle.NO_BORDER);
+		cell.setHorizontalAlignment(Element.ALIGN_JUSTIFIED);
+		cell.setColspan(6);
+		table.addCell(cell);
+
+		cell = new PdfPCell(new Phrase(" "));
+		cell.setBorder(Rectangle.NO_BORDER);
+		cell.setHorizontalAlignment(Element.ALIGN_JUSTIFIED);
+		cell.setColspan(6);
+		table.addCell(cell);
+
+		cell = new PdfPCell(new Phrase(" "));
+		cell.setBorder(Rectangle.NO_BORDER);
+		cell.setHorizontalAlignment(Element.ALIGN_JUSTIFIED);
+		cell.setColspan(6);
+		table.addCell(cell);
+		
+		cell = new PdfPCell(new Phrase("Autoriza envió por correo electrónico    _____", FontFactory.getFont(FontFactory.HELVETICA, 10, Font.BOLD)));
+		cell.setBorder(Rectangle.NO_BORDER);
+		cell.setHorizontalAlignment(Element.ALIGN_CENTER);
+		cell.setColspan(3);
+		table.addCell(cell);
+
+		cell = new PdfPCell(
+				new Phrase("No autoriza envió por correo electrónico    _____", FontFactory.getFont(FontFactory.HELVETICA, 10, Font.BOLD)));
+		cell.setBorder(Rectangle.NO_BORDER);
+		cell.setHorizontalAlignment(Element.ALIGN_CENTER);
+		cell.setColspan(3);
+		table.addCell(cell);
+		
+		cell = new PdfPCell(new Phrase(" "));
+		cell.setBorder(Rectangle.NO_BORDER);
+		cell.setHorizontalAlignment(Element.ALIGN_JUSTIFIED);
+		cell.setColspan(6);
+		table.addCell(cell);
+		
+				//--------------
+		
+		cell = new PdfPCell(new Phrase("5.   CARÁCTER DE DECLARACIÓN JURADA",
 				FontFactory.getFont(FontFactory.HELVETICA, 10, Font.BOLD, BaseColor.WHITE)));
 		// cell.setBorder(Rectangle.NO_BORDER);
 		cell.setHorizontalAlignment(Element.ALIGN_JUSTIFIED);
@@ -13016,7 +13069,7 @@ public class AdministracionController {
 		cell.setColspan(6);
 		table.addCell(cell);
 
-		cell = new PdfPCell(new Phrase("5.   USO INTERNO DEL BANCO",
+		cell = new PdfPCell(new Phrase("6.   USO INTERNO DEL BANCO",
 				FontFactory.getFont(FontFactory.HELVETICA, 10, Font.BOLD, BaseColor.WHITE)));
 		// cell.setBorder(Rectangle.NO_BORDER);
 		cell.setHorizontalAlignment(Element.ALIGN_JUSTIFIED);
@@ -13130,7 +13183,7 @@ public class AdministracionController {
 		cell.setColspan(1);
 		table.addCell(cell);
 
-		cell = new PdfPCell(new Phrase(" "));
+		/*cell = new PdfPCell(new Phrase(" "));
 		cell.setBorder(Rectangle.NO_BORDER);
 		cell.setHorizontalAlignment(Element.ALIGN_JUSTIFIED);
 		cell.setColspan(6);
@@ -13146,7 +13199,7 @@ public class AdministracionController {
 		cell.setBorder(Rectangle.NO_BORDER);
 		cell.setHorizontalAlignment(Element.ALIGN_JUSTIFIED);
 		cell.setColspan(6);
-		table.addCell(cell);
+		table.addCell(cell);*/
 
 		cell = new PdfPCell(new Phrase(" "));
 		cell.setBorder(Rectangle.NO_BORDER);
@@ -13362,7 +13415,7 @@ public class AdministracionController {
 		cell.setColspan(3);
 		table.addCell(cell);
 
-		cell = new PdfPCell(new Phrase(" "));
+		/*cell = new PdfPCell(new Phrase(" "));
 		cell.setBorder(Rectangle.NO_BORDER);
 		cell.setHorizontalAlignment(Element.ALIGN_JUSTIFIED);
 		cell.setColspan(6);
@@ -13391,7 +13444,7 @@ public class AdministracionController {
 		cell.setHorizontalAlignment(Element.ALIGN_JUSTIFIED);
 		cell.setColspan(6);
 		table.addCell(cell);
-
+*/
 		cell = new PdfPCell(new Phrase(" "));
 		cell.setBorder(Rectangle.NO_BORDER);
 		cell.setHorizontalAlignment(Element.ALIGN_JUSTIFIED);
@@ -42077,6 +42130,7 @@ public class AdministracionController {
 		String email = datosCliente.get("email");
 		String nombreCompleto = datosCliente.get("nombreCompleto");
 
+		//COMO GUARDO EL NUMERO DE PRESTAMO EN LA CONSULTA DE CORREO
 		HttpSession session = request.getSession();
 		session.setAttribute("tipodoc", tipo);
 		session.setAttribute("numdoc", num);
@@ -42106,7 +42160,7 @@ public class AdministracionController {
 		String numDoc = requestBody.get("numDocCli");
 		String nombreCliente = requestBody.get("nombreCli");
 
-		// TODO: Correo yapumelanie9
+		// TODO: Correo yapumelanie9 validar correo
 		//String correoCliente = "yapumelanie9@gmail.com";
 		String correoCliente = requestBody.get("correoCli");
 
@@ -42181,7 +42235,7 @@ public class AdministracionController {
 				if (tiempoActual - horaGeneracion <= 2 * 60 * 1000) { // 2 minutos
 					if (codigoGuardado.equals(codigoIngresado)) {
 						respuesta.put("cod", "0000");
-						respuesta.put("msj", "Código OTP válido");
+						//respuesta.put("msj", "Código OTP válido");
 
 						LocalDateTime fechaHoraActual = LocalDateTime.now();
 
@@ -42210,7 +42264,8 @@ public class AdministracionController {
 							String resultado = datosCorreo.cargaCorreoValidar(valCorreo);
 
 							if ("ENVIADO".equals(resultado)) {
-								respuesta.put("msj", "Datos guardados y codigo OTP validado");
+								respuesta.put("msj", "Se validaron los datos correctamente");						
+								
 							} else {
 								respuesta.put("msj",
 										"Codigo OTP validado, pero no se pudo guardar en la base de datos");
@@ -42459,31 +42514,46 @@ public class AdministracionController {
 		//
 
 		// System.out.println("prueba de datos" + poliza.getNdoc());
-
+		
 		cronograma.setACLIENTE(poliza.getAcliente());
 		cronograma.setDOCUMENTO(poliza.getNdoc());
-
+		RepoLogAuditoria auditoria = new RepoLogAuditoria();
+		
+		
+		
+		
+		LocalDate fechaHoy = LocalDate.now();
+        String fechaStr = fechaHoy.format(DateTimeFormatter.ofPattern("yyyy-MM-dd"));
+		String dni  = cronograma.getDOCUMENTO().substring(2);
+		String DOI = "DNI "+dni;
+		
+		Map<String, String> correoCel = new HashMap<String, String>();
+		correoCel = emailDocYcel(cronograma.getDOCUMENTO());
+		String correoCli = correoCel.get("email");
+		String celular = correoCel.get("celular");
+        CustomUser usuario = (CustomUser) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+	
+		String numdoc = cronograma.getDOCUMENTO().substring(2);
+		
+        
 		if ((cronograma.getCERROR()).equals("0000") && (solicitud.getCERROR()).equals("0000")
 				&& (poliza.getCerror()).equals("0000") && (hojaResumen.getCERROR()).equals("0000")) {
-
+			
+			
 			request.setAttribute("msje", "Haga Clic en Abrir para Confirmar la Exportación");
 
-			System.out.println("Prestamos cronograma: " + cronograma);
-
 			request.setAttribute("cronograma", cronograma);
-
-			String correoCli = emailDoc(cronograma.getDOCUMENTO());
+			
 
 			request.setAttribute("correo", correoCli);
-			System.out.println("correoCli: " + correoCli);
-
+		
+			request.setAttribute("dni", numdoc);
 			String msjVal = validaremail(cronograma.getDOCUMENTO());
 
 			request.setAttribute("valcorreo", msjVal);
 			System.out.println("mensaje del correo: " + msjVal);
-			
-			session.setAttribute("numerodoc", cronograma.getDOCUMENTO());
-		} else {
+					
+			} else {
 
 			if ((cronograma.getMSJ().trim()).equals("")) {
 
@@ -42565,15 +42635,16 @@ public class AdministracionController {
 		}
 	}
 
-	private String emailDoc(String num) {
-
+	private Map<String, String> emailDocYcel(String num) {
+		
 		String numSinCeros = num.substring(2);
+		
 
 		Map<String, String> datosCliente = serviceEnvioEmail.getDatoCliente(numSinCeros, parametrosComp);
-		String email = datosCliente.get("email");
-		String nombreee = datosCliente.get("nombreCompleto");
-
-		return email;
+		
+		System.out.println("emailDocYcel"+ datosCliente);
+		
+		return datosCliente;
 	}
 
 	// TODO GENERAR DOCUMENTO (VER DOCUMENTO)	
@@ -45357,32 +45428,30 @@ public class AdministracionController {
 			String numerodoc = requestBody.get("numDocP");
 			//String correoCliente = requestBody.get("correoP");
 				
-			// TODO: Correo yapumelanie9
+			// TODO: Correo yapumelanie9 enviar pdf
 			String correoCliente = "yapumelanie9@gmail.com";
-			// String correoCliente = requestBody.get("correoCli");
 			
-			System.out.print("dato del cli: " + prestamo +nombreCliente + numerodoc + correoCliente);
-
 			HttpSession session = request.getSession(false);		
 			String pdfBase64 = (String) session.getAttribute("docPDF");	
 			byte[] docBytes = (byte[]) session.getAttribute("bytePDF");
 			String fecha = (String) session.getAttribute("fechaDS");
 			
 			boolean estado = servicioEnvioCorreo.enviarCorreoPdf(correoCliente, nombreCliente, pdfBase64, fecha, prestamo);
-
 			
 			LocalDateTime fechaHoraActual = LocalDateTime.now();
 
 			DateTimeFormatter formatoFecha = DateTimeFormatter.ofPattern("yyyy-MM-dd");
 			String fechaenvio = fechaHoraActual.format(formatoFecha);
-
+			LocalDate fechaOpe = LocalDate.parse(fechaenvio, DateTimeFormatter.ofPattern("yyyy-MM-dd"));
+			Date sqlDate = Date.valueOf(fechaOpe);
 			DateTimeFormatter formatoHora = DateTimeFormatter.ofPattern("HH:mm:ss");
 			String hora = fechaHoraActual.format(formatoHora);
-
+			
 			enviardoc.setNUMPRESTAMO(prestamo);
 			enviardoc.setTIPDOC("1");
 			enviardoc.setNUMDOC(numerodoc);
 			enviardoc.setCORREO(correoCliente);
+			enviardoc.setNOMBRES(nombreCliente);
 			enviardoc.setFECHA(fechaenvio);
 			enviardoc.setHORA(hora);
 			enviardoc.setUSUARIO(usuario.getUsername());
@@ -45390,22 +45459,23 @@ public class AdministracionController {
 			enviardoc.setESTADO("ENVIADO");
 			enviardoc.setPDF(docBytes);
 			
-			//System.out.print("dato del cliente enviarcorreo: " + enviardoc);
+			
 			if (estado) {
-				System.out.print("USUARIO del cliente enviarcorreo: " + usuario.getCodAgencia());
 				
-				respuesta.put("cod", "0000");
-				respuesta.put("msj", "Se envio correctamente el correo");
+				System.out.print("Correo enviado pdf: " + enviardoc);	
 				
-				/*try {
-					String resultado = pdf.cargaDocumentopdf(enviardoc);
+				try {
+					
+					String resultado = pdf.cargaDocumentopdf(enviardoc, sqlDate);
 
 					if ("ENVIADO".equals(resultado)) {
 						
+						System.out.print("Correo enviado y guardado en bd " + enviardoc);
 						respuesta.put("cod", "0000");
-						respuesta.put("msj", "Se envio correctamente el correo");
+						respuesta.put("msj", "Se enviaron los documentos de manera satisfactoria");
 						
 						session.removeAttribute("docPDF");
+						session.removeAttribute("bytePDF");
 						session.removeAttribute("fechaDS");
 						
 					} else {
@@ -45417,7 +45487,7 @@ public class AdministracionController {
 
 					respuesta.put("cod", "9998");
 					respuesta.put("msj", "Error interno al guardar datos");
-				}*/
+				}
 							
 			} else {
 				respuesta.put("cod", "9999");
@@ -45463,28 +45533,70 @@ public class AdministracionController {
 
 				String num = requestBody.get("numerop");
 				RepoLogAuditoria datos = new RepoLogAuditoria();
+				
+				HttpSession session = request.getSession(false);	
 				Map<String, String> respuesta = new HashMap<>();
-				BnEnviarDoc datosR = datos.buscardatos(num);
-				HttpSession session = request.getSession(false);		
-			
-				if(datosR !=null) {
-					
+				
+				CustomUser usuario = (CustomUser) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+							
+				LocalDateTime fechaHoraActual = LocalDateTime.now();
+				DateTimeFormatter formatoFecha = DateTimeFormatter.ofPattern("yyyy-MM-dd");
+				String fecha_auditoria = fechaHoraActual.format(formatoFecha);
+				
+				BnEnviarDoc datosR = datos.buscardatosReenvio(num);
+				String fecha_envio = datos.buscarfechaEnvio(num);
+				String estado_envio = datos.buscarestado(num);
+				String accion = Constant.CONSULTAR_PRESTAMO; 
+				
+				BnAuditoriaPM au = new BnAuditoriaPM();
+				au.setPrestamo(num);
+				au.setFecha(fecha_auditoria);
+				au.setCusuario(usuario.getUsername());
+				au.setCoficina(usuario.getCodAgencia());
+				au.setCliente(datosR.getNOMBRES());
+				au.setTipodoc(datosR.getTIPDOC());
+				au.setNumerodoc(datosR.getNUMDOC());
+				au.setCelular("");
+				au.setCorreo(datosR.getCORREO());
+				au.setSit_envio(estado_envio);
+				au.setAccion(accion);		
+						
+					if(datosR == null || datosR.getNUMPRESTAMO() == null || datosR.getNUMPRESTAMO().isEmpty() ||
+					        datosR.getNOMBRES() == null || datosR.getNOMBRES().isEmpty() ||
+					        datosR.getTIPDOC() == null || datosR.getTIPDOC().isEmpty() ||
+					        datosR.getNUMDOC() == null || datosR.getNUMDOC().isEmpty() ||
+					        datosR.getCORREO() == null || datosR.getCORREO().isEmpty() ||
+					        datosR.getESTADO() == null || datosR.getESTADO().isEmpty())  
+							{
+						
+						respuesta.put("cod", "8888");
+					    respuesta.put("msj", "No se envio el correo por primera vez");					
+					}else {
+					respuesta.put("estado", estado_envio);
 					respuesta.put("prestamo", datosR.getNUMPRESTAMO());
 					respuesta.put("nombres", datosR.getNOMBRES());
-					respuesta.put("tipodoc", datosR.getESTADO());
+					respuesta.put("tipodoc", datosR.getTIPDOC());
 					respuesta.put("numdoc", datosR.getNUMDOC());
 					respuesta.put("correo", datosR.getCORREO());
-					respuesta.put("estado", datosR.getESTADO());
+					
+					String consulta = datos.cargarAuditoriaPM(au);
+					System.out.println("Cargar datos en auditoria CONSULTAR " +consulta) ;
+					
 					respuesta.put("cod", "0000");
 					respuesta.put("msj", "Datos consultados con exito");
 					
 					session.setAttribute("ReenviarPDF", datosR.getPDF());
 					session.setAttribute("prest", datosR.getNUMPRESTAMO());
 					session.setAttribute("dniRE", datosR.getNUMDOC());
+					session.setAttribute("tipodocRE", datosR.getTIPDOC());
 					session.setAttribute("nombresRE", datosR.getNOMBRES());
-					session.setAttribute("fechaenvioRE", datosR.getFECHA());
-										
-									}
+					session.setAttribute("correoRE", datosR.getCORREO());
+					session.setAttribute("fecha_primer_envio", fecha_envio);
+					session.setAttribute("estado_envio",estado_envio );
+					
+				}
+				
+				
 				String json = "";
 				try {
 					// Convertir el mapa a JSON
@@ -45497,7 +45609,7 @@ public class AdministracionController {
 				return json;
 			}
 			
-			
+		
 			@RequestMapping(value = "verDocumentosR", method = RequestMethod.POST)
 			@ResponseBody
 			public String verdocReenviar(ModelMap model, HttpServletRequest request, HttpServletResponse response) throws Exception {
@@ -45506,7 +45618,34 @@ public class AdministracionController {
 
 			    HttpSession session = request.getSession(false);
 			    DatosSesion datosSesion = (DatosSesion) request.getSession().getAttribute("datosSesion");
-			    String doc = request.getParameter("dniR");
+			    RepoLogAuditoria datos = new RepoLogAuditoria();
+			    
+			    CustomUser usuario = (CustomUser) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+				LocalDateTime fechaHoraActual = LocalDateTime.now();
+				DateTimeFormatter formatoFecha = DateTimeFormatter.ofPattern("yyyy-MM-dd");
+				String fecha_auditoria = fechaHoraActual.format(formatoFecha);
+				
+				String accion = Constant.DESCARGAR_PDF; 
+			    String numdoc = (String)session.getAttribute("dniRE");
+			    String tipodoc = (String)session.getAttribute("tipodocRE");
+			    String nombre = (String)session.getAttribute("nombresRE");
+			    String correo = (String)session.getAttribute("correoRE");
+			    String estado_envio = (String)session.getAttribute("estado_envio");
+			    String prestamo = (String)session.getAttribute("prest");
+			    
+			    BnAuditoriaPM au = new BnAuditoriaPM();
+				au.setPrestamo(prestamo);
+				au.setFecha(fecha_auditoria);
+				au.setCusuario(usuario.getUsername());
+				au.setCoficina(usuario.getCodAgencia());
+				au.setCliente(nombre);
+				au.setTipodoc(tipodoc);
+				au.setNumerodoc(numdoc);
+				au.setCelular("");
+				au.setCorreo(correo);
+				au.setSit_envio(estado_envio);
+				au.setAccion(accion);		
+			   			    
 			    String nombredoc= "Prestamo_Multired_"+session.getAttribute("prest")+".pdf";
 			    
 			    // Obtener los bytes del PDF desde la sesión
@@ -45531,7 +45670,10 @@ public class AdministracionController {
 			        outputStream.write(ba); // Escribir directamente desde los bytes obtenidos
 			        outputStream.flush();
 			        outputStream.close();
-
+			        
+			        String consulta = datos.cargarAuditoriaPM(au);
+					System.out.println("Cargar datos en auditoria DESGARGAR " +consulta) ;
+			        
 			        System.out.println("PDF generado y enviado para descarga.");
 
 			        path = View.returnJsp(model, "prestamo/segEnvio");
@@ -45549,7 +45691,6 @@ public class AdministracionController {
 			}
 			
 			
-			
 			@RequestMapping(value = "/getEnviarREEnvio/", method = RequestMethod.POST)
 			@ResponseBody
 			public Object REEnviarCorreoDoc(@RequestBody Map<String, String> requestBody, HttpServletRequest request,
@@ -45559,68 +45700,96 @@ public class AdministracionController {
 				compService.asignarParametros();
 				CustomUser usuario = (CustomUser) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
 				log.debug("Usuario autenticado: " + usuario.getUsername(), Constant.LOGGER_DEBUG_NIVEL_1);
+			    RepoLogAuditoria datos = new RepoLogAuditoria();
+
 				HttpSession session = request.getSession(false);
 				RepoLogAuditoria pdf = new RepoLogAuditoria();
 				BnEnviarDoc enviardoc = new BnEnviarDoc();
+
+				String accion = Constant.REENVIAR_PDF_PRESTAMO; 
+				
 				String pdfBase64 ="";
+				String prestamo = (String) session.getAttribute("prest");
+				String numdoc = (String) session.getAttribute("dniRE");
+				String nombre = (String) session.getAttribute("nombresRE");
+				String fechaDe = (String) session.getAttribute("fecha_primer_envio");
+				String tipodoc = (String) session.getAttribute("tipodocRE");
 				String correoCliente = requestBody.get("correop");
+				
 					
-				// TODO: Correo yapumelanie9
-				//String correoCliente = "yapumelanie9@gmail.com";
-			
-				 			 
+		 			 
 				 byte[] ba = (byte[]) session.getAttribute("ReenviarPDF");
 				 if (ba != null) {
 					 	 pdfBase64 = Base64Utils.encodeToString(ba);
 					    System.out.println(pdfBase64); 
 					} else {
-					    System.out.println("No hay datos en la sesión.");
+					    System.out.println("No hay datos del pdf en la sesión.");
 					}
 				 
-				 String prestamo = (String) session.getAttribute("prest");
-				 String dni = (String) session.getAttribute("dniRE");
-				 String nombre = (String) session.getAttribute("nombresRE");
-				 String fecha = (String) session.getAttribute("fechaenvioRE");
 				 
-				boolean estado = servicioEnvioCorreo.enviarCorreoPdf(correoCliente, nombre, pdfBase64, fecha, prestamo);
-//listo hasta aqui
-				
-				/*LocalDateTime fechaHoraActual = LocalDateTime.now();
+				 System.out.println("FECHA DE DESEMBOLSO: "+ fechaDe);
+				 
+				boolean estado = servicioEnvioCorreo.enviarCorreoPdf(correoCliente, nombre, pdfBase64, fechaDe, prestamo);
+					
+				LocalDateTime fechaHoraActual = LocalDateTime.now();
 
 				DateTimeFormatter formatoFecha = DateTimeFormatter.ofPattern("yyyy-MM-dd");
 				String fechaenvio = fechaHoraActual.format(formatoFecha);
+				LocalDate fechaOpe = LocalDate.parse(fechaenvio, DateTimeFormatter.ofPattern("yyyy-MM-dd"));
+				Date sqlDate = Date.valueOf(fechaOpe);
 
 				DateTimeFormatter formatoHora = DateTimeFormatter.ofPattern("HH:mm:ss");
 				String hora = fechaHoraActual.format(formatoHora);
 
 				enviardoc.setNUMPRESTAMO(prestamo);
-				enviardoc.setTIPDOC("1");
-				enviardoc.setNUMDOC(numerodoc);
+				enviardoc.setTIPDOC(tipodoc);
+				enviardoc.setNUMDOC(numdoc);
+				enviardoc.setNOMBRES(nombre);
 				enviardoc.setCORREO(correoCliente);
 				enviardoc.setFECHA(fechaenvio);
 				enviardoc.setHORA(hora);
 				enviardoc.setUSUARIO(usuario.getUsername());
 				enviardoc.setAGENCIA(usuario.getCodAgencia());
-				enviardoc.setESTADO("ENVIADO");
-				enviardoc.setPDF(docBytes);*/
+				enviardoc.setESTADO("REENVIADO");
+				enviardoc.setPDF(ba);
 				
-				//System.out.print("dato del cliente enviarcorreo: " + enviardoc);
+				BnAuditoriaPM au = new BnAuditoriaPM();
+				au.setPrestamo(prestamo);
+				au.setFecha(fechaenvio);
+				au.setCusuario(usuario.getUsername());
+				au.setCoficina(usuario.getCodAgencia());
+				au.setCliente(nombre);
+				au.setTipodoc(tipodoc);
+				au.setNumerodoc(numdoc);
+				au.setCelular("");
+				au.setCorreo(correoCliente);
+				au.setSit_envio(enviardoc.getESTADO());
+				au.setAccion(accion);
+				
 				if (estado) {
-					System.out.print("USUARIO del cliente enviarcorreo: " + usuario.getCodAgencia());
+					System.out.print("CORREO REENVIADO..." );
 					
-					respuesta.put("cod", "0000");
-					respuesta.put("msj", "Se envio correctamente el correo");
-					
-					/*try {
-						String resultado = pdf.cargaDocumentopdf(enviardoc);
+					try {
+						
+						String resultado = pdf.cargaDocumentopdf(enviardoc, sqlDate);
 
 						if ("ENVIADO".equals(resultado)) {
 							
+							System.out.print("Correo Reenviado y guardado en bd" + enviardoc);
 							respuesta.put("cod", "0000");
-							respuesta.put("msj", "Se envio correctamente el correo");
+							respuesta.put("msj", "Se reenvió los documentos de manera satisfactoria");
+							
+							String consulta = datos.cargarAuditoriaPM(au);
+							System.out.println("Cargar datos en auditoria REENVIAR " +consulta) ;
 							
 							session.removeAttribute("docPDF");
 							session.removeAttribute("fechaDS");
+							session.removeAttribute("dniRE");
+							session.removeAttribute("nombresRE");
+							session.removeAttribute("fecha_primer_envio");
+							session.removeAttribute("tipodocRE");
+							session.removeAttribute("correoRE");
+							session.removeAttribute("estado_envio");
 							
 						} else {
 							respuesta.put("cod", "9998");
@@ -45631,7 +45800,7 @@ public class AdministracionController {
 
 						respuesta.put("cod", "9998");
 						respuesta.put("msj", "Error interno al guardar datos");
-					}*/
+					}
 								
 				} else {
 					respuesta.put("cod", "9999");
@@ -45649,7 +45818,55 @@ public class AdministracionController {
 					e.printStackTrace();
 				}
 				return json;
-
 			}	
+			
+		
+			@RequestMapping("logPM")
+			public String logAuditoria(ModelMap model, HttpServletRequest request,
+					HttpServletResponse response) {
+				List<BnAuditoriaPM> contenlog = new ArrayList<BnAuditoriaPM>();
+				request.setAttribute("contenlog", contenlog);
+				request.setAttribute("first", "first"); 
+				String path = View.returnJsp(model, "auditoriaPM/logPM");
+				return path;
+			}
+			
+			@RequestMapping("filterlogPM")
+			public String logAuditoriaPMFiltro(ModelMap model,
+					HttpServletRequest request, HttpServletResponse response)
+					throws SQLException {
+				List<BnAuditoriaPM> contenlog = new ArrayList<BnAuditoriaPM>();
+				RepoLogAuditoria audi = new RepoLogAuditoria();
+				String path = View.returnJsp(model, "auditoriaPM/logPM");
+				String opcion = request.getParameter("opt");
+
+				int opcionint = Integer.parseInt(opcion);
+				switch (opcionint) {
+				case 1:
+					String forDni = request.getParameter("forDni");
+					contenlog = audi.forDniPM(forDni);
+					break;
+				case 2:
+					String forFechaInicio = request.getParameter("forFechaInicio");
+					String forFechaFin = request.getParameter("forFechaFin");
+					//contenlog = audi.forFechas(forFechaInicio, forFechaFin);
+
+					break;
+				case 3:
+					String forDia = request.getParameter("forDia");
+					//contenlog = audi.forDia(forDia);
+
+					break;
+				case 4:
+					//contenlog = audi.showLog();
+					break;
+				default:
+					return path;
+				}
+
+				request.setAttribute("contenlog", contenlog);
+
+				return path;
+			}
 
 }
