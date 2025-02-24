@@ -68,10 +68,6 @@ public class ReturnProceso_Ser extends com.ibm.ws.webservices.engine.encoding.se
           }
         }
     }
-    private final static javax.xml.namespace.QName QName_0_13 = 
-           com.ibm.ws.webservices.engine.utils.QNameTable.createQName(
-                  "",
-                  "descripcion");
     private final static javax.xml.namespace.QName QName_1_4 = 
            com.ibm.ws.webservices.engine.utils.QNameTable.createQName(
                   "http://www.w3.org/2001/XMLSchema",
@@ -80,4 +76,8 @@ public class ReturnProceso_Ser extends com.ibm.ws.webservices.engine.encoding.se
            com.ibm.ws.webservices.engine.utils.QNameTable.createQName(
                   "",
                   "codigo");
+    private final static javax.xml.namespace.QName QName_0_13 = 
+           com.ibm.ws.webservices.engine.utils.QNameTable.createQName(
+                  "",
+                  "descripcion");
 }

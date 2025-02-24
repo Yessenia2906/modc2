@@ -70,18 +70,6 @@ public class SistemaParametro_Ser extends com.ibm.ws.webservices.engine.encoding
               true,null,context);
         }
     }
-    private final static javax.xml.namespace.QName QName_0_7 = 
-           com.ibm.ws.webservices.engine.utils.QNameTable.createQName(
-                  "",
-                  "aliasSistema");
-    private final static javax.xml.namespace.QName QName_2_11 = 
-           com.ibm.ws.webservices.engine.utils.QNameTable.createQName(
-                  "http://bean.ws.comp.bn.com.pe",
-                  "ReturnProceso");
-    private final static javax.xml.namespace.QName QName_1_4 = 
-           com.ibm.ws.webservices.engine.utils.QNameTable.createQName(
-                  "http://www.w3.org/2001/XMLSchema",
-                  "string");
     private final static javax.xml.namespace.QName QName_2_10 = 
            com.ibm.ws.webservices.engine.utils.QNameTable.createQName(
                   "http://bean.ws.comp.bn.com.pe",
@@ -90,8 +78,20 @@ public class SistemaParametro_Ser extends com.ibm.ws.webservices.engine.encoding
            com.ibm.ws.webservices.engine.utils.QNameTable.createQName(
                   "",
                   "grupoParametro");
+    private final static javax.xml.namespace.QName QName_1_4 = 
+           com.ibm.ws.webservices.engine.utils.QNameTable.createQName(
+                  "http://www.w3.org/2001/XMLSchema",
+                  "string");
+    private final static javax.xml.namespace.QName QName_2_11 = 
+           com.ibm.ws.webservices.engine.utils.QNameTable.createQName(
+                  "http://bean.ws.comp.bn.com.pe",
+                  "ReturnProceso");
     private final static javax.xml.namespace.QName QName_0_9 = 
            com.ibm.ws.webservices.engine.utils.QNameTable.createQName(
                   "",
                   "proceso");
+    private final static javax.xml.namespace.QName QName_0_7 = 
+           com.ibm.ws.webservices.engine.utils.QNameTable.createQName(
+                  "",
+                  "aliasSistema");
 }

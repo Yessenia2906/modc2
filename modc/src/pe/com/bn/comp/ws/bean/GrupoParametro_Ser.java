@@ -84,6 +84,18 @@ public class GrupoParametro_Ser extends com.ibm.ws.webservices.engine.encoding.s
               true,null,context);
         }
     }
+    private final static javax.xml.namespace.QName QName_1_4 = 
+           com.ibm.ws.webservices.engine.utils.QNameTable.createQName(
+                  "http://www.w3.org/2001/XMLSchema",
+                  "string");
+    private final static javax.xml.namespace.QName QName_0_16 = 
+           com.ibm.ws.webservices.engine.utils.QNameTable.createQName(
+                  "",
+                  "aliasGrupo");
+    private final static javax.xml.namespace.QName QName_0_17 = 
+           com.ibm.ws.webservices.engine.utils.QNameTable.createQName(
+                  "",
+                  "parametro");
     private final static javax.xml.namespace.QName QName_0_15 = 
            com.ibm.ws.webservices.engine.utils.QNameTable.createQName(
                   "",
@@ -92,18 +104,6 @@ public class GrupoParametro_Ser extends com.ibm.ws.webservices.engine.encoding.s
            com.ibm.ws.webservices.engine.utils.QNameTable.createQName(
                   "http://bean.ws.comp.bn.com.pe",
                   "ArrayOfParametro");
-    private final static javax.xml.namespace.QName QName_0_16 = 
-           com.ibm.ws.webservices.engine.utils.QNameTable.createQName(
-                  "",
-                  "aliasGrupo");
-    private final static javax.xml.namespace.QName QName_1_4 = 
-           com.ibm.ws.webservices.engine.utils.QNameTable.createQName(
-                  "http://www.w3.org/2001/XMLSchema",
-                  "string");
-    private final static javax.xml.namespace.QName QName_0_17 = 
-           com.ibm.ws.webservices.engine.utils.QNameTable.createQName(
-                  "",
-                  "parametro");
     private final static javax.xml.namespace.QName QName_0_14 = 
            com.ibm.ws.webservices.engine.utils.QNameTable.createQName(
                   "",

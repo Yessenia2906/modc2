@@ -29,6 +29,7 @@ import pe.com.bn.modc.dao.inte.IntLogAuditoria;
 import pe.com.bn.modc.dao.pool.ConexionJndi;
 import pe.com.bn.modc.domain.mapper.BnAuditoriaPM;
 import pe.com.bn.modc.domain.mapper.BnEnviarDoc;
+import pe.com.bn.modc.domain.mapper.BnLogAuditoriaPM;
 import pe.com.bn.modc.domain.mapper.BnValidarCorreoOTP;
 import pe.com.bn.modc.model.AudiLog;
 
@@ -699,10 +700,10 @@ public class RepoLogAuditoria implements IntLogAuditoria{
 		}
 		
 		
-		public List<BnAuditoriaPM> forDniPM(String forDni) throws SQLException {
+		public List<BnLogAuditoriaPM> forDniPM(String forDni) throws SQLException {
 
 			ResultSet rs = null;
-			List<BnAuditoriaPM> registros = null;	
+			List<BnLogAuditoriaPM> registros = null;	
 			Connection conn = null;																		
 		 	PreparedStatement pstmt = null;	
 		 	StringBuffer sql = new  StringBuffer();
@@ -726,19 +727,19 @@ public class RepoLogAuditoria implements IntLogAuditoria{
 		 		conn =    dss.connect();
 		 		conn.setAutoCommit(false);	
 		 		pstmt= conn.prepareStatement(sql.toString());
-		 		BnAuditoriaPM pm = new BnAuditoriaPM();
-		 		registros=new ArrayList<BnAuditoriaPM>(); 
+		 		BnLogAuditoriaPM pm = new BnLogAuditoriaPM();
+		 		registros=new ArrayList<BnLogAuditoriaPM>(); 
 				rs = pstmt.executeQuery();
 				
 				while(rs.next()){	
-					pm =new BnAuditoriaPM();				 
+					pm =new BnLogAuditoriaPM();				 
 					//pm.setFecha(formatoFecha(rs.getString(1)));
 					pm.setPrestamo(rs.getString("F10_PRESTAMO"));
 					pm.setFecha(rs.getString("F10_FECHA"));
 					pm.setCusuario(rs.getString("F10_CUSUARIO"));
 					pm.setCoficina(rs.getString("F10_COFICINA"));	 
 					pm.setCliente(rs.getString("F10_CLIENTE"));
-					String tipo = rs.getString("F10_TIPO");
+					String tipo = rs.getString("F10_TIPO").trim();
 					if (tipo == "1") {
 						pm.setDOI("DNI - " +rs.getString("F10_NUMEOR"));
 						

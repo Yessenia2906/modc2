@@ -88,10 +88,6 @@ public class RequestGateway_Ser extends com.ibm.ws.webservices.engine.encoding.s
           }
         }
     }
-    private final static javax.xml.namespace.QName QName_0_0 = 
-           com.ibm.ws.webservices.engine.utils.QNameTable.createQName(
-                  "",
-                  "datos");
     private final static javax.xml.namespace.QName QName_0_3 = 
            com.ibm.ws.webservices.engine.utils.QNameTable.createQName(
                   "",
@@ -100,12 +96,16 @@ public class RequestGateway_Ser extends com.ibm.ws.webservices.engine.encoding.s
            com.ibm.ws.webservices.engine.utils.QNameTable.createQName(
                   "http://www.w3.org/2001/XMLSchema",
                   "string");
-    private final static javax.xml.namespace.QName QName_0_1 = 
-           com.ibm.ws.webservices.engine.utils.QNameTable.createQName(
-                  "",
-                  "filler");
     private final static javax.xml.namespace.QName QName_0_2 = 
            com.ibm.ws.webservices.engine.utils.QNameTable.createQName(
                   "",
                   "longitud");
+    private final static javax.xml.namespace.QName QName_0_1 = 
+           com.ibm.ws.webservices.engine.utils.QNameTable.createQName(
+                  "",
+                  "filler");
+    private final static javax.xml.namespace.QName QName_0_0 = 
+           com.ibm.ws.webservices.engine.utils.QNameTable.createQName(
+                  "",
+                  "datos");
 }

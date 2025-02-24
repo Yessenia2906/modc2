@@ -42,12 +42,12 @@ public class ReturnProceso_Deser extends com.ibm.ws.webservices.engine.encoding.
     protected boolean tryElementSetFromList(javax.xml.namespace.QName qName, java.util.List listValue) {
         return false;
     }
-    private final static javax.xml.namespace.QName QName_0_13 = 
-           com.ibm.ws.webservices.engine.utils.QNameTable.createQName(
-                  "",
-                  "descripcion");
     private final static javax.xml.namespace.QName QName_0_12 = 
            com.ibm.ws.webservices.engine.utils.QNameTable.createQName(
                   "",
                   "codigo");
+    private final static javax.xml.namespace.QName QName_0_13 = 
+           com.ibm.ws.webservices.engine.utils.QNameTable.createQName(
+                  "",
+                  "descripcion");
 }

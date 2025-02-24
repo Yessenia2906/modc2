@@ -43,6 +43,7 @@ import pe.com.bn.modc.domain.mapper.BnEnviarDoc;
 import pe.com.bn.modc.domain.mapper.BnHojaResumen;
 import pe.com.bn.modc.domain.mapper.BnIndicador;
 import pe.com.bn.modc.domain.mapper.BnLetraCambio;
+import pe.com.bn.modc.domain.mapper.BnLogAuditoriaPM;
 import pe.com.bn.modc.domain.mapper.BnPase;
 import pe.com.bn.modc.domain.mapper.BnPoliza;
 import pe.com.bn.modc.domain.mapper.BnPolizaPrestamo;
@@ -45835,7 +45836,7 @@ public class AdministracionController {
 			public String logAuditoriaPMFiltro(ModelMap model,
 					HttpServletRequest request, HttpServletResponse response)
 					throws SQLException {
-				List<BnAuditoriaPM> contenlog = new ArrayList<BnAuditoriaPM>();
+				List<BnLogAuditoriaPM> contenlog = new ArrayList<BnLogAuditoriaPM>();
 				RepoLogAuditoria audi = new RepoLogAuditoria();
 				String path = View.returnJsp(model, "auditoriaPM/logPM");
 				String opcion = request.getParameter("opt");
@@ -45845,6 +45846,7 @@ public class AdministracionController {
 				case 1:
 					String forDni = request.getParameter("forDni");
 					contenlog = audi.forDniPM(forDni);
+					System.out.println("LISTAR POR DNI " +contenlog) ;
 					break;
 				case 2:
 					String forFechaInicio = request.getParameter("forFechaInicio");

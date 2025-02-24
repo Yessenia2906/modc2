@@ -47,8 +47,52 @@
 
 <%-- <script src='<c:url value="/assets/js/datepicker.js"/>'></script>
 <script src='<c:url value="/assets/js/datepicker-es.js"/>'></script> --%>
+<style>
+#mensaje {
+	display: none;
+	margin-top: 10px;
+	margin-bottom: 20px;
+	padding: 10px;
+	border-radius: 5px;
+	font-size: 14px;
+}
 
+.exito {
+	color: #155724;
+	background-color: #d4edda;
+	border: 1px solid #c3e6cb;
+}
+
+.error {
+	color: #721c24;
+	background-color: #f8d7da;
+	border: 1px solid #f5c6cb;
+}
+</style>
 <script>
+function mostrarMensaje(tipo, texto) {
+        const $mensaje = $("#mensaje");
+        $mensaje.text(texto); // Actualizar el texto del mensaje
+        $mensaje.removeClass("exito error"); // Remover clases previas
+        $mensaje.addClass(tipo); // Agregar la clase correspondiente
+        $mensaje.fadeIn(); // Mostrar el mensaje
+
+        setTimeout(() => {
+            $mensaje.fadeOut();
+        }, 5000);
+    }
+    
+    function checkIt(evt) {
+
+    evt = (evt) ? evt : window.event
+    var charCode = (evt.which) ? evt.which : evt.keyCode
+    if (charCode > 31 && (charCode < 48 || charCode > 57)) {
+        status = "Solo numeros"
+        return false
+    }
+    status = ""
+    return true
+}
 	function enviarForm() {
 		let
 		opt = document.getElementById("slcOpt").value;
@@ -70,11 +114,13 @@
 					enviar = true;
 				} else {
 					// La validación falló
-					alert("El DNI debe tener entre 8 y 9 dígitos numéricos.");
+					mostrarMensaje("error", "El DNI debe tener 8 dígitos numéricos.");
+					//alert("El DNI debe tener entre 8 y 9 dígitos numéricos.");
 				}
 			} else {
 				// El elemento no se encontró
-				alert("Elemento 'forDniTxt' no encontrado.");
+				mostrarMensaje("error", "Elemento 'forDniTxt' no encontrado.");
+				//alert("Elemento 'forDniTxt' no encontrado.");
 			}
 			break;
 		case '2':
@@ -111,13 +157,15 @@
 
 		// Validar que la fecha no sea nula
 		if (!forDiaDate.value) {
-			alert("Por favor, ingrese una fecha.");
+			mostrarMensaje("error", "Por favor, ingrese una fecha.");
+			//alert("Por favor, ingrese una fecha.");
 			return false;
 		}
 
 		// Validar que la fecha no sea mayor que la fecha actual
 		if (fechaSeleccionada > fechaActual) {
-			alert("La fecha seleccionada no puede ser mayor que la fecha actual.");
+			mostrarMensaje("error", "La fecha seleccionada no puede ser mayor que la fecha actual.");
+			//alert("La fecha seleccionada no puede ser mayor que la fecha actual.");
 			return false;
 		}
  
@@ -270,7 +318,7 @@
 									<!-- 	POR DNI -->
 										<tr id="forDni">
 											<td width="24%" align="center">Ingresa DNI: <input
-												id="forDniTxt" name="forDni" value="" type="text"></td>
+												id="forDniTxt" name="forDni" value="" type="text" onkeypress="return checkIt(event)" maxlength="8"></td>
 										</tr>
 										<!-- entre fechas -->
 										<tr id="forFechas">
@@ -305,7 +353,12 @@
 											</td>
 										</tr>
 
+														<tr>
 
+															<td width="10%" colspan="6" align="center"><span
+																id="mensaje"></span></td>
+
+														</tr>
 									<!-- 	btn Buscar -->
 										<tr id="btnBuscar">
 											<td colspan="2" align="center"><input type="button"
@@ -336,7 +389,19 @@
 																		class="headerDisplay" name="${contenlog}"
 																		pagesize="20" id=" " cellpadding="0" cellspacing="0"
 																		requestURI="">
-																																								
+																<script type="text/javascript">
+      															  $(document).ready(function() {
+      															   
+      															   var numpres = "${contenlog}";
+														          
+														    
+      															  
+													console.log("Error", numpres);
+															            
+															   													            
+															      
+     																});
+   																 </script>																		
 																		<display:column property="prestamo" title="N° PRESTAMO"></display:column>
 																		<display:column property="fecha" title="FECHA"></display:column>
 																		<display:column property="usuario" title="CUSUARIO"></display:column>
@@ -347,6 +412,7 @@
 																		<display:column property="correo" title="CORREO"></display:column>
 																		<display:column property="envio" title="SIT. ENVÍO"></display:column>
 																		<display:column property="accion" title="ACCION"></display:column>
+																		
 																	</display:table></td>
 																																							
 																																			
@@ -363,8 +429,10 @@
   																	<tr>
 																		<td style="height: 20px"></td>
 																	</tr>
+																	
 																	<tr>
 																		<td align="center"><strong> Estimado(a)
+																		
 																		</strong></td>
 																	</tr>
 																	<tr>
