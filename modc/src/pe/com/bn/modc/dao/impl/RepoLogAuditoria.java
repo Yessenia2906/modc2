@@ -650,15 +650,15 @@ public class RepoLogAuditoria implements IntLogAuditoria{
 		        connection.setAutoCommit(false);
 		      	        
 		        // Establecer los valores de los parámetros
-		        pstmt.setString(1,au.getPrestamo() );
-		        pstmt.setString(2,au.getFecha());
+		        pstmt.setString(1,au.getPrestamo().trim());
+		        pstmt.setString(2,au.getFecha().trim());
 		        pstmt.setString(3, au.getCusuario());
 		        pstmt.setString(4, au.getCoficina());
 		        pstmt.setString(5, au.getCliente().trim());
-		        pstmt.setString(6, au.getTipodoc());
-		        pstmt.setString(7, au.getNumerodoc());
-		        pstmt.setString(8, au.getCelular());
-		        pstmt.setString(9, au.getCorreo());
+		        pstmt.setString(6, au.getTipodoc().trim());
+		        pstmt.setString(7, au.getNumerodoc().trim());
+		        pstmt.setString(8, au.getCelular().trim());
+		        pstmt.setString(9, au.getCorreo().trim());
 		        pstmt.setString(10,au.getSit_envio());
 		        pstmt.setString(11,au.getAccion());
 		     
@@ -700,6 +700,73 @@ public class RepoLogAuditoria implements IntLogAuditoria{
 		}
 		
 		
+		public List<BnLogAuditoriaPM> forFechasPM1(String forFechaInicio, String forFechaFin) throws SQLException {
+
+			ResultSet rs = null;
+			List<BnLogAuditoriaPM> registros = null;	
+			Connection conn = null;																		
+		 	PreparedStatement pstmt = null;	
+		 	StringBuffer sql = new  StringBuffer();
+		 	sql.append("SELECT F10_PRESTAMO, F10_FECHA, F10_CUSUARIO, F10_COFICINA, F10_CLIENTE, F10_TIPO, F10_NUMEOR, F10_CELULAR, F10_CORREO, F10_SITUACION, F10_ACCION " 
+		 				+ "FROM BNMODCF10_LOGPM" + 
+		 				"WHERE TO_DATE(F10_FECHA, 'YYYY-MM-DD')" + 
+		 				"      BETWEEN TO_DATE( '"+forFechaInicio+"', 'YYYY-MM-DD')" + 
+		 				"      AND TO_DATE('"+forFechaFin+"', 'YYYY-MM-DD')");	 	 
+		    // Verificar si el usuario tiene el rol 'ROLE_06'
+	        boolean rol06 = false;
+	        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+	        for (GrantedAuthority authority : authentication.getAuthorities()) {
+	            if (authority.getAuthority().equals("ROLE_06")) {
+	            	rol06 = true;
+	                break;
+	            }
+	        }
+		 	if (!rol06) {
+		 		sql.append(" AND F10_COFICINA='"+getAuthenticatedUser().getCodAgencia() +"' ORDER BY  F10_FECHA DESC");
+			}else{
+				sql.append(" ORDER BY  F10_FECHA DESC");
+			}
+		 	try {		
+		 		conn =    dss.connect();
+		 		conn.setAutoCommit(false);	
+		 		pstmt= conn.prepareStatement(sql.toString());
+		 		BnLogAuditoriaPM pm = new BnLogAuditoriaPM();
+		 		registros=new ArrayList<BnLogAuditoriaPM>(); 
+				rs = pstmt.executeQuery();
+				
+				while(rs.next()){	
+					pm =new BnLogAuditoriaPM();				 
+					//pm.setFecha(formatoFecha(rs.getString(1)));
+					pm.setPrestamo(rs.getString("F10_PRESTAMO"));
+					pm.setFecha(rs.getString("F10_FECHA"));
+					pm.setCusuario(rs.getString("F10_CUSUARIO"));
+					pm.setCoficina(rs.getString("F10_COFICINA"));	 
+					pm.setCliente(rs.getString("F10_CLIENTE"));
+					String tipo = rs.getString("F10_TIPO").trim();
+					if (tipo == "1") {
+						pm.setDoi("DNI - " +rs.getString("F10_NUMEOR"));
+						
+					} else {
+						pm.setDoi("CE - " +rs.getString("F10_NUMEOR"));
+					}
+					
+					pm.setCelular(rs.getString("F10_CELULAR"));
+					pm.setCorreo(rs.getString("F10_CORREO"));	 
+					pm.setSit_envio(rs.getString("F10_SITUACION"));
+					pm.setAccion(rs.getString("F10_ACCION"));
+
+					  registros.add(pm);    	
+			}	
+		 	} catch (Exception e) {	
+		 		if (conn != null) conn.rollback(); 
+		 	}finally {
+		 		if (conn != null) conn.setAutoCommit(true);	
+		 		if (pstmt != null) {try{pstmt.close();}catch(Exception e){}; pstmt = null; }			
+		 		if (conn != null) { try{conn.close();}catch(Exception e){}; conn = null;}				
+		 	}	
+		return registros;
+		}
+
 		public List<BnLogAuditoriaPM> forDniPM(String forDni) throws SQLException {
 
 			ResultSet rs = null;
@@ -740,11 +807,11 @@ public class RepoLogAuditoria implements IntLogAuditoria{
 					pm.setCoficina(rs.getString("F10_COFICINA"));	 
 					pm.setCliente(rs.getString("F10_CLIENTE"));
 					String tipo = rs.getString("F10_TIPO").trim();
-					if (tipo == "1") {
-						pm.setDOI("DNI - " +rs.getString("F10_NUMEOR"));
+					if (tipo.equals("1")) {
+						pm.setDoi("DNI - " +rs.getString("F10_NUMEOR"));
 						
 					} else {
-						pm.setDOI("CE - " +rs.getString("F10_NUMEOR"));
+						pm.setDoi("CE - " +rs.getString("F10_NUMEOR"));
 					}
 					
 					pm.setCelular(rs.getString("F10_CELULAR"));
@@ -764,7 +831,73 @@ public class RepoLogAuditoria implements IntLogAuditoria{
 		return registros;
 		}
 
-		
+
+		public List<BnLogAuditoriaPM> forFechasPM(String forFechaInicio, String forFechaFin) throws SQLException {
+			ResultSet rs = null;
+			List<BnLogAuditoriaPM> registros = null;	
+			Connection conn = null;																		
+		 	PreparedStatement pstmt = null;	
+		 	StringBuffer sql = new  StringBuffer();
+		 	sql.append("SELECT F10_PRESTAMO, F10_FECHA, F10_CUSUARIO, F10_COFICINA, F10_CLIENTE, F10_TIPO, F10_NUMEOR, F10_CELULAR, F10_CORREO, F10_SITUACION, F10_ACCION " 
+		 				+ "FROM BNMODCF10_LOGPM " + 
+		 				"WHERE TO_DATE(F10_FECHA, 'YYYY-MM-DD')" + 
+		 				"      BETWEEN TO_DATE( '"+forFechaInicio+"', 'YYYY-MM-DD')" + 
+		 				"      AND TO_DATE('"+forFechaFin+"', 'YYYY-MM-DD')");	 	 
+		    // Verificar si el usuario tiene el rol 'ROLE_06'
+	        boolean rol06 = false;
+	        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+	        for (GrantedAuthority authority : authentication.getAuthorities()) {
+	            if (authority.getAuthority().equals("ROLE_06")) {
+	            	rol06 = true;
+	                break;
+	            }
+	        }
+		 	if (!rol06) {
+		 		sql.append(" AND F10_COFICINA='"+getAuthenticatedUser().getCodAgencia() +"' ORDER BY  F10_FECHA DESC");
+			}else{
+				sql.append(" ORDER BY  F10_FECHA DESC");
+			}
+		 	try {		
+		 		conn =    dss.connect();
+		 		conn.setAutoCommit(false);	
+		 		pstmt= conn.prepareStatement(sql.toString());
+		 		BnLogAuditoriaPM pm = new BnLogAuditoriaPM();
+		 		registros=new ArrayList<BnLogAuditoriaPM>(); 
+				rs = pstmt.executeQuery();
+				
+				while(rs.next()){	
+					pm =new BnLogAuditoriaPM();				 
+					//pm.setFecha(formatoFecha(rs.getString(1)));
+					pm.setPrestamo(rs.getString("F10_PRESTAMO"));
+					pm.setFecha(rs.getString("F10_FECHA"));
+					pm.setCusuario(rs.getString("F10_CUSUARIO"));
+					pm.setCoficina(rs.getString("F10_COFICINA"));	 
+					pm.setCliente(rs.getString("F10_CLIENTE"));
+					String tipo = rs.getString("F10_TIPO").trim();
+					if (tipo.equals("1")) {
+						pm.setDoi("DNI - " +rs.getString("F10_NUMEOR"));
+						
+					} else {
+						pm.setDoi("CE - " +rs.getString("F10_NUMEOR"));
+					}
+					
+					pm.setCelular(rs.getString("F10_CELULAR"));
+					pm.setCorreo(rs.getString("F10_CORREO"));	 
+					pm.setSit_envio(rs.getString("F10_SITUACION"));
+					pm.setAccion(rs.getString("F10_ACCION"));
+
+					  registros.add(pm);    	
+			}	
+		 	} catch (Exception e) {	
+		 		if (conn != null) conn.rollback(); 
+		 	}finally {
+		 		if (conn != null) conn.setAutoCommit(true);	
+		 		if (pstmt != null) {try{pstmt.close();}catch(Exception e){}; pstmt = null; }			
+		 		if (conn != null) { try{conn.close();}catch(Exception e){}; conn = null;}				
+		 	}	
+		return registros;
+		}
+
 
 		
 		

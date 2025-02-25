@@ -4,15 +4,14 @@ package pe.com.bn.modc.domain.mapper;
 public class BnLogAuditoriaPM {
 	String prestamo;
 	String fecha;
-	String Cusuario;
-	String Coficina;
+	String cusuario;
+	String coficina;
 	String cliente;
 	String celular;
 	String correo;
 	String sit_envio;
 	String accion;
-	String DOI;
-	
+	String doi;
 	
 	public String getPrestamo() {
 		return prestamo;
@@ -27,16 +26,16 @@ public class BnLogAuditoriaPM {
 		this.fecha = fecha;
 	}
 	public String getCusuario() {
-		return Cusuario;
+		return cusuario;
 	}
 	public void setCusuario(String cusuario) {
-		Cusuario = cusuario;
+		this.cusuario = cusuario;
 	}
 	public String getCoficina() {
-		return Coficina;
+		return coficina;
 	}
 	public void setCoficina(String coficina) {
-		Coficina = coficina;
+		this.coficina = coficina;
 	}
 	public String getCliente() {
 		return cliente;
@@ -68,22 +67,13 @@ public class BnLogAuditoriaPM {
 	public void setAccion(String accion) {
 		this.accion = accion;
 	}
-	public String getDOI() {
-		return DOI;
+	public String getDoi() {
+		return doi;
 	}
-	public void setDOI(String dOI) {
-		DOI = dOI;
+	public void setDoi(String doi) {
+		this.doi = doi;
 	}
-	@Override
-	public String toString() {
-		return "BnLogAuditoriaPM [prestamo=" + prestamo + ", fecha=" + fecha + ", Cusuario=" + Cusuario + ", Coficina="
-				+ Coficina + ", cliente=" + cliente + ", celular=" + celular + ", correo=" + correo + ", sit_envio="
-				+ sit_envio + ", accion=" + accion + ", DOI=" + DOI + ", getPrestamo()=" + getPrestamo()
-				+ ", getFecha()=" + getFecha() + ", getCusuario()=" + getCusuario() + ", getCoficina()=" + getCoficina()
-				+ ", getCliente()=" + getCliente() + ", getCelular()=" + getCelular() + ", getCorreo()=" + getCorreo()
-				+ ", getSit_envio()=" + getSit_envio() + ", getAccion()=" + getAccion() + ", getDOI()=" + getDOI()
-				+ ", getClass()=" + getClass() + ", hashCode()=" + hashCode() + ", toString()=" + super.toString()
-				+ "]";
-	}
-
+	
+	
+	
 }

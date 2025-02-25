@@ -45820,25 +45820,24 @@ public class AdministracionController {
 				}
 				return json;
 			}	
-			
-		
-			@RequestMapping("logPM")
-			public String logAuditoria(ModelMap model, HttpServletRequest request,
+					
+			@RequestMapping("logPM2")
+			public String logAuditoriaPM(ModelMap model, HttpServletRequest request,
 					HttpServletResponse response) {
-				List<BnAuditoriaPM> contenlog = new ArrayList<BnAuditoriaPM>();
+				List<BnLogAuditoriaPM> contenlog = new ArrayList<BnLogAuditoriaPM>();
 				request.setAttribute("contenlog", contenlog);
 				request.setAttribute("first", "first"); 
-				String path = View.returnJsp(model, "auditoriaPM/logPM");
+				String path = View.returnJsp(model, "auditoriaPM/logPM2");
 				return path;
 			}
 			
-			@RequestMapping("filterlogPM")
-			public String logAuditoriaPMFiltro(ModelMap model,
+			@RequestMapping("filterlogPM2")
+			public String logAuditoriaFiltroPM(ModelMap model,
 					HttpServletRequest request, HttpServletResponse response)
 					throws SQLException {
 				List<BnLogAuditoriaPM> contenlog = new ArrayList<BnLogAuditoriaPM>();
 				RepoLogAuditoria audi = new RepoLogAuditoria();
-				String path = View.returnJsp(model, "auditoriaPM/logPM");
+				String path = View.returnJsp(model, "auditoriaPM/logPM2");
 				String opcion = request.getParameter("opt");
 
 				int opcionint = Integer.parseInt(opcion);
@@ -45846,21 +45845,20 @@ public class AdministracionController {
 				case 1:
 					String forDni = request.getParameter("forDni");
 					contenlog = audi.forDniPM(forDni);
-					System.out.println("LISTAR POR DNI " +contenlog) ;
 					break;
 				case 2:
 					String forFechaInicio = request.getParameter("forFechaInicio");
 					String forFechaFin = request.getParameter("forFechaFin");
-					//contenlog = audi.forFechas(forFechaInicio, forFechaFin);
+					contenlog = audi.forFechasPM(forFechaInicio, forFechaFin);
 
 					break;
 				case 3:
 					String forDia = request.getParameter("forDia");
-					//contenlog = audi.forDia(forDia);
+					//contenlog = LogAuditoria.forDia(forDia);
 
 					break;
 				case 4:
-					//contenlog = audi.showLog();
+					//contenlog = LogAuditoria.showLog();
 					break;
 				default:
 					return path;
@@ -45870,5 +45868,6 @@ public class AdministracionController {
 
 				return path;
 			}
+			
 
 }

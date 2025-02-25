@@ -240,10 +240,6 @@
 									align="center"> Log Auditoria EECC</th>
 
 							</tr>
-
-
-
-
 							<tr>
 								<td class="rxcontainer">
 
