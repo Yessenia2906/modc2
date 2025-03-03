@@ -377,6 +377,13 @@
 						</a>
 					</li>
 				</sec:authorize>
+				 <sec:authorize url="/Prueba/**">
+					<li>
+						<a id="conNombre"   href='<c:out value="${url}"/>Prueba/' >
+							<span>Prueba</span>
+						</a>
+					</li>
+				</sec:authorize>
 		 
 				
 			</ul>

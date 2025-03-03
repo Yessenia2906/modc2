@@ -10197,7 +10197,7 @@ public class AdministracionController {
 				request.setAttribute("result", result);
 
 				path = View.returnJsp(model, "consulta/consultaPM");
-
+				
 				return path;
 			}
 
@@ -45871,5 +45871,288 @@ public class AdministracionController {
 				return path;
 			}
 			
+			@RequestMapping("Prueba")
+			public String prueba(ModelMap model, HttpServletRequest request,
+					HttpServletResponse response) {
+				List<BnLogAuditoriaPM> contenlog = new ArrayList<BnLogAuditoriaPM>();
+				request.setAttribute("contenlog", contenlog);
+				request.setAttribute("first", "first"); 
+				String path = View.returnJsp(model, "auditoriaPM/Pruebaaaa");
+				return path;
+			}
+			
+			
+			@RequestMapping("consulPM1")
+			public String consulPM1(ModelMap model, HttpServletRequest request, HttpServletResponse response) throws Exception {
+				String path = "";
+				DatosSesion datosSesion = Util.getIdUsuario(request);
+				HttpSession sesion = request.getSession();
 
+				// Capturando DNI
+
+				String numero = request.getParameter("Numero");
+
+				try {
+
+					if (numero.length() > 2) {
+
+						List result = null;
+
+						ConsultaDocumentoImpl consultaDocPrestamos = new ConsultaDocumentoImpl();
+
+						result = consultaDocPrestamos.prestamoConsultaCronograma(numero.trim());
+
+						int a = result.size();
+
+						if (a == 0) {
+							request.setAttribute("msje", "Error 98");
+							path = View.returnJsp(model, "auditoriaPM/Pruebaaaa");
+
+							return path;
+
+						} else {
+
+							request.setAttribute("msje", "Haga Clic en Abrir para Confirmar la Exportación");
+							request.setAttribute("result", result);
+
+							request.setAttribute("desembolso", numero);
+
+							path = View.returnJsp(model, "auditoriaPM/Pruebaaaa");
+
+							return path;
+						}
+					} else {
+
+						List result = null;
+
+						ConsultaDocumentoImpl consultaDocPrestamos = new ConsultaDocumentoImpl();
+
+						// log.debug("ENTRA CONSULTA TOTAL",
+						// "TODA LA TABLA",Constante.LOGGER_DEBUG_NIVEL_2);
+						// log4.debug("ENTRA CONSULTA TOTAL",Constante.LOGGER_DEBUG_NIVEL_2);
+
+						// result =
+						// consultaDocPrestamos.prestamoConsultaTodoCronograma();
+
+						result = consultaDocPrestamos.prestamoConsultaTodo();
+						int a = result.size();
+
+						// log.debug("total resultL",
+						// Integer.toString(a),Constante.LOGGER_DEBUG_NIVEL_2);
+
+						// log4.debug("total resultL", Integer.toString(a));
+
+						request.setAttribute("msje", "Consultar Todo");
+						request.setAttribute("result", result);
+
+						// TODO path = View.returnJsp(model, "consulta/consultaPM   1");
+						path = View.returnJsp(model, "auditoriaPM/Pruebaaaa");
+						return path;
+					}
+
+				} catch (Exception e) {
+
+					// log.error(e,"","");
+
+					// log.debug("CONSULTA TOTAL","CONSULTA TOTAL","CONSULTA TOTAL");
+
+					throw e;
+				}
+
+			}
+			
+			
+			@RequestMapping("exPrestamoEnviar1")
+			public String exPrestamoEnviar1(ModelMap model, HttpServletRequest request, HttpServletResponse response)
+					throws Exception {
+
+				String path = "";
+
+				String ruta = request.getSession().getServletContext().getRealPath("").toString();
+
+				String desembolso = request.getParameter("numero");
+
+				BufferedOutputStream bos = null;
+
+				Connection conn = null;
+				PreparedStatement pstmt = null;
+
+				Statement stmt = null;
+				InputStream input = null;
+				String fecha = "";
+				String correoTitular = "";
+				String correoGarante = "";
+				String nombres = "";
+				String age = "";
+				FileOutputStream output = null;
+
+				String tabla = "BN_MODC.BNMODCF02_DOCPRESTAMO";
+
+				try {
+					String sql = "SELECT F02_DOCUMENTO, F02_FECHA_CARGA, F02_EMAIL, F02_CAMPO2, NOMBRES, AGENCIA FROM  BN_MODC.BNMODCF02_DOCPRESTAMO where rowid in(select max(rowid) from "
+							+ " bnmodcf02_docprestamo WHERE F02_DESEMBOLSO = '" + desembolso + "')";
+
+					conn = dss.connect();
+					stmt = conn.createStatement();
+					ResultSet rs = stmt.executeQuery(sql);
+
+					if (rs.next()) {
+						input = rs.getBinaryStream("F02_DOCUMENTO");
+						fecha = rs.getString("F02_FECHA_CARGA");
+						correoTitular = rs.getString("F02_EMAIL");
+						correoGarante = rs.getString("F02_CAMPO2");
+						nombres = rs.getString("NOMBRES");
+						age = rs.getString("AGENCIA");
+
+					}
+
+					// System.out.println("fecha "+fecha);
+					// System.out.println("titular "+correoTitular);
+					// System.out.println("nombres "+nombres);
+					// System.out.println("age "+age);
+
+					ByteArrayOutputStream buffer = new ByteArrayOutputStream();
+					int nRead;
+					byte[] data = new byte[1024];
+					while ((nRead = input.read(data, 0, data.length)) != -1) {
+						buffer.write(data, 0, nRead);
+					}
+
+					buffer.flush();
+					byte[] ba = buffer.toByteArray();
+
+					// solo manda correo al titular
+					// if(correoGarante == null){
+
+					ServiceMessageProxy serviceMessage = new ServiceMessageProxy();
+
+					String urlSimm = getServiceSimmAdress();
+					// Seteo url del Cliente Simm
+					serviceMessage._getDescriptor().setEndpoint(urlSimm);
+
+					RequestMessage requestMessage = new RequestMessage();
+					ReqListMessage rm = new ReqListMessage();
+					ReqListMessage[] reqListMessage;
+					reqListMessage = new ReqListMessage[1];
+
+					Adjunto adjunto = new Adjunto();
+					adjunto.setFlagAdjunto(1);
+
+					adjunto.setDocAdjunto(ba);
+
+					DatosCorreo datosCorreo = new DatosCorreo();
+					datosCorreo.setAsunto(Constante.ASUNTO_PRESTAMO + "-" + desembolso);
+					// datosCorreo.setCorreoDestinatario(correoTitular);
+
+					DatosParametro datosParametro = new DatosParametro();
+					datosParametro.setParametro1(nombres);
+					datosParametro.setParametro5(age);
+
+					if (correoGarante == null) {
+
+						datosCorreo.setCorreoDestinatario(correoTitular);
+
+					} else {
+
+						datosCorreo.setCorreoDestinatario(correoTitular);
+
+						datosCorreo.setCorreoCopia(correoGarante);
+
+					}
+
+					datosParametro.setParametro1(nombres);
+					datosParametro.setParametro5(age);
+					rm.setAdjunto(adjunto);
+					rm.setDatosCorreo(datosCorreo);
+					rm.setDatosParametro(datosParametro);
+					reqListMessage[0] = rm;
+					requestMessage.setCodRequermiento(Constante.REQUE_PRESTAMO);
+
+					ArrayOfTns1ReqListMessage array = new ArrayOfTns1ReqListMessage();
+					List<ReqListMessage> arrayList = new ArrayList<ReqListMessage>();
+					arrayList.add(rm);
+					array.setItem(arrayList);
+					requestMessage.setReqListMessage(array);
+					serviceMessage.sendMessage(requestMessage);
+					try {
+						serviceMessage.sendMessageAsync(requestMessage);
+
+						ResponseMessage respuesta = new ResponseMessage();
+
+						respuesta.getCodRetorno();
+
+					} catch (Exception e) {
+						e.printStackTrace();
+						System.out.println("no se pudo enviar el mensaje");
+						System.out.println(e.getMessage());
+						// log.error(e, "122", e.getMessage());
+
+					}
+
+					// }
+
+					Calendar fecha1 = new GregorianCalendar();
+
+					int ano = fecha1.get(Calendar.YEAR);
+					int mes = (fecha1.get(Calendar.MONTH)) + 1;
+					int dia = fecha1.get(Calendar.DAY_OF_MONTH);
+
+					String anoo = String.valueOf(ano);
+					String mess = String.valueOf(mes);
+					String diaa = String.valueOf(dia);
+
+					if (mess.length() == 1) {
+						mess = "0" + mess;
+					}
+					if (diaa.length() == 1) {
+						diaa = "0" + diaa;
+					}
+					String fechaEnv = diaa + "/" + mess + "/" + anoo;
+
+					int hora = fecha1.get(Calendar.HOUR_OF_DAY);
+					int min = fecha1.get(Calendar.MINUTE);
+					int seg = fecha1.get(Calendar.SECOND);
+
+					String horaEnv = hora + ":" + min + ":" + seg;
+					String horaLec = "";
+					String fechaLec = "";
+					String ipLec = "";
+					String estado = "";
+					String campo1 = "";
+					String campo2 = "";
+
+					// Actualiza tabla de prestamos
+					CargarDocumento cargarPrestamo = new CargarDocumento();
+					String prestamoActualiza = cargarPrestamo.prestamoActualiza(fechaEnv, horaEnv, desembolso);
+
+					if (prestamoActualiza.equalsIgnoreCase("ACTUALIZADO")) {
+						request.setAttribute("msje", "Error 30");
+						path = View.returnJsp(model, "auditoriaPM/Pruebaaaa");
+						return path;
+					}
+
+				} catch (Exception e) {
+					System.err.println(e);
+				} finally {
+					try {
+						if (input != null) {
+							input.close();
+						}
+						if (output != null) {
+							output.close();
+						}
+						if (stmt != null) {
+							stmt.close();
+						}
+					} catch (Exception e) {
+						System.err.println(e);
+					}
+				}
+
+				//
+
+				return path;
+
+			}
+			
 }

@@ -102,7 +102,11 @@
 			<security:intercept-url pattern="/logPM2/**" access="isAuthenticated()" />
 		    <security:intercept-url pattern="/filterlogPM2/**" access="isAuthenticated()" />
 			
-
+			<security:intercept-url pattern="/exPrestamoEnviar1/**" access="isAuthenticated()" />
+			<security:intercept-url pattern="/Prueba/**" access="isAuthenticated()" />
+			<security:intercept-url pattern="/consulPM1/**" access="isAuthenticated()" />
+			
+			
 <!-- 		<security:intercept-url pattern="/consultaLogCuentas/**" access="hasAnyRole('02')" /> -->
 <!-- 		<security:intercept-url pattern="/resultadoConsultaLogCuentas/**" access="hasAnyRole('02')" /> -->
 		

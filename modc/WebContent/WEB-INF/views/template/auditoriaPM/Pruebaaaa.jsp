@@ -128,7 +128,7 @@ function verExportar(){
     function enviar(){
 
 
-   document.exPrestamoEnviar.submit();
+   document.exPrestamoEnviar1.submit();
 }   
  
 </script>
@@ -140,7 +140,7 @@ function verExportar(){
 
 <c:url var="url" value="/" />
 
-<form id="exPrestamoEnviar" name="exPrestamoEnviar" method="post" action="<c:out value='${url}'/>exPrestamoEnviar"   runat="server" >
+<form id="exPrestamoEnviar1" name="exPrestamoEnviar1" method="post" action="<c:out value='${url}'/>exPrestamoEnviar1"   runat="server" >
 <input	id="numero" name="numero" value = "<c:out value="${desembolso}"  />" type="hidden" /> 
 	<input	id="enviar" name="enviar" value = "SI" type="hidden" /> 
 	<input	id="pol1" name="pol1" type="hidden" /> 
@@ -172,7 +172,7 @@ function verExportar(){
 
 
 
-<form  id="frmLogin" name="frmLogin" method="post" action="<c:out value='${url}'/>consulPM" runat="server"   >
+<form  id="frmLogin" name="frmLogin" method="post" action="<c:out value='${url}'/>consulPM1" runat="server"   >
 	<input name="method" value="" type="hidden">
 	<input type="hidden" name="id" >
 	 
