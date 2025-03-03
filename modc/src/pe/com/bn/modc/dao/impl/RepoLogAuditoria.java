@@ -899,6 +899,166 @@ public class RepoLogAuditoria implements IntLogAuditoria{
 		}
 
 
+		public List<BnLogAuditoriaPM> forDiaPM(String forDia) throws SQLException {
+			ResultSet rs = null;
+			List<BnLogAuditoriaPM> registros = null;	
+			Connection conn = null;																		
+		 	PreparedStatement pstmt = null;	
+		 	StringBuffer sql = new  StringBuffer();
+		 	sql.append("SELECT F10_PRESTAMO, F10_FECHA, F10_CUSUARIO, F10_COFICINA, F10_CLIENTE, F10_TIPO, F10_NUMEOR, F10_CELULAR, F10_CORREO, F10_SITUACION, F10_ACCION " 
+		 				+ "FROM BNMODCF10_LOGPM WHERE TO_DATE(F10_FECHA, 'YYYY-MM-DD') = TO_DATE( '"+forDia+"', 'YYYY-MM-DD')");	 	 
+		    // Verificar si el usuario tiene el rol 'ROLE_06'
+	        boolean rol06 = false;
+	        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+	        for (GrantedAuthority authority : authentication.getAuthorities()) {
+	            if (authority.getAuthority().equals("ROLE_06")) {
+	            	rol06 = true;
+	                break;
+	            }
+	        }
+		 	if (!rol06) {
+		 		sql.append(" AND F10_COFICINA='"+getAuthenticatedUser().getCodAgencia() +"' ORDER BY  F10_FECHA DESC");
+			}else{
+				sql.append(" ORDER BY  F10_FECHA DESC");
+			}
+		 	try {		
+		 		conn =    dss.connect();
+		 		conn.setAutoCommit(false);	
+		 		pstmt= conn.prepareStatement(sql.toString());
+		 		BnLogAuditoriaPM pm = new BnLogAuditoriaPM();
+		 		registros=new ArrayList<BnLogAuditoriaPM>(); 
+				rs = pstmt.executeQuery();
+				
+				while(rs.next()){	
+					pm =new BnLogAuditoriaPM();				 
+					//pm.setFecha(formatoFecha(rs.getString(1)));
+					pm.setPrestamo(rs.getString("F10_PRESTAMO"));
+					pm.setFecha(rs.getString("F10_FECHA"));
+					pm.setCusuario(rs.getString("F10_CUSUARIO"));
+					pm.setCoficina(rs.getString("F10_COFICINA"));	 
+					pm.setCliente(rs.getString("F10_CLIENTE"));
+					String tipo = rs.getString("F10_TIPO").trim();
+					if (tipo.equals("1")) {
+						pm.setDoi("DNI - " +rs.getString("F10_NUMEOR"));
+						
+					} else {
+						pm.setDoi("CE - " +rs.getString("F10_NUMEOR"));
+					}
+					
+					//pm.setCelular(rs.getString("F10_CELULAR"));
+					pm.setCorreo(rs.getString("F10_CORREO"));	 
+					pm.setSit_envio(rs.getString("F10_SITUACION"));
+					pm.setAccion(rs.getString("F10_ACCION"));
+
+					  registros.add(pm);    	
+			}	
+		 	} catch (Exception e) {	
+		 		if (conn != null) conn.rollback(); 
+		 	}finally {
+		 		if (conn != null) conn.setAutoCommit(true);	
+		 		if (pstmt != null) {try{pstmt.close();}catch(Exception e){}; pstmt = null; }			
+		 		if (conn != null) { try{conn.close();}catch(Exception e){}; conn = null;}				
+		 	}	
+		return registros;
+		}
+
+
+		public List<BnLogAuditoriaPM> showLogPM()  throws SQLException {
+			ResultSet rs = null;
+			List<BnLogAuditoriaPM> registros = null;	
+			Connection conn = null;																		
+		 	PreparedStatement pstmt = null;	
+		 	StringBuffer sql = new  StringBuffer();
+		 	sql.append("SELECT F10_PRESTAMO, F10_FECHA, F10_CUSUARIO, F10_COFICINA, F10_CLIENTE, F10_TIPO, F10_NUMEOR, F10_CELULAR, F10_CORREO, F10_SITUACION, F10_ACCION " 
+		 				+ " FROM BNMODCF10_LOGPM");	 	 
+		    // Verificar si el usuario tiene el rol 'ROLE_06'
+	        boolean rol06 = false;
+	        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+	        for (GrantedAuthority authority : authentication.getAuthorities()) {
+	            if (authority.getAuthority().equals("ROLE_06")) {
+	            	rol06 = true;
+	                break;
+	            }
+	        }
+		 	if (!rol06) {
+		 		sql.append(" AND F10_COFICINA='"+getAuthenticatedUser().getCodAgencia() +"' ORDER BY  F10_FECHA DESC");
+			}else{
+				sql.append(" ORDER BY  F10_FECHA DESC");
+			}
+		 	try {		
+		 		conn =    dss.connect();
+		 		conn.setAutoCommit(false);	
+		 		pstmt= conn.prepareStatement(sql.toString());
+		 		BnLogAuditoriaPM pm = new BnLogAuditoriaPM();
+		 		registros=new ArrayList<BnLogAuditoriaPM>(); 
+				rs = pstmt.executeQuery();
+				
+				while(rs.next()){	
+					pm =new BnLogAuditoriaPM();				 
+					//pm.setFecha(formatoFecha(rs.getString(1)));
+					pm.setPrestamo(rs.getString("F10_PRESTAMO"));
+					pm.setFecha(rs.getString("F10_FECHA"));
+					pm.setCusuario(rs.getString("F10_CUSUARIO"));
+					pm.setCoficina(rs.getString("F10_COFICINA"));	 
+					pm.setCliente(rs.getString("F10_CLIENTE"));
+					String tipo = rs.getString("F10_TIPO").trim();
+					if (tipo.equals("1")) {
+						pm.setDoi("DNI - " +rs.getString("F10_NUMEOR"));
+						
+					} else {
+						pm.setDoi("CE - " +rs.getString("F10_NUMEOR"));
+					}
+					
+					//pm.setCelular(rs.getString("F10_CELULAR"));
+					pm.setCorreo(rs.getString("F10_CORREO"));	 
+					pm.setSit_envio(rs.getString("F10_SITUACION"));
+					pm.setAccion(rs.getString("F10_ACCION"));
+
+					  registros.add(pm);    	
+			}	
+		 	} catch (Exception e) {	
+		 		if (conn != null) conn.rollback(); 
+		 	}finally {
+		 		if (conn != null) conn.setAutoCommit(true);	
+		 		if (pstmt != null) {try{pstmt.close();}catch(Exception e){}; pstmt = null; }			
+		 		if (conn != null) { try{conn.close();}catch(Exception e){}; conn = null;}				
+		 	}	
+		return registros;
+		}
+
+
+		public String buscaragencias(String num) throws SQLException {
+			 System.out.println("reporlog buscar la agencia del primer envio por num prestamo: " + num); 
+				String agencia = "";
+			    ResultSet rs = null;
+				Connection conn = null;																		
+			 	PreparedStatement pstmt = null;	
+			 	StringBuffer sql = new  StringBuffer();
+			 	sql.append("SELECT B09_AGENCIA FROM BNMODCF09_PRESTAMOS_HIS WHERE B09_NUM_PRESTAO = '")
+			    .append(num.trim())
+			    .append("' AND B09_ESTADO = 'ENVIADO'");
+			 	try {
+			    		conn =    dss.connect();
+				 		conn.setAutoCommit(false);	
+				 		pstmt= conn.prepareStatement(sql.toString());		 		
+						rs = pstmt.executeQuery();
+
+						if(rs.next()) {
+							
+							agencia = rs.getString("B09_AGENCIA"); 	                 
+			            }
+			        }
+			     catch (Exception e) {	
+			 		if (conn != null) conn.rollback(); 
+			 	}finally {
+			 		if (conn != null) conn.setAutoCommit(true);	
+			 		if (pstmt != null) {try{pstmt.close();}catch(Exception e){}; pstmt = null; }			
+			 		if (conn != null) { try{conn.close();}catch(Exception e){}; conn = null;}				
+			 	}	
+			   
+			return agencia;
+		}
+
 		
 		
 }

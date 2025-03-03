@@ -50,16 +50,16 @@ public class SistemaParametro_Deser extends com.ibm.ws.webservices.engine.encodi
     protected boolean tryElementSetFromList(javax.xml.namespace.QName qName, java.util.List listValue) {
         return false;
     }
-    private final static javax.xml.namespace.QName QName_0_8 = 
-           com.ibm.ws.webservices.engine.utils.QNameTable.createQName(
-                  "",
-                  "grupoParametro");
-    private final static javax.xml.namespace.QName QName_0_9 = 
-           com.ibm.ws.webservices.engine.utils.QNameTable.createQName(
-                  "",
-                  "proceso");
     private final static javax.xml.namespace.QName QName_0_7 = 
            com.ibm.ws.webservices.engine.utils.QNameTable.createQName(
                   "",
                   "aliasSistema");
+    private final static javax.xml.namespace.QName QName_0_9 = 
+           com.ibm.ws.webservices.engine.utils.QNameTable.createQName(
+                  "",
+                  "proceso");
+    private final static javax.xml.namespace.QName QName_0_8 = 
+           com.ibm.ws.webservices.engine.utils.QNameTable.createQName(
+                  "",
+                  "grupoParametro");
 }

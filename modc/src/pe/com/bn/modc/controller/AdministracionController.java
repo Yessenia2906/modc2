@@ -45547,6 +45547,7 @@ public class AdministracionController {
 				BnEnviarDoc datosR = datos.buscardatosReenvio(num);
 				String fecha_envio = datos.buscarfechaEnvio(num);
 				String estado_envio = datos.buscarestado(num);
+				String agencia_1_envio = datos.buscaragencias(num);
 				String accion = Constant.CONSULTAR_PRESTAMO; 
 				
 				BnAuditoriaPM au = new BnAuditoriaPM();
@@ -45594,7 +45595,8 @@ public class AdministracionController {
 					session.setAttribute("correoRE", datosR.getCORREO());
 					session.setAttribute("fecha_primer_envio", fecha_envio);
 					session.setAttribute("estado_envio",estado_envio );
-					
+					session.setAttribute("agencia_1_envio",agencia_1_envio);
+
 				}
 				
 				
@@ -45716,7 +45718,7 @@ public class AdministracionController {
 				String fechaDe = (String) session.getAttribute("fecha_primer_envio");
 				String tipodoc = (String) session.getAttribute("tipodocRE");
 				String correoCliente = requestBody.get("correop");
-				
+				String agencia = requestBody.get("agencia_1_envio");
 					
 		 			 
 				 byte[] ba = (byte[]) session.getAttribute("ReenviarPDF");
@@ -45744,13 +45746,13 @@ public class AdministracionController {
 
 				enviardoc.setNUMPRESTAMO(prestamo);
 				enviardoc.setTIPDOC(tipodoc);
-				enviardoc.setNUMDOC(numdoc);
-				enviardoc.setNOMBRES(nombre);
-				enviardoc.setCORREO(correoCliente);
+				enviardoc.setNUMDOC(numdoc.trim());
+				enviardoc.setNOMBRES(nombre.trim());
+				enviardoc.setCORREO(correoCliente.trim());
 				enviardoc.setFECHA(fechaenvio);
 				enviardoc.setHORA(hora);
 				enviardoc.setUSUARIO(usuario.getUsername());
-				enviardoc.setAGENCIA(usuario.getCodAgencia());
+				enviardoc.setAGENCIA(agencia);
 				enviardoc.setESTADO("REENVIADO");
 				enviardoc.setPDF(ba);
 				
@@ -45759,7 +45761,7 @@ public class AdministracionController {
 				au.setFecha(fechaenvio);
 				au.setCusuario(usuario.getUsername());
 				au.setCoficina(usuario.getCodAgencia());
-				au.setCliente(nombre);
+				au.setCliente(nombre.trim());
 				au.setTipodoc(tipodoc);
 				au.setNumerodoc(numdoc);
 				au.setCelular("");
@@ -45854,11 +45856,11 @@ public class AdministracionController {
 					break;
 				case 3:
 					String forDia = request.getParameter("forDia");
-					//contenlog = LogAuditoria.forDia(forDia);
+					contenlog = audi.forDiaPM(forDia);
 
 					break;
 				case 4:
-					//contenlog = LogAuditoria.showLog();
+					contenlog = audi.showLogPM();
 					break;
 				default:
 					return path;
